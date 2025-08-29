@@ -5,7 +5,8 @@ import 'package:tech_lingual_quest/main.dart';
 
 void main() {
   group('TechLingual Quest App Tests', () {
-    testWidgets('App should display title and welcome message', (WidgetTester tester) async {
+    testWidgets('App should display title and welcome message',
+        (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester.pumpWidget(const TechLingualQuestApp());
 
@@ -19,7 +20,8 @@ void main() {
       expect(find.text('0'), findsOneWidget);
     });
 
-    testWidgets('Tap floating action button to earn XP', (WidgetTester tester) async {
+    testWidgets('Tap floating action button to earn XP',
+        (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester.pumpWidget(const TechLingualQuestApp());
 
@@ -36,7 +38,8 @@ void main() {
       expect(find.text('10'), findsOneWidget);
     });
 
-    testWidgets('Multiple taps should accumulate XP', (WidgetTester tester) async {
+    testWidgets('Multiple taps should accumulate XP',
+        (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester.pumpWidget(const TechLingualQuestApp());
 
@@ -59,7 +62,8 @@ void main() {
       // Verify that feature list is displayed
       expect(find.text('Features coming soon:'), findsOneWidget);
       expect(find.text('• Daily quests and challenges'), findsOneWidget);
-      expect(find.text('• Vocabulary building with spaced repetition'), findsOneWidget);
+      expect(find.text('• Vocabulary building with spaced repetition'),
+          findsOneWidget);
       expect(find.text('• Technical article summaries'), findsOneWidget);
       expect(find.text('• Progress tracking and achievements'), findsOneWidget);
       expect(find.text('• AI-powered conversation practice'), findsOneWidget);
