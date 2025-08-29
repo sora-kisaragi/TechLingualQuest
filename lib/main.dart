@@ -5,9 +5,9 @@ void main() {
 }
 
 /// Main application widget for TechLingual Quest
-/// 
+///
 /// A gamified learning app for improving technical English skills.
-/// This app combines quests, vocabulary building, and technical article 
+/// This app combines quests, vocabulary building, and technical article
 /// summaries with a game-like experience.
 class TechLingualQuestApp extends StatelessWidget {
   const TechLingualQuestApp({super.key});

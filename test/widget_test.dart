@@ -11,10 +11,10 @@ void main() {
 
       // Verify that the app title is displayed
       expect(find.text('TechLingual Quest'), findsOneWidget);
-      
+
       // Verify that the welcome message is displayed
       expect(find.text('Welcome to TechLingual Quest!'), findsOneWidget);
-      
+
       // Verify that XP counter starts at 0
       expect(find.text('0'), findsOneWidget);
     });
