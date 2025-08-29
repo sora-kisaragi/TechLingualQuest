@@ -31,10 +31,8 @@ jobs:
     - name: Run tests
       run: flutter test
     
-    # Note: APK build temporarily disabled due to network restrictions to dl.google.com
-    # Uncomment once access to dl.google.com is granted for Android Gradle Plugin downloads
-    # - name: Build APK
-    #   run: flutter build apk --debug
+    - name: Build APK
+      run: flutter build apk --debug
     
     - name: Build web
       run: flutter build web
