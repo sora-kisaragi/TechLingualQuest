@@ -1,0 +1,2 @@
+# This file ensures that the config directory is tracked by git
+# config/ contains configuration files for different environments (dev, staging, prod)

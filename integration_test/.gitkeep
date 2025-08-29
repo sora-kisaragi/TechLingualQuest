@@ -1,0 +1,2 @@
+# This file ensures that the integration_test directory is tracked by git
+# integration_test/ contains integration tests for the Flutter application
