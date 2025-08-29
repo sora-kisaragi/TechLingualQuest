@@ -1,0 +1,2 @@
+# This file ensures that the test directory is tracked by git
+# test/ contains unit tests and widget tests for the Flutter application

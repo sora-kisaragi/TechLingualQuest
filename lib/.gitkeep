@@ -1,0 +1,2 @@
+# This file ensures that the lib directory is tracked by git
+# lib/ contains the main Dart source code for the Flutter application
