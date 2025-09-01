@@ -1,6 +1,6 @@
 # 📘 要件定義書 - TechLingual Quest
 
-**作成者:** Sora_Kisaragi  
+**作成者:** Github Copilot Agent  
 **作成日:** 2025-08-29  
 **バージョン:** 1.0  
 

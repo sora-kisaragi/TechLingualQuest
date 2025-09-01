@@ -1,6 +1,6 @@
 # 高水準設計書 (HLD) - TechLingual Quest
 
-**作成者:** Sora_Kisaragi  
+**作成者:** Github Copilot Agent  
 **作成日:** 2025-01-16  
 **バージョン:** 2.0  
 **ステータス:** 完成
