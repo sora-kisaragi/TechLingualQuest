@@ -3,7 +3,7 @@ author: "GitHub Copilot Agent"
 date: "2025-08-29"
 version: "1.1"
 related_issues: ["#10"]
-related_docs: ["development-tasks.md", "issue-10-summary.md", "../requirements/system-requirements.md"]
+related_docs: ["development-tasks.md", "issue-10-summary.md", "requirements/requirements.md"]
 ---
 
 # Issue Creation Implementation Plan
@@ -15,7 +15,7 @@ This document provides the specific GitHub issues that should be created to impl
 ## Related Documents
 - [Development Tasks](development-tasks.md) - Detailed task breakdown and timelines
 - [Issue #10 Summary](issue-10-summary.md) - Bilingual implementation summary
-- [System Requirements](../requirements/system-requirements.md) - Technical requirements reference
+- [System Requirements](requirements/requirements.md) - Technical requirements reference
 
 ---
 
