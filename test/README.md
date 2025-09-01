@@ -1,40 +1,40 @@
-# Tests (test/)
+# テスト（test/）
 
-This directory contains unit tests and widget tests for the TechLingual Quest application.
+このディレクトリには、TechLingual Quest アプリケーションのユニットテストとウィジェットテストが含まれています。
 
-## Structure
+## 構造
 
 ```
 test/
-├── unit/                     # Unit tests
-│   ├── services/             # Service layer tests
-│   ├── models/               # Model tests
-│   └── utils/                # Utility function tests
-├── widget/                   # Widget tests
-│   ├── features/             # Feature widget tests
-│   └── shared/               # Shared widget tests
-└── helpers/                  # Test helpers and mocks
-    ├── mocks/                # Mock objects
-    └── fixtures/             # Test data fixtures
+├── unit/                     # ユニットテスト
+│   ├── services/             # サービス層テスト
+│   ├── models/               # モデルテスト
+│   └── utils/                # ユーティリティ関数テスト
+├── widget/                   # ウィジェットテスト
+│   ├── features/             # 機能ウィジェットテスト
+│   └── shared/               # 共有ウィジェットテスト
+└── helpers/                  # テストヘルパーとモック
+    ├── mocks/                # モックオブジェクト
+    └── fixtures/             # テストデータフィクスチャー
 ```
 
-## Guidelines
+## ガイドライン
 
-- Write tests for all business logic
-- Test widgets and user interactions
-- Use descriptive test names
-- Mock external dependencies
-- Aim for high test coverage
+- すべてのビジネスロジックにテストを記述
+- ウィジェットとユーザーインタラクションをテスト
+- 説明的なテスト名を使用
+- 外部依存関係をモック化
+- 高いテストカバレッジを目指す
 
-## Running Tests
+## テストの実行
 
 ```bash
-# Run all tests
+# すべてのテストを実行
 flutter test
 
-# Run tests with coverage
+# カバレッジ付きでテストを実行
 flutter test --coverage
 
-# Run specific test file
+# 特定のテストファイルを実行
 flutter test test/unit/services/auth_service_test.dart
 ```

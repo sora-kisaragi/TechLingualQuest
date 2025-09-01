@@ -1,34 +1,34 @@
-# Assets
+# アセット
 
-This directory contains static assets used in the TechLingual Quest application.
+このディレクトリには、TechLingual Quest アプリケーションで使用される静的アセットが含まれています。
 
-## Structure
+## 構造
 
 ```
 assets/
-├── images/                   # Image files
-│   ├── icons/                # App icons and UI icons
-│   ├── backgrounds/          # Background images
-│   ├── illustrations/        # Game illustrations
-│   └── badges/               # Achievement badges
-├── fonts/                    # Custom font files
-│   └── custom_fonts.ttf      # Custom typography
-└── icons/                    # Vector icons and SVG files
-    ├── tab_icons/            # Bottom navigation icons
-    ├── feature_icons/        # Feature-specific icons
-    └── ui_icons/             # General UI icons
+├── images/                   # 画像ファイル
+│   ├── icons/                # アプリアイコンとUIアイコン
+│   ├── backgrounds/          # 背景画像
+│   ├── illustrations/        # ゲームイラスト
+│   └── badges/               # 実績バッジ
+├── fonts/                    # カスタムフォントファイル
+│   └── custom_fonts.ttf      # カスタムタイポグラフィ
+└── icons/                    # ベクターアイコンとSVGファイル
+    ├── tab_icons/            # ボトムナビゲーションアイコン
+    ├── feature_icons/        # 機能固有アイコン
+    └── ui_icons/             # 一般UIアイコン
 ```
 
-## Guidelines
+## ガイドライン
 
-- Use optimized image formats (WebP, PNG, SVG)
-- Provide multiple resolutions (@2x, @3x) for images
-- Use semantic naming for asset files
-- Keep file sizes minimal for better performance
-- Organize assets by feature or category
+- 最適化された画像フォーマットを使用（WebP、PNG、SVG）
+- 画像に複数解像度（@2x、@3x）を提供
+- アセットファイルにセマンティックな名前を使用
+- パフォーマンス向上のためファイルサイズを最小限に保つ
+- 機能やカテゴリーごとにアセットを整理
 
-## Supported Formats
+## サポートされるフォーマット
 
-- **Images**: PNG, JPG, WebP, GIF
-- **Icons**: SVG, PNG (multiple resolutions)
-- **Fonts**: TTF, OTF
+- **画像**: PNG、JPG、WebP、GIF
+- **アイコン**: SVG、PNG（複数解像度）
+- **フォント**: TTF、OTF

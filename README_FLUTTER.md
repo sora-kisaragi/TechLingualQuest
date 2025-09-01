@@ -1,77 +1,77 @@
-# Flutter Environment Setup
+# Flutter 環境セットアップ
 
-This document provides instructions for setting up the Flutter development environment for TechLingual Quest.
+このドキュメントでは、TechLingual Quest のFlutter開発環境のセットアップ手順を説明します。
 
-## Prerequisites
+## 前提条件
 
-Before you begin, ensure you have the following installed:
+始める前に、以下がインストールされていることを確認してください：
 
-1. **Flutter SDK** (3.10.0 or later)
+1. **Flutter SDK**（3.10.0以降）
    ```bash
-   # Download Flutter SDK
+   # Flutter SDK のダウンロード
    git clone https://github.com/flutter/flutter.git -b stable
    export PATH="$PATH:`pwd`/flutter/bin"
    
-   # Or use snap (Ubuntu/Linux)
+   # または snap を使用（Ubuntu/Linux）
    sudo snap install flutter --classic
    
-   # Or use homebrew (macOS)
+   # または homebrew を使用（macOS）
    brew install --cask flutter
    ```
 
-2. **IDE Setup**
-   - VS Code with Flutter and Dart extensions
-   - Android Studio with Flutter plugin
-   - IntelliJ IDEA with Flutter plugin
+2. **IDE セットアップ**
+   - VS Code と Flutter、Dart 拡張機能
+   - Android Studio と Flutter プラグイン
+   - IntelliJ IDEA と Flutter プラグイン
 
-## Project Structure
+## プロジェクト構造
 
-The project has been set up with the following structure:
+プロジェクトは以下の構造でセットアップされています：
 
 ```
 TechLingualQuest/
 ├── lib/
-│   └── main.dart           # Main application entry point
+│   └── main.dart           # メインアプリケーションエントリーポイント
 ├── test/
-│   └── widget_test.dart    # Widget tests
-├── android/                # Android platform-specific files
-├── ios/                    # iOS platform-specific files  
-├── web/                    # Web platform-specific files
-├── pubspec.yaml           # Project dependencies and metadata
-├── analysis_options.yaml  # Dart analyzer configuration
-└── README_FLUTTER.md      # This file
+│   └── widget_test.dart    # ウィジェットテスト
+├── android/                # Android プラットフォーム固有ファイル
+├── ios/                    # iOS プラットフォーム固有ファイル  
+├── web/                    # Web プラットフォーム固有ファイル
+├── pubspec.yaml           # プロジェクトの依存関係とメタデータ
+├── analysis_options.yaml  # Dart アナライザー設定
+└── README_FLUTTER.md      # このファイル
 ```
 
-## Getting Started
+## はじめに
 
-1. **Verify Flutter Installation**
+1. **Flutter インストールの確認**
    ```bash
    flutter doctor
    ```
 
-2. **Install Dependencies**
+2. **依存関係のインストール**
    ```bash
    flutter pub get
    ```
 
-3. **Run the App**
+3. **アプリの実行**
    ```bash
    # Web
    flutter run -d chrome
    
-   # Android (with connected device/emulator)
+   # Android（接続されたデバイス/エミュレーターで）
    flutter run -d android
    
-   # iOS (macOS only, with simulator/device)
+   # iOS（macOS のみ、シミュレーター/デバイスで）
    flutter run -d ios
    ```
 
-4. **Run Tests**
+4. **テストの実行**
    ```bash
    flutter test
    ```
 
-5. **Build for Production**
+5. **プロダクション用ビルド**
    ```bash
    # Web
    flutter build web
@@ -82,69 +82,69 @@ TechLingualQuest/
    # Android App Bundle
    flutter build appbundle
    
-   # iOS (macOS only)
+   # iOS（macOS のみ）
    flutter build ios
    ```
 
-## Development Guidelines
+## 開発ガイドライン
 
-### Code Style
-- Follow the Dart style guide
-- Use `flutter format` to format code
-- Run `flutter analyze` to check for issues
-- All code comments should be in English with optional Japanese clarification
+### コードスタイル
+- Dart スタイルガイドに従う
+- `flutter format` を使用してコードをフォーマット
+- `flutter analyze` を実行して問題をチェック
+- すべてのコメントは英語で記述し、必要に応じて日本語で補足説明
 
-### Widget Guidelines
-- Prefer StatelessWidget when possible
-- Keep build methods concise
-- Use small, reusable widgets
-- Separate UI from business logic
+### ウィジェットガイドライン
+- 可能な限り StatelessWidget を使用
+- build メソッドを簡潔に保つ
+- 小さく再利用可能なウィジェットを使用
+- UI とビジネスロジックを分離
 
-### Testing
-- Write widget tests for UI components
-- Write unit tests for business logic
-- Maintain good test coverage
+### テスト
+- UI コンポーネントにはウィジェットテストを記述
+- ビジネスロジックにはユニットテストを記述
+- 良好なテストカバレッジを維持
 
-## Available Features
+## 利用可能な機能
 
-The current app includes:
-- ✅ Basic Flutter project structure
-- ✅ Material Design 3 theme
-- ✅ XP tracking system (basic)
-- ✅ Progress bar visualization
-- ✅ Multi-platform support (Android, iOS, Web)
-- ✅ Widget tests
+現在のアプリには以下が含まれています：
+- ✅ 基本的な Flutter プロジェクト構造
+- ✅ Material Design 3 テーマ
+- ✅ XP トラッキングシステム（基本機能）
+- ✅ 進捗バー可視化
+- ✅ マルチプラットフォーム対応（Android、iOS、Web）
+- ✅ ウィジェットテスト
 
-### Planned Features
-- [ ] User authentication
-- [ ] Vocabulary management
-- [ ] Quest system
-- [ ] Database integration (Firebase/Supabase)
-- [ ] AI integration for summaries and quizzes
+### 予定されている機能
+- [ ] ユーザー認証
+- [ ] 語彙管理
+- [ ] クエストシステム
+- [ ] データベース連携（Firebase/Supabase）
+- [ ] 要約とクイズのAI統合
 
-## Troubleshooting
+## トラブルシューティング
 
-### Common Issues
+### よくある問題
 
-1. **Flutter not recognized**
-   - Ensure Flutter is in your PATH
-   - Run `flutter doctor` to verify installation
+1. **Flutter が認識されない**
+   - Flutter が PATH に含まれていることを確認
+   - `flutter doctor` を実行してインストールを確認
 
-2. **Dependencies not found**
-   - Run `flutter pub get` to install dependencies
-   - Check `pubspec.yaml` for correct dependency versions
+2. **依存関係が見つからない**
+   - `flutter pub get` を実行して依存関係をインストール
+   - `pubspec.yaml` で正しい依存関係バージョンを確認
 
-3. **Build issues**
-   - Clean the project: `flutter clean`
-   - Reinstall dependencies: `flutter pub get`
-   - Check platform-specific setup (Android SDK, Xcode, etc.)
+3. **ビルドエラー**
+   - プロジェクトをクリーンアップ: `flutter clean`
+   - 依存関係を再インストール: `flutter pub get`
+   - プラットフォーム固有のセットアップ（Android SDK、Xcode等）を確認
 
-## Next Steps
+## 次のステップ
 
-1. Set up your preferred IDE with Flutter extensions
-2. Configure device/emulator for testing
-3. Run `flutter pub get` to install dependencies
-4. Start the app with `flutter run`
-5. Begin implementing the planned features
+1. 優先IDEにFlutter拡張機能をセットアップ
+2. テスト用のデバイス/エミュレーターを設定
+3. `flutter pub get` を実行して依存関係をインストール
+4. `flutter run` でアプリを開始
+5. 予定されている機能の実装を開始
 
-For more information, see the [official Flutter documentation](https://docs.flutter.dev/).
+詳細については、[公式Flutter ドキュメント](https://docs.flutter.dev/)を参照してください。

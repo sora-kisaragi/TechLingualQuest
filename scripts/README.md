@@ -1,41 +1,41 @@
-# Scripts
+# スクリプト
 
-This directory contains build scripts, deployment scripts, and utility scripts for the TechLingual Quest project.
+このディレクトリには、TechLingual Quest プロジェクトのビルドスクリプト、デプロイメントスクリプト、ユーティリティスクリプトが含まれています。
 
-## Structure
+## 構造
 
 ```
 scripts/
-├── build/                    # Build-related scripts
-│   ├── build_android.sh      # Android build script
-│   ├── build_ios.sh          # iOS build script
-│   └── build_web.sh          # Web build script
-├── deploy/                   # Deployment scripts
-│   ├── deploy_staging.sh     # Staging deployment
-│   └── deploy_production.sh  # Production deployment
-├── setup/                    # Setup and installation scripts
-│   ├── setup_dev.sh          # Development environment setup
-│   └── install_deps.sh       # Install dependencies
-└── utils/                    # Utility scripts
-    ├── cleanup.sh            # Clean build artifacts
-    ├── generate_icons.sh     # Generate app icons
-    └── backup_db.sh          # Database backup
+├── build/                    # ビルド関連スクリプト
+│   ├── build_android.sh      # Android ビルドスクリプト
+│   ├── build_ios.sh          # iOS ビルドスクリプト
+│   └── build_web.sh          # Web ビルドスクリプト
+├── deploy/                   # デプロイメントスクリプト
+│   ├── deploy_staging.sh     # ステージング環境デプロイ
+│   └── deploy_production.sh  # プロダクション環境デプロイ
+├── setup/                    # セットアップ・インストールスクリプト
+│   ├── setup_dev.sh          # 開発環境セットアップ
+│   └── install_deps.sh       # 依存関係インストール
+└── utils/                    # ユーティリティスクリプト
+    ├── cleanup.sh            # ビルドアーティファクトのクリーンアップ
+    ├── generate_icons.sh     # アプリアイコン生成
+    └── backup_db.sh          # データベースバックアップ
 ```
 
-## Guidelines
+## ガイドライン
 
-- Make scripts executable (`chmod +x script_name.sh`)
-- Include error handling and validation
-- Document script parameters and usage
-- Use consistent naming conventions
-- Test scripts in different environments
+- スクリプトを実行可能にする（`chmod +x script_name.sh`）
+- エラーハンドリングと検証を含める
+- スクリプトのパラメーターと使用方法を文書化
+- 一貫したネーミング規則を使用
+- 異なる環境でスクリプトをテスト
 
-## Usage
+## 使用方法
 
 ```bash
-# Make script executable
+# スクリプトを実行可能にする
 chmod +x scripts/build/build_android.sh
 
-# Run script
+# スクリプトを実行
 ./scripts/build/build_android.sh
 ```

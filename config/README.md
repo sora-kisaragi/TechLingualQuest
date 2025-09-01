@@ -1,40 +1,40 @@
-# Configuration
+# 設定
 
-This directory contains configuration files for different environments and services.
+このディレクトリには、異なる環境とサービス用の設定ファイルが含まれています。
 
-## Structure
+## 構造
 
 ```
 config/
-├── environments/             # Environment-specific configs
-│   ├── development.json      # Development environment
-│   ├── staging.json          # Staging environment
-│   └── production.json       # Production environment
-├── firebase/                 # Firebase configurations
+├── environments/             # 環境固有の設定
+│   ├── development.json      # 開発環境
+│   ├── staging.json          # ステージング環境
+│   └── production.json       # プロダクション環境
+├── firebase/                 # Firebase設定
 │   ├── dev-firebase-config.json
 │   ├── staging-firebase-config.json
 │   └── prod-firebase-config.json
-├── api/                      # API configurations
-│   ├── endpoints.json        # API endpoint URLs
-│   └── api_keys.template.json # API key template (no real keys)
-└── app/                      # App-specific configs
-    ├── features.json         # Feature flags
-    ├── themes.json           # Theme configurations
-    └── constants.json        # App constants
+├── api/                      # API設定
+│   ├── endpoints.json        # APIエンドポイントURL
+│   └── api_keys.template.json # APIキーテンプレート（実際のキーなし）
+└── app/                      # アプリ固有設定
+    ├── features.json         # 機能フラグ
+    ├── themes.json           # テーマ設定
+    └── constants.json        # アプリ定数
 ```
 
-## Guidelines
+## ガイドライン
 
-- **Never commit sensitive data** (API keys, passwords, secrets)
-- Use template files for sensitive configurations
-- Environment-specific configs should be clearly labeled
-- Use JSON or YAML format for configuration files
-- Document all configuration options
-- Validate configuration files before deployment
+- **機密データは絶対にコミットしない**（APIキー、パスワード、シークレット）
+- 機密設定にはテンプレートファイルを使用
+- 環境固有設定は明確にラベル付け
+- 設定ファイルにはJSONまたはYAMLフォーマットを使用
+- すべての設定オプションを文書化
+- デプロイ前に設定ファイルを検証
 
-## Security Notes
+## セキュリティ注意事項
 
-- Add `*.key`, `*secret*`, `*password*` to .gitignore
-- Use environment variables for sensitive data in production
-- Provide template files with example values
-- Use different configurations for each environment
+- `*.key`、`*secret*`、`*password*`を.gitignoreに追加
+- プロダクションでは機密データに環境変数を使用
+- サンプル値を含むテンプレートファイルを提供
+- 各環境で異なる設定を使用
