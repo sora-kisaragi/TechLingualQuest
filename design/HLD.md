@@ -3,7 +3,7 @@ author: "GitHub Copilot Agent"
 date: "2025-08-29"
 version: "1.0"
 related_issues: ["#10", "#4"]
-related_docs: ["LLD.md", "../requirements/system-requirements.md", "../requirements/user-requirements.md", "../docs/development-tasks.md"]
+related_docs: ["LLD.md", "../requirements/system-requirements.md", "../requirements/user-requirements.md"]
 ---
 
 # High-Level Design (HLD) - TechLingual Quest
@@ -14,7 +14,6 @@ This document provides the system architecture overview and high-level design de
 - [Low-Level Design](LLD.md) - Detailed technical design and implementation
 - [System Requirements](../requirements/system-requirements.md) - Technical system requirements
 - [User Requirements](../requirements/user-requirements.md) - User stories and functional requirements
-- [Development Tasks](../docs/development-tasks.md) - Implementation task breakdown
 
 ---
 

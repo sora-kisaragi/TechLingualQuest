@@ -3,7 +3,7 @@ author: "GitHub Copilot Agent"
 date: "2025-08-29"
 version: "1.0"
 related_issues: ["#10"]
-related_docs: ["user-requirements.md", "../design/HLD.md", "../design/LLD.md", "../docs/development-tasks.md"]
+related_docs: ["user-requirements.md", "../design/HLD.md", "../design/LLD.md"]
 ---
 
 # System Requirements - TechLingual Quest
@@ -14,7 +14,6 @@ This document outlines the comprehensive system requirements for the TechLingual
 - [User Requirements](user-requirements.md) - User stories and functional requirements
 - [High-Level Design](../design/HLD.md) - System architecture overview
 - [Low-Level Design](../design/LLD.md) - Detailed technical design
-- [Development Tasks](../docs/development-tasks.md) - Implementation task breakdown
 
 ---
 

@@ -3,7 +3,7 @@ author: "GitHub Copilot Agent"
 date: "2025-08-29"
 version: "1.0"
 related_issues: ["#10", "#5"]
-related_docs: ["HLD.md", "../requirements/system-requirements.md", "../requirements/user-requirements.md", "../docs/development-tasks.md"]
+related_docs: ["HLD.md", "../requirements/system-requirements.md", "../requirements/user-requirements.md"]
 ---
 
 # 低水準設計書（LLD）- TechLingual Quest
@@ -14,7 +14,6 @@ related_docs: ["HLD.md", "../requirements/system-requirements.md", "../requireme
 - [高水準設計書](HLD.md) - システムアーキテクチャ概要
 - [システム要件](../requirements/system-requirements.md) - 技術システム要件
 - [ユーザー要件](../requirements/user-requirements.md) - ユーザーストーリーと機能要件
-- [開発タスク](../docs/development-tasks.md) - 実装タスク詳細
 
 ---
 
