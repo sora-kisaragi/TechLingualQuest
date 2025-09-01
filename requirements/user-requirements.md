@@ -166,7 +166,31 @@ This document captures user stories and functional requirements from the end-use
   - AI-generated questions based on personal vocabulary
   - Multiple difficulty levels and question types
   - Content quality validation and filtering
-  - Usage optimization for API cost management
+  - Support for multiple LLM providers (OpenAI, Ollama, LMStudio, etc.)
+
+**US-018**: As a user, I want to configure my own LLM API keys so that I can control my usage costs and maintain privacy.
+- **Acceptance Criteria:**
+  - Secure API key configuration interface
+  - Support for multiple LLM providers
+  - API key validation and testing functionality
+  - Clear cost transparency and usage tracking
+  - Local secure storage of API credentials
+
+**US-019**: As a privacy-conscious user, I want to use local LLM models so that my data doesn't leave my device.
+- **Acceptance Criteria:**
+  - Support for local/edge LLM deployment
+  - Ollama and LMStudio integration
+  - Offline functionality for AI features
+  - Performance optimization for mobile devices
+  - Model download and management interface
+
+**US-020**: As a user, I want to easily switch between different LLM providers so that I can choose the best option for my needs.
+- **Acceptance Criteria:**
+  - Provider selection interface in settings
+  - Seamless switching without data loss
+  - Provider-specific configuration options
+  - Performance and cost comparison information
+  - Fallback options when primary provider is unavailable
 
 ---
 

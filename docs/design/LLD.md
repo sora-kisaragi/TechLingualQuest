@@ -858,76 +858,126 @@ class DatabaseMigration {
 
 ---
 
-## 5. API統合層
+## 5. LLM統合層
 
-### 5.1 外部API統合設計
+### 5.1 LLM プロバイダー抽象化設計
 
 ```dart
-// OpenAI API統合サービス
-class OpenAIService {
-  OpenAIService(this._httpClient, this._apiKey);
+// LLM プロバイダー抽象インターフェース
+abstract class LLMProvider {
+  String get name;
+  LLMProviderType get type;
+  bool get requiresApiKey;
+  bool get supportsLocalModel;
+  
+  Future<bool> validateConfiguration();
+  Future<String> generateSummary(String content);
+  Future<List<QuizQuestion>> generateQuizQuestions(
+    List<VocabularyWord> words, 
+    int questionCount
+  );
+  Future<String> checkGrammar(String text);
+  Future<double> evaluatePronunciation(String audioPath, String expectedText);
+}
+
+// LLM プロバイダータイプ
+enum LLMProviderType {
+  cloud,    // OpenAI, Claude等のクラウドAPI
+  local,    // Ollama, LMStudio等のローカルサーバー
+  edge,     // デバイス内モデル
+}
+
+// LLM 設定管理
+@freezed
+class LLMConfiguration with _$LLMConfiguration {
+  const factory LLMConfiguration({
+    required String providerId,
+    required LLMProviderType type,
+    required Map<String, String> settings,
+    required bool isEnabled,
+    @Default(false) bool isDefault,
+  }) = _LLMConfiguration;
+  
+  factory LLMConfiguration.fromJson(Map<String, dynamic> json) =>
+      _$LLMConfigurationFromJson(json);
+}
+```
+
+### 5.2 OpenAI プロバイダー実装
+
+```dart
+// OpenAI 専用プロバイダー
+class OpenAIProvider implements LLMProvider {
+  OpenAIProvider(this._httpClient, this._configuration);
   
   final http.Client _httpClient;
-  final String _apiKey;
-  static const String _baseUrl = 'https://api.openai.com/v1';
+  final LLMConfiguration _configuration;
   
-  // 自動要約生成
-  Future<String> generateSummary(String articleText) async {
+  @override
+  String get name => 'OpenAI';
+  
+  @override
+  LLMProviderType get type => LLMProviderType.cloud;
+  
+  @override
+  bool get requiresApiKey => true;
+  
+  @override
+  bool get supportsLocalModel => false;
+  
+  String get _apiKey => _configuration.settings['apiKey'] ?? '';
+  String get _model => _configuration.settings['model'] ?? 'gpt-3.5-turbo';
+  String get _baseUrl => _configuration.settings['baseUrl'] ?? 'https://api.openai.com/v1';
+  
+  @override
+  Future<bool> validateConfiguration() async {
+    if (_apiKey.isEmpty) return false;
+    
     try {
-      final response = await _httpClient.post(
-        Uri.parse('$_baseUrl/chat/completions'),
-        headers: {
-          'Authorization': 'Bearer $_apiKey',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'model': 'gpt-3.5-turbo',
-          'messages': [
-            {
-              'role': 'system',
-              'content': '技術記事の要点を3〜5行で簡潔にまとめてください。専門用語は適切に説明してください。',
-            },
-            {
-              'role': 'user',
-              'content': articleText,
-            },
-          ],
-          'max_tokens': 500,
-          'temperature': 0.3,
-        }),
+      final response = await _httpClient.get(
+        Uri.parse('$_baseUrl/models'),
+        headers: {'Authorization': 'Bearer $_apiKey'},
       );
-      
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['choices'][0]['message']['content'];
-      } else {
-        throw OpenAIException('要約生成に失敗しました: ${response.statusCode}');
-      }
+      return response.statusCode == 200;
     } catch (e) {
-      throw OpenAIException('API呼び出しエラー: $e');
+      return false;
     }
   }
   
-  // クイズ問題生成
+  @override
+  Future<String> generateSummary(String content) async {
+    final response = await _makeRequest({
+      'model': _model,
+      'messages': [
+        {
+          'role': 'system',
+          'content': '技術記事を簡潔に要約してください。重要なポイントを箇条書きで含めてください。',
+        },
+        {
+          'role': 'user',
+          'content': content,
+        },
+      ],
+      'max_tokens': 500,
+      'temperature': 0.3,
+    });
+    
+    return response['choices'][0]['message']['content'];
+  }
+  
+  @override
   Future<List<QuizQuestion>> generateQuizQuestions(
     List<VocabularyWord> words,
     int questionCount,
   ) async {
-    try {
-      final wordsText = words.map((w) => '${w.word}: ${w.definition}').join('\n');
-      
-      final response = await _httpClient.post(
-        Uri.parse('$_baseUrl/chat/completions'),
-        headers: {
-          'Authorization': 'Bearer $_apiKey',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'model': 'gpt-3.5-turbo',
-          'messages': [
-            {
-              'role': 'system',
-              'content': '''
+    final wordsText = words.map((w) => '${w.word}: ${w.definition}').join('\n');
+    
+    final response = await _makeRequest({
+      'model': _model,
+      'messages': [
+        {
+          'role': 'system',
+          'content': '''
 与えられた単語リストから${questionCount}問の選択式クイズを作成してください。
 JSON形式で以下の構造で返してください：
 {
@@ -941,30 +991,568 @@ JSON形式で以下の構造で返してください：
   ]
 }
 ''',
-            },
-            {
-              'role': 'user',
-              'content': wordsText,
-            },
-          ],
-          'max_tokens': 1000,
-          'temperature': 0.5,
-        }),
+        },
+        {
+          'role': 'user',
+          'content': wordsText,
+        },
+      ],
+      'max_tokens': 1000,
+      'temperature': 0.5,
+    });
+    
+    final content = response['choices'][0]['message']['content'];
+    final quizData = jsonDecode(content);
+    
+    return (quizData['questions'] as List)
+        .map((q) => QuizQuestion.fromJson(q))
+        .toList();
+  }
+  
+  Future<Map<String, dynamic>> _makeRequest(Map<String, dynamic> body) async {
+    final response = await _httpClient.post(
+      Uri.parse('$_baseUrl/chat/completions'),
+      headers: {
+        'Authorization': 'Bearer $_apiKey',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw LLMException('OpenAI API エラー: ${response.statusCode}');
+    }
+  }
+  
+  @override
+  Future<String> checkGrammar(String text) async {
+    final response = await _makeRequest({
+      'model': _model,
+      'messages': [
+        {
+          'role': 'system',
+          'content': '英語の文法をチェックし、修正案と説明を提供してください。',
+        },
+        {
+          'role': 'user',
+          'content': text,
+        },
+      ],
+      'max_tokens': 300,
+      'temperature': 0.1,
+    });
+    
+    return response['choices'][0]['message']['content'];
+  }
+  
+  @override
+  Future<double> evaluatePronunciation(String audioPath, String expectedText) async {
+    // Whisper API を使用した発音評価
+    // 実装は省略（ファイルアップロード処理が必要）
+    throw UnimplementedError('発音評価機能は今後実装予定');
+  }
+}
+```
+
+### 5.3 Ollama プロバイダー実装
+
+```dart
+// Ollama ローカルサーバープロバイダー
+class OllamaProvider implements LLMProvider {
+  OllamaProvider(this._httpClient, this._configuration);
+  
+  final http.Client _httpClient;
+  final LLMConfiguration _configuration;
+  
+  @override
+  String get name => 'Ollama';
+  
+  @override
+  LLMProviderType get type => LLMProviderType.local;
+  
+  @override
+  bool get requiresApiKey => false;
+  
+  @override
+  bool get supportsLocalModel => true;
+  
+  String get _baseUrl => _configuration.settings['baseUrl'] ?? 'http://localhost:11434';
+  String get _model => _configuration.settings['model'] ?? 'llama2';
+  
+  @override
+  Future<bool> validateConfiguration() async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('$_baseUrl/api/tags'),
       );
-      
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final content = data['choices'][0]['message']['content'];
-        final quizData = jsonDecode(content);
-        
-        return (quizData['questions'] as List)
-            .map((q) => QuizQuestion.fromJson(q))
-            .toList();
-      } else {
-        throw OpenAIException('クイズ生成に失敗しました: ${response.statusCode}');
-      }
+      return response.statusCode == 200;
     } catch (e) {
-      throw OpenAIException('クイズ生成エラー: $e');
+      return false;
+    }
+  }
+  
+  @override
+  Future<String> generateSummary(String content) async {
+    final response = await _makeRequest({
+      'model': _model,
+      'prompt': '''
+技術記事を簡潔に要約してください。重要なポイントを含めてください。
+
+記事内容：
+$content
+
+要約：
+''',
+    });
+    
+    return response['response'];
+  }
+  
+  @override
+  Future<List<QuizQuestion>> generateQuizQuestions(
+    List<VocabularyWord> words,
+    int questionCount,
+  ) async {
+    final wordsText = words.map((w) => '${w.word}: ${w.definition}').join('\n');
+    
+    final response = await _makeRequest({
+      'model': _model,
+      'prompt': '''
+以下の単語から${questionCount}問の選択式クイズを作成してください。
+JSON形式で回答してください。
+
+単語リスト：
+$wordsText
+
+JSON形式：
+{
+  "questions": [
+    {
+      "question": "質問文",
+      "options": ["選択肢A", "選択肢B", "選択肢C", "選択肢D"],
+      "correct_answer": 0,
+      "explanation": "解説"
+    }
+  ]
+}
+''',
+    });
+    
+    try {
+      final quizData = jsonDecode(response['response']);
+      return (quizData['questions'] as List)
+          .map((q) => QuizQuestion.fromJson(q))
+          .toList();
+    } catch (e) {
+      throw LLMException('Ollama クイズ生成エラー: $e');
+    }
+  }
+  
+  Future<Map<String, dynamic>> _makeRequest(Map<String, dynamic> body) async {
+    final response = await _httpClient.post(
+      Uri.parse('$_baseUrl/api/generate'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+    
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw LLMException('Ollama API エラー: ${response.statusCode}');
+    }
+  }
+  
+  @override
+  Future<String> checkGrammar(String text) async {
+    final response = await _makeRequest({
+      'model': _model,
+      'prompt': '''
+以下の英語文の文法をチェックし、修正案と説明を提供してください。
+
+テキスト：$text
+
+チェック結果：
+''',
+    });
+    
+    return response['response'];
+  }
+  
+  @override
+  Future<double> evaluatePronunciation(String audioPath, String expectedText) async {
+    // ローカル音声認識モデルが必要
+    throw UnimplementedError('Ollama での発音評価は今後実装予定');
+  }
+}
+```
+
+### 5.4 LMStudio プロバイダー実装
+
+```dart
+// LMStudio ローカルサーバープロバイダー
+class LMStudioProvider implements LLMProvider {
+  LMStudioProvider(this._httpClient, this._configuration);
+  
+  final http.Client _httpClient;
+  final LLMConfiguration _configuration;
+  
+  @override
+  String get name => 'LMStudio';
+  
+  @override
+  LLMProviderType get type => LLMProviderType.local;
+  
+  @override
+  bool get requiresApiKey => false;
+  
+  @override
+  bool get supportsLocalModel => true;
+  
+  String get _baseUrl => _configuration.settings['baseUrl'] ?? 'http://localhost:1234/v1';
+  String get _model => _configuration.settings['model'] ?? 'local-model';
+  
+  @override
+  Future<bool> validateConfiguration() async {
+    try {
+      final response = await _httpClient.get(
+        Uri.parse('$_baseUrl/models'),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  @override
+  Future<String> generateSummary(String content) async {
+    // LMStudio は OpenAI 互換 API を提供
+    final response = await _makeRequest({
+      'model': _model,
+      'messages': [
+        {
+          'role': 'system',
+          'content': '技術記事を簡潔に要約してください。',
+        },
+        {
+          'role': 'user',
+          'content': content,
+        },
+      ],
+      'max_tokens': 500,
+      'temperature': 0.3,
+    });
+    
+    return response['choices'][0]['message']['content'];
+  }
+  
+  @override
+  Future<List<QuizQuestion>> generateQuizQuestions(
+    List<VocabularyWord> words,
+    int questionCount,
+  ) async {
+    // OpenAI Provider と同様の実装
+    // 実装は省略（OpenAI互換なので同じロジック）
+    throw UnimplementedError('LMStudio クイズ生成機能実装中');
+  }
+  
+  Future<Map<String, dynamic>> _makeRequest(Map<String, dynamic> body) async {
+    final response = await _httpClient.post(
+      Uri.parse('$_baseUrl/chat/completions'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+    
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw LLMException('LMStudio API エラー: ${response.statusCode}');
+    }
+  }
+  
+  @override
+  Future<String> checkGrammar(String text) async {
+    // 文法チェック実装
+    throw UnimplementedError('LMStudio 文法チェック機能実装中');
+  }
+  
+  @override
+  Future<double> evaluatePronunciation(String audioPath, String expectedText) async {
+    throw UnimplementedError('LMStudio 発音評価機能実装中');
+  }
+}
+```
+
+### 5.5 エッジLLM プロバイダー実装
+
+```dart
+// デバイス内軽量モデルプロバイダー
+class EdgeLLMProvider implements LLMProvider {
+  EdgeLLMProvider(this._configuration);
+  
+  final LLMConfiguration _configuration;
+  
+  @override
+  String get name => 'Edge LLM';
+  
+  @override
+  LLMProviderType get type => LLMProviderType.edge;
+  
+  @override
+  bool get requiresApiKey => false;
+  
+  @override
+  bool get supportsLocalModel => true;
+  
+  String get _modelPath => _configuration.settings['modelPath'] ?? '';
+  
+  @override
+  Future<bool> validateConfiguration() async {
+    // モデルファイルの存在確認
+    final file = File(_modelPath);
+    return await file.exists();
+  }
+  
+  @override
+  Future<String> generateSummary(String content) async {
+    // 軽量要約機能（キーワード抽出ベース）
+    final keywords = _extractKeywords(content);
+    return '主要ポイント：\n${keywords.join('\n• ')}';
+  }
+  
+  @override
+  Future<List<QuizQuestion>> generateQuizQuestions(
+    List<VocabularyWord> words,
+    int questionCount,
+  ) async {
+    // テンプレートベースのクイズ生成
+    final questions = <QuizQuestion>[];
+    final shuffledWords = words.toList()..shuffle();
+    
+    for (int i = 0; i < questionCount && i < shuffledWords.length; i++) {
+      final word = shuffledWords[i];
+      questions.add(_generateQuestionFromWord(word, shuffledWords));
+    }
+    
+    return questions;
+  }
+  
+  QuizQuestion _generateQuestionFromWord(
+    VocabularyWord correctWord,
+    List<VocabularyWord> allWords,
+  ) {
+    final options = <String>[correctWord.definition];
+    final otherWords = allWords.where((w) => w != correctWord).toList()..shuffle();
+    
+    // 他の選択肢を3つ追加
+    for (int i = 0; i < 3 && i < otherWords.length; i++) {
+      options.add(otherWords[i].definition);
+    }
+    
+    options.shuffle();
+    final correctAnswer = options.indexOf(correctWord.definition);
+    
+    return QuizQuestion(
+      question: '「${correctWord.word}」の意味は？',
+      options: options,
+      correctAnswer: correctAnswer,
+      explanation: '正解：${correctWord.definition}',
+    );
+  }
+  
+  List<String> _extractKeywords(String content) {
+    // 簡単なキーワード抽出ロジック
+    final words = content.split(RegExp(r'\s+'));
+    final technicalWords = words.where((word) => 
+      word.length > 5 && 
+      RegExp(r'^[A-Za-z]+$').hasMatch(word)
+    ).toSet().take(5).toList();
+    
+    return technicalWords;
+  }
+  
+  @override
+  Future<String> checkGrammar(String text) async {
+    // 基本的な文法チェック（パターンマッチング）
+    return '基本的な文法チェック機能（エッジモデル）';
+  }
+  
+  @override
+  Future<double> evaluatePronunciation(String audioPath, String expectedText) async {
+    // エッジ音声認識は実装が複雑
+    throw UnimplementedError('エッジ発音評価機能は今後実装予定');
+  }
+}
+```
+
+### 5.6 LLM サービス管理
+
+```dart
+// LLM サービス統合管理
+class LLMService {
+  LLMService(this._configService, this._httpClient);
+  
+  final ConfigurationService _configService;
+  final http.Client _httpClient;
+  final Map<String, LLMProvider> _providers = {};
+  LLMProvider? _defaultProvider;
+  
+  // 初期化
+  Future<void> initialize() async {
+    await _loadProviders();
+    await _setDefaultProvider();
+  }
+  
+  // プロバイダー読み込み
+  Future<void> _loadProviders() async {
+    final configs = await _configService.getLLMConfigurations();
+    
+    for (final config in configs) {
+      if (!config.isEnabled) continue;
+      
+      LLMProvider provider;
+      switch (config.providerId) {
+        case 'openai':
+          provider = OpenAIProvider(_httpClient, config);
+          break;
+        case 'ollama':
+          provider = OllamaProvider(_httpClient, config);
+          break;
+        case 'lmstudio':
+          provider = LMStudioProvider(_httpClient, config);
+          break;
+        case 'edge':
+          provider = EdgeLLMProvider(config);
+          break;
+        default:
+          continue;
+      }
+      
+      _providers[config.providerId] = provider;
+    }
+  }
+  
+  // デフォルトプロバイダー設定
+  Future<void> _setDefaultProvider() async {
+    final defaultConfig = await _configService.getDefaultLLMConfiguration();
+    if (defaultConfig != null) {
+      _defaultProvider = _providers[defaultConfig.providerId];
+    } else if (_providers.isNotEmpty) {
+      _defaultProvider = _providers.values.first;
+    }
+  }
+  
+  // 使用可能プロバイダー取得
+  List<LLMProvider> getAvailableProviders() {
+    return _providers.values.toList();
+  }
+  
+  // 特定プロバイダー取得
+  LLMProvider? getProvider(String providerId) {
+    return _providers[providerId];
+  }
+  
+  // デフォルトプロバイダー取得
+  LLMProvider? getDefaultProvider() {
+    return _defaultProvider;
+  }
+  
+  // 要約生成（フォールバック付き）
+  Future<String> generateSummary(String content, {String? providerId}) async {
+    final provider = providerId != null 
+        ? getProvider(providerId) 
+        : getDefaultProvider();
+    
+    if (provider == null) {
+      throw LLMException('利用可能なLLMプロバイダーがありません');
+    }
+    
+    try {
+      return await provider.generateSummary(content);
+    } catch (e) {
+      // フォールバックプロバイダーを試行
+      final fallbackProvider = _getFallbackProvider(provider);
+      if (fallbackProvider != null) {
+        return await fallbackProvider.generateSummary(content);
+      }
+      rethrow;
+    }
+  }
+  
+  // クイズ生成（フォールバック付き）
+  Future<List<QuizQuestion>> generateQuizQuestions(
+    List<VocabularyWord> words,
+    int questionCount,
+    {String? providerId}
+  ) async {
+    final provider = providerId != null 
+        ? getProvider(providerId) 
+        : getDefaultProvider();
+    
+    if (provider == null) {
+      throw LLMException('利用可能なLLMプロバイダーがありません');
+    }
+    
+    try {
+      return await provider.generateQuizQuestions(words, questionCount);
+    } catch (e) {
+      final fallbackProvider = _getFallbackProvider(provider);
+      if (fallbackProvider != null) {
+        return await fallbackProvider.generateQuizQuestions(words, questionCount);
+      }
+      rethrow;
+    }
+  }
+  
+  // フォールバックプロバイダー取得
+  LLMProvider? _getFallbackProvider(LLMProvider currentProvider) {
+    // エッジプロバイダーを優先的にフォールバック
+    final edgeProvider = _providers.values
+        .where((p) => p.type == LLMProviderType.edge && p != currentProvider)
+        .firstOrNull;
+        
+    return edgeProvider ?? _providers.values
+        .where((p) => p != currentProvider)
+        .firstOrNull;
+  }
+}
+```
+
+### 5.7 API キー管理サービス
+
+```dart
+// API キー安全管理
+class APIKeyManager {
+  APIKeyManager(this._secureStorage);
+  
+  final FlutterSecureStorage _secureStorage;
+  
+  // API キー保存
+  Future<void> storeAPIKey(String providerId, String apiKey) async {
+    await _secureStorage.write(
+      key: 'llm_api_key_$providerId',
+      value: apiKey,
+    );
+  }
+  
+  // API キー取得
+  Future<String?> getAPIKey(String providerId) async {
+    return await _secureStorage.read(key: 'llm_api_key_$providerId');
+  }
+  
+  // API キー削除
+  Future<void> deleteAPIKey(String providerId) async {
+    await _secureStorage.delete(key: 'llm_api_key_$providerId');
+  }
+  
+  // 全API キー削除
+  Future<void> deleteAllAPIKeys() async {
+    final allKeys = await _secureStorage.readAll();
+    for (final key in allKeys.keys) {
+      if (key.startsWith('llm_api_key_')) {
+        await _secureStorage.delete(key: key);
+      }
     }
   }
 }
@@ -980,6 +1568,15 @@ class QuizQuestion with _$QuizQuestion {
   }) = _QuizQuestion;
   
   factory QuizQuestion.fromJson(Map<String, dynamic> json) => _$QuizQuestionFromJson(json);
+}
+
+// LLM 例外クラス
+class LLMException implements Exception {
+  LLMException(this.message);
+  final String message;
+  
+  @override
+  String toString() => 'LLMException: $message';
 }
 ```
 
