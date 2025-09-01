@@ -10,6 +10,7 @@ TechLingualQuest/
 │   ├── HLD.md               # 高水準設計書
 │   └── LLD.md               # 低水準設計書
 ├── requirements/             # 要件ドキュメント（ルートレベル）
+│   ├── overview.md            # 要件概要
 │   ├── system-requirements.md  # システム要件
 │   └── user-requirements.md    # ユーザー要件
 ├── optional/                 # 補足ドキュメント（ルートレベル）
@@ -41,6 +42,7 @@ TechLingualQuest/
 ## 関連ドキュメント
 
 メインのプロジェクトドキュメントについては、以下を参照してください：
+- [要件概要](../requirements/overview.md) - 要件定義書
 - [高水準設計書](../design/HLD.md) - システムアーキテクチャ概要
 - [低水準設計書](../design/LLD.md) - 詳細実装設計
 - [システム要件](../requirements/system-requirements.md) - 技術要件
