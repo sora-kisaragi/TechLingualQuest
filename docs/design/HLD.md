@@ -1,6 +1,6 @@
 # 高水準設計書 (HLD) - TechLingual Quest
 
-**作成者:** Sora_Kisaragi  
+**作成者:** Github Copilot Agent  
 **作成日:** 2025-01-16  
 **バージョン:** 2.0  
 **ステータス:** 完成
@@ -41,6 +41,51 @@ TechLingual Questは、技術系英語学習をゲーミフィケーションに
 
 ### 2.1 全体アーキテクチャ図
 
+#### 2.1.1 開発初期フェーズ（ローカルDBアプローチ）
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        A[Flutter Mobile App<br/>iOS/Android]
+        B[Flutter Web App<br/>Browser]
+        C[External Apps<br/>GPT Official App]
+    end
+    
+    subgraph "Local Storage"
+        D[SQLite Database<br/>User Data, Vocabulary, Summaries]
+        E[Local File Storage<br/>Assets, Media]
+    end
+    
+    subgraph "Data Sharing"
+        F[QR Code Generator/Scanner]
+        G[Device-to-Device Communication<br/>Bluetooth/WiFi Direct]
+    end
+    
+    subgraph "External Services"
+        H[LLM Providers<br/>OpenAI/Ollama/LMStudio]
+        I[External APIs<br/>Article Sources]
+    end
+    
+    A --> D
+    B --> D
+    A --> E
+    B --> E
+    
+    A --> F
+    A --> G
+    B --> F
+    
+    A --> H
+    B --> H
+    A --> I
+    B --> I
+    
+    C -.-> A
+    C -.-> B
+```
+
+#### 2.1.2 将来のサーバーDBフェーズ
+
 ```mermaid
 graph TB
     subgraph "Client Layer"
@@ -64,15 +109,15 @@ graph TB
     end
     
     subgraph "Data Layer"
-        K[Firestore Database<br/>User Data, Content]
-        L[Cloud Storage<br/>Assets, Media]
-        M[Analytics DB<br/>Usage Statistics]
+        L[Firestore Database<br/>User Data, Content]
+        M[Cloud Storage<br/>Assets, Media]
+        N[Analytics DB<br/>Usage Statistics]
     end
     
     subgraph "External Services"
-        N[LLM Providers<br/>OpenAI/Ollama/LMStudio]
-        O[Push Notification<br/>FCM/APNS]
-        P[External APIs<br/>Article Sources]
+        O[LLM Providers<br/>OpenAI/Ollama/LMStudio]
+        P[Push Notification<br/>FCM/APNS]
+        Q[External APIs<br/>Article Sources]
     end
     
     A --> D
@@ -91,22 +136,37 @@ graph TB
     G --> L
     H --> L
     I --> L
-    J --> M
-    K --> N
+    J --> N
+    K --> O
     
-    E --> K
-    G --> L
-    H --> L
+    E --> L
+    G --> M
+    H --> M
     
-    F --> N
-    G --> N
-    H --> N
+    F --> O
+    G --> O
+    H --> O
     
-    I --> O
-    H --> P
+    I --> P
+    H --> Q
 ```
 
 ### 2.2 技術スタック
+
+#### 2.2.1 開発初期フェーズ
+
+| レイヤー | 技術 | 説明 |
+|---------|------|------|
+| **フロントエンド** | Flutter 3.x | クロスプラットフォーム（iOS/Android/Web） |
+| **状態管理** | Riverpod/Provider | リアクティブ状態管理 |
+| **認証** | ローカル認証 | 端末内でのユーザー識別・セッション管理 |
+| **データベース** | SQLite | ローカルリレーショナルDB |
+| **ストレージ** | ローカルファイルシステム | 端末内ファイル・メディア保存 |
+| **データ共有** | QRコード/Bluetooth | 端末間データ共有 |
+| **AI連携** | 抽象LLMプロバイダー | OpenAI/Ollama/LMStudio等対応 |
+| **CI/CD** | GitHub Actions | 自動ビルド・デプロイ |
+
+#### 2.2.2 将来のサーバーDBフェーズ
 
 | レイヤー | 技術 | 説明 |
 |---------|------|------|
@@ -123,9 +183,16 @@ graph TB
 
 ### 2.3 アーキテクチャパターン
 
+#### 2.3.1 開発初期フェーズ
+- **フロントエンド**: Clean Architecture + MVVM
+- **データアクセス**: Repository Pattern (Local SQLite)
+- **状態管理**: Reactive Programming (Stream/Future)
+- **データ共有**: P2P Communication Pattern
+
+#### 2.3.2 将来のサーバーDBフェーズ
 - **フロントエンド**: Clean Architecture + MVVM
 - **バックエンド**: Microservices Architecture
-- **データアクセス**: Repository Pattern
+- **データアクセス**: Repository Pattern (Cloud Firestore)
 - **状態管理**: Reactive Programming (Stream/Future)
 
 ---
@@ -197,13 +264,45 @@ graph TD
 
 ### 4.1 データフロー図
 
+#### 4.1.1 開発初期フェーズ（ローカルDBアプローチ）
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Flutter App
+    participant L as Local DB (SQLite)
+    participant E as External API
+    participant Q as QR Code/Device Communication
+    
+    U->>F: アクション実行
+    F->>F: ローカル認証チェック
+    F->>L: データ取得/更新
+    L->>F: ローカルデータ返却
+    
+    alt 外部API呼び出し（LLM等）
+        F->>E: API呼び出し
+        E->>F: レスポンス
+        F->>L: 結果をローカル保存
+    end
+    
+    alt データ共有
+        F->>Q: QRコード生成/端末間通信
+        Q->>F: 共有データ受信
+        F->>L: 受信データをマージ
+    end
+    
+    F->>U: UI更新
+```
+
+#### 4.1.2 将来のサーバーDBフェーズ
+
 ```mermaid
 sequenceDiagram
     participant U as User
     participant F as Flutter App
     participant A as API Gateway
     participant S as Service Layer
-    participant D as Database
+    participant D as Server Database
     participant E as External API
     
     U->>F: アクション実行
@@ -299,7 +398,26 @@ interface Quest {
 }
 ```
 
-### 4.3 データベース最適化戦略
+### 4.3 データベース要件・戦略
+
+#### 4.3.1 開発初期のデータ管理
+- 開発初期はサーバーDB（Firestore等）は利用せず、ローカルDBのみでデータを保持・管理します。
+
+#### 4.3.2 端末間でのデータ共有
+- 端末間でのデータ共有は、QRコードや端末間通信を利用します。
+
+#### 4.3.3 資金調達後の方針
+- 資金調達後にサーバーDBの導入を検討する方針です。
+
+#### 4.3.4 設計根拠
+- 初期段階では、開発コストや時間を抑えるためにローカルDBを活用し、迅速なプロトタイピングを行うことが重要です。
+- QRコードや端末間通信を利用することで、ユーザー同士の直接的なデータ共有が可能になり、利便性を向上させます。
+
+#### 4.3.5 将来的なサーバー移行案
+- 資金調達が成功した場合、スケーラビリティやデータの一元管理を考慮して、サーバーDB導入を検討します。
+- サーバーDB導入後は、データのバックアップやセキュリティ向上が期待でき、より多くのユーザーに対応できるインフラを整備します。
+
+### 4.4 データベース最適化戦略
 
 - **インデックス**: userId、category、createdAt フィールドに複合インデックス
 - **パーティション**: ユーザー別データパーティション

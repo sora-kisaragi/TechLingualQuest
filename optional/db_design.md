@@ -1,51 +1,353 @@
 ---
 author: "GitHub Copilot Agent"
 date: "2025-08-29"
-version: "1.0"
-related_issues: ["#10"]
-related_docs: ["../design/HLD.md", "../design/LLD.md", "../requirements/system-requirements.md"]
+version: "2.0"
+related_issues: ["#6", "#10"]
+related_docs: ["../design/HLD.md", "../design/LLD.md", "../requirements/requirements.md"]
 ---
 
 # Database Design - TechLingual Quest
 
-This document provides detailed database schema design, relationships, and optimization strategies for the TechLingual Quest application.
+This document provides detailed database schema design, relationships, and optimization strategies for the TechLingual Quest application, covering both the development phase (local SQLite) and future server phase (cloud database).
 
 ## Related Documents
 - [High-Level Design](../design/HLD.md) - System architecture overview
 - [Low-Level Design](../design/LLD.md) - Detailed technical implementation
-- [System Requirements](../requirements/system-requirements.md) - Technical requirements
+- [Requirements](../requirements/requirements.md) - System requirements
 
 ---
 
-## 1. Database Technology Choice
+## 1. Database Strategy Overview
 
-### 1.1 Primary Database: Firestore (NoSQL)
+### 1.1 Phase-based Database Approach
+
+**Development Phase (Local SQLite):**
+- ローカルDBのみでデータを保持・管理
+- QRコードや端末間通信でデータ共有
+- 迅速なプロトタイピングと開発コスト削減
+
+**Future Phase (Cloud Database):**
+- 資金調達後にサーバーDB導入を検討
+- スケーラビリティとデータ一元管理
+- バックアップ・セキュリティ向上
+
+### 1.2 Database Technology Choices
+
+#### 1.2.1 Development Phase: SQLite (Local)
 
 **Justification:**
-- **Rapid Development**: Built-in authentication integration with Firebase Auth
-- **Real-time Sync**: Automatic data synchronization across devices
-- **Scalability**: Google-managed scaling and performance optimization
-- **Offline Support**: Built-in offline capabilities for mobile apps
-- **Security**: Integrated security rules and user-based access control
+- **Zero Infrastructure Cost**: No server or cloud costs
+- **Rapid Development**: Simple setup and deployment
+- **Offline First**: Always available without internet
+- **Data Portability**: Easy to export/import via QR codes
+- **Performance**: Fast local queries and operations
 
 **Trade-offs:**
-- Limited query capabilities compared to SQL databases
-- Vendor lock-in with Google Cloud Platform
-- Cost scaling with read/write operations
+- No real-time sync between devices
+- Limited concurrent access (single app instance)
+- Manual data sharing required
 
-### 1.2 Alternative: PostgreSQL with Supabase
+#### 1.2.2 Future Phase: Firestore (Cloud)
 
 **Justification:**
-- **SQL Flexibility**: Complex queries and joins for analytics
-- **ACID Compliance**: Strong consistency guarantees
-- **Open Source**: Reduced vendor lock-in
-- **Advanced Features**: Full-text search, JSON support, custom functions
+- **Real-time Sync**: Automatic data synchronization across devices
+- **Scalability**: Google-managed scaling and performance optimization
+- **Security**: Integrated security rules and user-based access control
+- **Analytics**: Built-in user behavior tracking
+
+**Trade-offs:**
+- Ongoing operational costs
+- Vendor lock-in with Google Cloud Platform
+- Internet dependency
 
 ---
 
-## 2. Firestore Schema Design
+## 2. Database Schema Design
 
-### 2.1 Collection Structure
+### 2.1 Development Phase: SQLite Schema
+
+#### 2.1.1 Database Structure
+
+```sql
+-- SQLite Schema for TechLingual Quest
+PRAGMA foreign_keys = ON;
+
+-- Users table
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT,
+    display_name TEXT,
+    avatar_path TEXT,
+    level INTEGER DEFAULT 1,
+    current_xp INTEGER DEFAULT 0,
+    total_xp INTEGER DEFAULT 0,
+    learning_streak INTEGER DEFAULT 0,
+    native_language TEXT DEFAULT 'ja',
+    target_language_level TEXT DEFAULT 'beginner',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login_at DATETIME
+);
+
+-- Vocabulary table
+CREATE TABLE vocabulary (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    word TEXT NOT NULL,
+    definition TEXT NOT NULL,
+    example_sentence TEXT,
+    pronunciation TEXT,
+    category TEXT,
+    difficulty_level INTEGER DEFAULT 1,
+    mastery_level INTEGER DEFAULT 0,
+    review_count INTEGER DEFAULT 0,
+    last_reviewed_at DATETIME,
+    next_review_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Articles/Summaries table
+CREATE TABLE article_summaries (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    url TEXT,
+    summary TEXT NOT NULL,
+    category TEXT,
+    tags TEXT, -- JSON array stored as text
+    character_count INTEGER,
+    is_auto_generated BOOLEAN DEFAULT FALSE,
+    source_language TEXT DEFAULT 'en',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Quests table
+CREATE TABLE quests (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    type TEXT NOT NULL, -- 'read', 'write', 'listen', 'speak'
+    title TEXT NOT NULL,
+    description TEXT,
+    status TEXT DEFAULT 'not_started', -- 'not_started', 'in_progress', 'completed'
+    reward_xp INTEGER DEFAULT 0,
+    target_count INTEGER,
+    current_progress INTEGER DEFAULT 0,
+    due_date DATETIME,
+    completed_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Vocabulary Reviews table
+CREATE TABLE vocabulary_reviews (
+    id TEXT PRIMARY KEY,
+    vocabulary_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    reviewed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    performance_score INTEGER, -- 1-5 scale
+    time_taken_seconds INTEGER,
+    was_correct BOOLEAN,
+    FOREIGN KEY (vocabulary_id) REFERENCES vocabulary(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Achievements table
+CREATE TABLE achievements (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    achievement_type TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    unlocked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- User preferences table
+CREATE TABLE user_preferences (
+    user_id TEXT PRIMARY KEY,
+    ui_theme TEXT DEFAULT 'light', -- 'light', 'dark', 'auto'
+    language TEXT DEFAULT 'ja', -- app interface language
+    notifications_enabled BOOLEAN DEFAULT TRUE,
+    daily_reminder_time TIME,
+    review_notification_enabled BOOLEAN DEFAULT TRUE,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Indexes for performance
+CREATE INDEX idx_vocabulary_user_id ON vocabulary(user_id);
+CREATE INDEX idx_vocabulary_category ON vocabulary(category);
+CREATE INDEX idx_vocabulary_next_review ON vocabulary(next_review_at);
+CREATE INDEX idx_article_summaries_user_id ON article_summaries(user_id);
+CREATE INDEX idx_article_summaries_category ON article_summaries(category);
+CREATE INDEX idx_quests_user_id ON quests(user_id);
+CREATE INDEX idx_quests_status ON quests(status);
+CREATE INDEX idx_vocabulary_reviews_vocabulary_id ON vocabulary_reviews(vocabulary_id);
+CREATE INDEX idx_vocabulary_reviews_user_id ON vocabulary_reviews(user_id);
+```
+
+#### 2.1.2 Data Sharing Schema (QR Code/Device Communication)
+
+```sql
+-- Export/Import metadata for data sharing
+CREATE TABLE data_exports (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    export_type TEXT NOT NULL, -- 'vocabulary', 'summaries', 'full_backup'
+    data_hash TEXT NOT NULL, -- SHA256 hash for integrity
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    exported_count INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Track imported data to avoid duplicates
+CREATE TABLE data_imports (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    source_hash TEXT NOT NULL,
+    import_type TEXT NOT NULL,
+    imported_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    imported_count INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+#### 2.1.3 Entity Relationship Diagram (SQLite Schema)
+
+```mermaid
+erDiagram
+    users {
+        string id PK
+        string username UK
+        string email
+        string display_name
+        string avatar_path
+        integer level
+        integer current_xp
+        integer total_xp
+        integer learning_streak
+        string native_language
+        string target_language_level
+        datetime created_at
+        datetime updated_at
+        datetime last_login_at
+    }
+    
+    vocabulary {
+        string id PK
+        string user_id FK
+        string word
+        string definition
+        string example_sentence
+        string pronunciation
+        string category
+        integer difficulty_level
+        integer mastery_level
+        integer review_count
+        datetime last_reviewed_at
+        datetime next_review_at
+        datetime created_at
+        datetime updated_at
+    }
+    
+    article_summaries {
+        string id PK
+        string user_id FK
+        string title
+        string url
+        string summary
+        string category
+        string tags
+        integer character_count
+        boolean is_auto_generated
+        string source_language
+        datetime created_at
+        datetime updated_at
+    }
+    
+    quests {
+        string id PK
+        string user_id FK
+        string type
+        string title
+        string description
+        string status
+        integer reward_xp
+        integer target_count
+        integer current_progress
+        datetime due_date
+        datetime completed_at
+        datetime created_at
+        datetime updated_at
+    }
+    
+    vocabulary_reviews {
+        string id PK
+        string vocabulary_id FK
+        string user_id FK
+        datetime reviewed_at
+        integer performance_score
+        integer time_taken_seconds
+        boolean was_correct
+    }
+    
+    achievements {
+        string id PK
+        string user_id FK
+        string achievement_type
+        string title
+        string description
+        datetime unlocked_at
+    }
+    
+    user_preferences {
+        string user_id PK,FK
+        string ui_theme
+        string language
+        boolean notifications_enabled
+        time daily_reminder_time
+        boolean review_notification_enabled
+        datetime updated_at
+    }
+    
+    data_exports {
+        string id PK
+        string user_id FK
+        string export_type
+        string data_hash
+        datetime created_at
+        integer exported_count
+    }
+    
+    data_imports {
+        string id PK
+        string user_id FK
+        string source_hash
+        string import_type
+        datetime imported_at
+        integer imported_count
+    }
+    
+    users ||--o{ vocabulary : owns
+    users ||--o{ article_summaries : creates
+    users ||--o{ quests : assigned
+    users ||--o{ achievements : earned
+    users ||--|| user_preferences : has
+    users ||--o{ data_exports : creates
+    users ||--o{ data_imports : performs
+    users ||--o{ vocabulary_reviews : reviews
+    vocabulary ||--o{ vocabulary_reviews : has_reviews
+```
+
+### 2.2 Future Phase: Cloud Database Schema (Firestore)
+
+#### 2.2.1 Collection Structure
 
 ```
 techlingual-quest/
@@ -66,9 +368,9 @@ techlingual-quest/
     └── {userId}/
 ```
 
-### 2.2 Detailed Schema Definitions
+#### 2.2.2 Detailed Schema Definitions
 
-#### 2.2.1 Users Collection
+##### 2.2.2.1 Users Collection
 
 ```javascript
 // /users/{userId}
@@ -851,8 +1153,98 @@ exports.restoreFromBackup = functions.https.onCall(async (data, context) => {
 
 ---
 
+## 3. Migration Strategy: SQLite to Cloud Database
+
+### 3.1 Data Migration Process
+
+```mermaid
+flowchart TD
+    A[Local SQLite Database] --> B[Data Export Service]
+    B --> C[Data Validation & Cleaning]
+    C --> D[Schema Mapping]
+    D --> E[Cloud Database Import]
+    E --> F[Data Verification]
+    F --> G[Production Cutover]
+    
+    B --> H[Data Backup Creation]
+    H --> I[Rollback Plan Preparation]
+    
+    style A fill:#e1f5fe
+    style E fill:#f3e5f5
+    style G fill:#e8f5e8
+```
+
+### 3.2 Migration Steps
+
+#### 3.2.1 Pre-Migration
+1. **Data Audit**: Analyze SQLite data for consistency and completeness
+2. **Schema Mapping**: Map SQLite tables to Firestore collections
+3. **Migration Tool Development**: Create automated migration scripts
+4. **Testing Environment Setup**: Prepare staging environment for testing
+
+#### 3.2.2 Migration Execution
+1. **Data Export**: Export user data from SQLite to JSON format
+2. **Data Transformation**: Convert SQL data to NoSQL document structure
+3. **Incremental Import**: Import data in batches to Firestore
+4. **Data Validation**: Verify data integrity and completeness
+
+#### 3.2.3 Post-Migration
+1. **User Account Linking**: Link Firebase Auth to migrated user data
+2. **Application Updates**: Deploy cloud-enabled app version
+3. **Monitoring**: Monitor system performance and user experience
+4. **Gradual Rollout**: Phased rollout to user segments
+
+### 3.3 Data Sharing Flow (Development Phase)
+
+```mermaid
+sequenceDiagram
+    participant U1 as User A (Device 1)
+    participant A1 as App A
+    participant Q as QR Code/Bluetooth
+    participant A2 as App B  
+    participant U2 as User B (Device 2)
+    
+    U1->>A1: Select vocabulary to share
+    A1->>A1: Generate export data
+    A1->>A1: Create QR code / Prepare Bluetooth transfer
+    A1->>Q: Display QR / Start Bluetooth advertising
+    
+    U2->>A2: Scan QR / Connect via Bluetooth
+    A2->>Q: Read QR data / Receive Bluetooth data
+    Q->>A2: Transfer encrypted data
+    A2->>A2: Validate data integrity
+    A2->>A2: Merge with local database
+    A2->>U2: Confirm successful import
+    
+    Note over A1,A2: Data includes: vocabulary, summaries, progress
+    Note over Q: Transfer is encrypted and includes checksum
+```
+
+### 3.4 Schema Compatibility Considerations
+
+#### 3.4.1 Data Type Mapping
+
+| SQLite Type | Firestore Type | Notes |
+|-------------|----------------|-------|
+| TEXT | string | Direct mapping |
+| INTEGER | number | Direct mapping |
+| DATETIME | timestamp | Convert to Firestore timestamp |
+| BOOLEAN | boolean | Direct mapping |
+| JSON TEXT | object/array | Parse JSON to native Firestore types |
+
+#### 3.4.2 Relationship Mapping
+
+| SQLite Approach | Firestore Approach | Migration Strategy |
+|-----------------|--------------------|--------------------|
+| Foreign Keys | Document References | Convert foreign keys to document references |
+| JOIN queries | Denormalization | Restructure data for NoSQL optimization |
+| Transactions | Batch Operations | Convert transactions to Firestore batch operations |
+
+---
+
 ## Version History
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2025-08-29 | GitHub Copilot Agent | Initial database design documentation |
+| 2.0 | 2025-08-29 | GitHub Copilot Agent | Added SQLite schema, ER diagram, migration strategy |

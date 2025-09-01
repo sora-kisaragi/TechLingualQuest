@@ -1,6 +1,6 @@
 # 📘 要件定義書 - TechLingual Quest
 
-**作成者:** Sora_Kisaragi  
+**作成者:** Github Copilot Agent  
 **作成日:** 2025-08-29  
 **バージョン:** 1.0  
 
@@ -66,10 +66,15 @@
 ## 4. 非機能要件
 
 - **対応端末**: モバイル（iOS/Android）、ブラウザ
-- **データベース**: Firebase Firestore / Supabase / PostgreSQL
-- **認証**: Firebase Auth（Google/Email）
-- **可用性**: 99.9% 稼働を目標
-- **セキュリティ**: ユーザーデータは認証必須、HTTPS通信必須
+- **データベース**: 
+  - 開発初期: SQLite（ローカルDB）
+  - 将来: Firebase Firestore / Supabase / PostgreSQL（クラウドDB）
+- **認証**: 
+  - 開発初期: ローカル認証
+  - 将来: Firebase Auth（Google/Email）
+- **データ共有**: QRコード、端末間通信（Bluetooth/WiFi Direct）
+- **可用性**: ローカルDB使用時は100%（オフライン対応）、クラウド移行後は99.9%稼働を目標
+- **セキュリティ**: ユーザーデータは暗号化、データ転送時はチェックサム検証
 - **拡張性**: 新しいクエスト種別や技術分野を追加できる設計
 
 ---
