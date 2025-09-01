@@ -27,7 +27,7 @@ TechLingual Questは、技術系英語学習をゲーミフィケーションに
 - **単語管理**: カード式単語帳、習熟度管理、間隔反復学習
 - **記事要約管理**: 技術記事の要約をDB保存、検索・フィルタリング機能
 - **進捗ダッシュボード**: XP・レベル表示、学習統計グラフ
-- **外部連携**: GPT公式アプリとのリンク共有による会話練習
+- **外部連携**: 柔軟なLLM統合（OpenAI、Ollama、LMStudio等）による会話練習・コンテンツ生成
 
 ### 1.3 システム特徴
 - **クロスプラットフォーム**: モバイル（iOS/Android）とWebブラウザ対応
@@ -60,6 +60,7 @@ graph TB
         H[Summary Service]
         I[Progress Service]
         J[Analytics Service]
+        K[LLM Service]
     end
     
     subgraph "Data Layer"
@@ -69,7 +70,7 @@ graph TB
     end
     
     subgraph "External Services"
-        N[OpenAI API<br/>Auto-summary, Quiz]
+        N[LLM Providers<br/>OpenAI/Ollama/LMStudio]
         O[Push Notification<br/>FCM/APNS]
         P[External APIs<br/>Article Sources]
     end
@@ -84,12 +85,14 @@ graph TB
     D --> H
     D --> I
     D --> J
+    D --> K
     
-    F --> K
-    G --> K
-    H --> K
-    I --> K
+    F --> L
+    G --> L
+    H --> L
+    I --> L
     J --> M
+    K --> N
     
     E --> K
     G --> L
@@ -114,7 +117,7 @@ graph TB
 | **ストレージ** | Cloud Storage | ファイル・メディア保存 |
 | **API** | Firebase Functions | サーバーレスAPI |
 | **プッシュ通知** | FCM/APNS | モバイル通知 |
-| **AI連携** | OpenAI API | 自動要約・クイズ生成 |
+| **AI連携** | 抽象LLMプロバイダー | OpenAI/Ollama/LMStudio等対応 |
 | **分析** | Firebase Analytics | ユーザー行動分析 |
 | **CI/CD** | GitHub Actions | 自動ビルド・デプロイ |
 
@@ -181,7 +184,7 @@ graph TD
 #### 3.2.4 要約管理コンポーネント
 - **責務**: 技術記事要約の保存・検索
 - **機能**: 要約CRUD、全文検索、タグフィルタ
-- **連携**: 外部API（記事取得）、OpenAI（自動要約）
+- **連携**: 外部API（記事取得）、柔軟なLLMプロバイダー（自動要約）
 
 #### 3.2.5 ダッシュボードコンポーネント
 - **責務**: 学習進捗の可視化
@@ -505,14 +508,85 @@ sequenceDiagram
     T->>U: 完了通知・バッジ付与
 ```
 
-### 8.2 OpenAI API連携
+### 8.2 LLM統合アーキテクチャ
 
-| 機能 | API | 用途 |
-|------|-----|------|
-| **自動要約** | GPT-4 | 技術記事の要約生成 |
-| **クイズ生成** | GPT-3.5 | 単語・記事からのクイズ作成 |
-| **文法チェック** | GPT-4 | ユーザー作成文章の校正 |
-| **発音評価** | Whisper | 音声認識・発音スコア |
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        A[Flutter App]
+    end
+    
+    subgraph "LLM Service Layer"
+        B[LLM Abstract Interface]
+        C[API Key Manager]
+    end
+    
+    subgraph "Provider Implementations"
+        D[OpenAI Provider]
+        E[Ollama Provider]
+        F[LMStudio Provider]
+        G[Local Model Provider]
+    end
+    
+    subgraph "External Services"
+        H[OpenAI API]
+        I[Ollama Server]
+        J[LMStudio Server]
+    end
+    
+    subgraph "Local Resources"
+        K[Edge LLM Models]
+        L[Device Storage]
+    end
+    
+    A --> B
+    A --> C
+    B --> D
+    B --> E
+    B --> F
+    B --> G
+    
+    C --> D
+    C --> E
+    C --> F
+    
+    D --> H
+    E --> I
+    F --> J
+    G --> K
+    G --> L
+```
+
+#### 8.2.1 サポート対象LLMプロバイダー
+
+| プロバイダー | タイプ | 機能 | 用途 | 料金形態 |
+|-------------|--------|------|------|---------|
+| **OpenAI** | クラウドAPI | GPT-4, GPT-3.5, Whisper | 自動要約・クイズ生成・文法チェック・発音評価 | ユーザー従量課金 |
+| **Ollama** | ローカル/リモート | Llama2, Mistral, Codellama | プライベート要約・クイズ生成 | 無料（ユーザー環境） |
+| **LMStudio** | ローカル | 各種OSS LLM | オフライン学習支援 | 無料（ユーザー環境） |
+| **ローカルモデル** | エッジ | 軽量モデル | 基本的な語彙支援 | 無料（デバイス内） |
+
+#### 8.2.2 API キー管理
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant S as Settings
+    participant K as Key Manager
+    participant P as Provider
+    participant A as API Service
+    
+    U->>S: API設定画面
+    S->>U: プロバイダー選択UI
+    U->>S: APIキー入力
+    S->>K: キー保存 (暗号化)
+    K->>P: キー検証
+    P->>A: テスト API 呼び出し
+    A->>P: レスポンス
+    P->>K: 検証結果
+    K->>S: 設定完了通知
+    S->>U: 成功/エラー表示
+```
 
 ### 8.3 外部記事API連携
 
@@ -595,7 +669,7 @@ timeline
 
 - **フロントエンド**: Flutter → Web Assembly対応
 - **バックエンド**: サーバーレス → Kubernetes対応
-- **AI**: OpenAI → 自社AI モデル検討
+- **AI**: 柔軟なLLMプロバイダー → エッジAI統合・自社モデル検討
 - **データベース**: Firestore → Multi-cloud対応
 
 ---
@@ -607,7 +681,7 @@ timeline
 | リスク | 影響度 | 発生確率 | 軽減策 |
 |--------|--------|----------|--------|
 | **Firebase依存** | 高 | 中 | マルチクラウド対応、移行計画策定 |
-| **OpenAI API制限** | 中 | 中 | API制限監視、代替AI サービス検討 |
+| **LLMプロバイダー依存** | 中 | 低 | 複数プロバイダー対応、ローカルモデル対応 |
 | **Flutter互換性** | 中 | 低 | 定期的なSDKアップデート、互換性テスト |
 | **データ移行** | 高 | 低 | 段階的移行、ロールバック計画 |
 

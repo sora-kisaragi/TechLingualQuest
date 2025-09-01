@@ -55,11 +55,14 @@ This document outlines the comprehensive system requirements for the TechLingual
 - **REQ-024**: System shall track time-based learning statistics
 - **REQ-025**: System shall support progress export functionality
 
-### 1.6 External Integrations
-- **REQ-026**: System shall integrate with OpenAI API for content generation
-- **REQ-027**: System shall support linking to GPT official app for conversation practice
-- **REQ-028**: System shall support data sharing between app and external tools
-- **REQ-029**: System shall provide API endpoints for external integration
+### 1.6 External Integrations & LLM Support
+- **REQ-026**: System shall support multiple LLM providers including OpenAI, Ollama, LMStudio, and compatible APIs
+- **REQ-027**: System shall allow users to configure their own API keys for LLM services
+- **REQ-028**: System shall support local/edge LLM integration for privacy and offline capability
+- **REQ-029**: System shall support linking to GPT official app for conversation practice
+- **REQ-030**: System shall support data sharing between app and external tools
+- **REQ-031**: System shall provide API endpoints for external integration
+- **REQ-032**: System shall provide LLM provider abstraction layer for seamless switching
 
 ---
 
@@ -120,10 +123,12 @@ This document outlines the comprehensive system requirements for the TechLingual
 - **TECH-012**: File storage shall support multimedia content (audio, images)
 
 ### 3.4 Integration Requirements
-- **TECH-013**: OpenAI API integration shall use official SDK or REST API
-- **TECH-014**: External app integration shall use deep linking and URL schemes
-- **TECH-015**: Analytics integration shall support event tracking and user behavior
-- **TECH-016**: Crash reporting and error monitoring shall be implemented
+- **TECH-013**: LLM integration shall use abstract provider pattern with support for OpenAI, Ollama, LMStudio, and other compatible APIs
+- **TECH-014**: API key management shall be user-configurable with secure local storage
+- **TECH-015**: System shall support both cloud-based and local/edge LLM deployment
+- **TECH-016**: External app integration shall use deep linking and URL schemes
+- **TECH-017**: Analytics integration shall support event tracking and user behavior
+- **TECH-018**: Crash reporting and error monitoring shall be implemented
 
 ---
 
@@ -132,7 +137,8 @@ This document outlines the comprehensive system requirements for the TechLingual
 ### 4.1 Technical Constraints
 - Development team has expertise in Flutter and Firebase/Supabase
 - Budget constraints limit use of premium cloud services initially
-- OpenAI API usage must be optimized for cost efficiency
+- LLM API usage costs are borne by individual users through their own API keys
+- Local/edge LLM models must balance performance with device capabilities
 - Mobile app store review processes must be considered for deployment
 
 ### 4.2 Business Constraints
