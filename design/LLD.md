@@ -6,21 +6,21 @@ related_issues: ["#10", "#5"]
 related_docs: ["HLD.md", "../requirements/system-requirements.md", "../requirements/user-requirements.md", "../docs/development-tasks.md"]
 ---
 
-# Low-Level Design (LLD) - TechLingual Quest
+# 低水準設計書（LLD）- TechLingual Quest
 
-This document provides detailed technical design, class structures, algorithms, and implementation specifications for the TechLingual Quest application.
+このドキュメントでは、TechLingual Quest アプリケーションの詳細な技術設計、クラス構造、アルゴリズム、実装仕様を提供します。
 
-## Related Documents
-- [High-Level Design](HLD.md) - System architecture overview
-- [System Requirements](../requirements/system-requirements.md) - Technical system requirements
-- [User Requirements](../requirements/user-requirements.md) - User stories and functional requirements
-- [Development Tasks](../docs/development-tasks.md) - Implementation task breakdown
+## 関連ドキュメント
+- [高水準設計書](HLD.md) - システムアーキテクチャ概要
+- [システム要件](../requirements/system-requirements.md) - 技術システム要件
+- [ユーザー要件](../requirements/user-requirements.md) - ユーザーストーリーと機能要件
+- [開発タスク](../docs/development-tasks.md) - 実装タスク詳細
 
 ---
 
-## 1. Frontend Architecture (Flutter)
+## 1. フロントエンドアーキテクチャ（Flutter）
 
-### 1.1 Project Structure
+### 1.1 プロジェクト構造
 
 ```
 lib/
@@ -47,12 +47,12 @@ lib/
     └── providers/
 ```
 
-### 1.2 Core Classes and Interfaces
+### 1.2 コアクラスとインターフェース
 
-#### 1.2.1 State Management (Riverpod)
+#### 1.2.1 状態管理（Riverpod）
 
 ```dart
-// Core Provider Base Class
+// コアプロバイダー基底クラス
 abstract class BaseNotifier<T> extends StateNotifier<AsyncValue<T>> {
   BaseNotifier() : super(const AsyncValue.loading());
   
@@ -67,7 +67,7 @@ abstract class BaseNotifier<T> extends StateNotifier<AsyncValue<T>> {
   }
 }
 
-// User State Provider
+// ユーザー状態プロバイダー
 class UserNotifier extends BaseNotifier<User> {
   UserNotifier(this._userService);
   
@@ -83,10 +83,10 @@ class UserNotifier extends BaseNotifier<User> {
 }
 ```
 
-#### 1.2.2 Model Classes
+#### 1.2.2 モデルクラス
 
 ```dart
-// User Models
+// ユーザーモデル
 @freezed
 class User with _$User {
   const factory User({
@@ -129,7 +129,7 @@ class UserProgress with _$UserProgress {
       _$UserProgressFromJson(json);
 }
 
-// Vocabulary Models
+// 語彙モデル
 @freezed
 class VocabularyWord with _$VocabularyWord {
   const factory VocabularyWord({
@@ -161,7 +161,7 @@ class VocabularyReviewData with _$VocabularyReviewData {
       _$VocabularyReviewDataFromJson(json);
 }
 
-// Quest Models
+// クエストモデル
 @freezed
 class Quest with _$Quest {
   const factory Quest({
@@ -180,27 +180,27 @@ class Quest with _$Quest {
 }
 
 enum QuestType {
-  vocabularyReview,
-  vocabularyQuiz,
-  articleSummary,
-  readingChallenge,
-  writingExercise,
-  listeningPractice,
-  speakingPractice,
+  vocabularyReview,    // 語彙復習
+  vocabularyQuiz,      // 語彙クイズ
+  articleSummary,      // 記事要約
+  readingChallenge,    // 読解チャレンジ
+  writingExercise,     // ライティング練習
+  listeningPractice,   // リスニング練習
+  speakingPractice,    // スピーキング練習
 }
 
 enum QuestStatus {
-  available,
-  inProgress,
-  completed,
-  expired,
+  available,    // 利用可能
+  inProgress,   // 進行中
+  completed,    // 完了
+  expired,      // 期限切れ
 }
 ```
 
-#### 1.2.3 Service Layer
+#### 1.2.3 サービス層
 
 ```dart
-// Abstract Service Interface
+// 抽象サービスインターフェース
 abstract class IDataService<T, ID> {
   Future<T?> getById(ID id);
   Future<List<T>> getAll();
@@ -209,7 +209,7 @@ abstract class IDataService<T, ID> {
   Future<void> delete(ID id);
 }
 
-// User Service Implementation
+// ユーザーサービス実装
 class UserService implements IDataService<User, String> {
   UserService(this._repository, this._authService);
   
@@ -221,7 +221,7 @@ class UserService implements IDataService<User, String> {
     try {
       return await _repository.getById(id);
     } on Exception catch (e) {
-      throw UserServiceException('Failed to get user: $e');
+      throw UserServiceException('ユーザー取得に失敗しました: $e');
     }
   }
   
@@ -231,12 +231,12 @@ class UserService implements IDataService<User, String> {
       throw UserNotAuthenticatedException();
     }
     return await getById(authUser.uid) ?? 
-           throw UserNotFoundException('User not found');
+           throw UserNotFoundException('ユーザーが見つかりません');
   }
   
   Future<UserProgress> updateProgress(String userId, ProgressUpdate update) async {
     final user = await getById(userId);
-    if (user == null) throw UserNotFoundException('User not found');
+    if (user == null) throw UserNotFoundException('ユーザーが見つかりません');
     
     final updatedProgress = _calculateProgressUpdate(user.progress, update);
     final updatedUser = user.copyWith(progress: updatedProgress);
@@ -257,7 +257,7 @@ class UserService implements IDataService<User, String> {
   }
   
   int _calculateLevel(int totalXp) {
-    // Level calculation: level = floor(sqrt(totalXp / 100))
+    // レベル計算：level = floor(sqrt(totalXp / 100))
     return (sqrt(totalXp / 100)).floor();
   }
   
@@ -269,12 +269,12 @@ class UserService implements IDataService<User, String> {
     if (daysSinceLastActivity <= 1) {
       return current.learningStreak + 1;
     } else {
-      return 1; // Reset streak
+      return 1; // ストリークをリセット
     }
   }
 }
 
-// Vocabulary Service Implementation
+// 語彙サービス実装
 class VocabularyService implements IDataService<VocabularyWord, String> {
   VocabularyService(this._repository, this._spacedRepetitionEngine);
   
@@ -296,7 +296,7 @@ class VocabularyService implements IDataService<VocabularyWord, String> {
     ReviewPerformance performance
   ) async {
     final word = await getById(wordId);
-    if (word == null) throw VocabularyNotFoundException('Word not found');
+    if (word == null) throw VocabularyNotFoundException('単語が見つかりません');
     
     final updatedReviewData = _spacedRepetitionEngine.calculateNextReview(
       word.reviewData,
@@ -326,7 +326,7 @@ class VocabularyService implements IDataService<VocabularyWord, String> {
     List<VocabularyWord> words, 
     int count
   ) {
-    // Prioritize words that need review and words with lower retention scores
+    // 復習が必要な単語と定着度の低い単語を優先
     final sortedWords = words..sort((a, b) {
       final aScore = a.reviewData.retentionScore;
       final bScore = b.reviewData.retentionScore;
@@ -340,9 +340,9 @@ class VocabularyService implements IDataService<VocabularyWord, String> {
 
 ---
 
-## 2. Spaced Repetition Algorithm
+## 2. 間隔反復アルゴリズム
 
-### 2.1 Algorithm Implementation
+### 2.1 アルゴリズム実装
 
 ```dart
 class SpacedRepetitionEngine {
@@ -462,10 +462,10 @@ class SpacedRepetitionEngine {
 }
 
 enum ReviewPerformance {
-  failed,   // 0 - Complete failure to recall
-  hard,     // 1 - Recalled with significant difficulty
-  good,     // 2 - Recalled with some difficulty
-  easy,     // 3 - Recalled easily
+  failed,   // 0 - 完全に思い出せない
+  hard,     // 1 - かなり困難に思い出した
+  good,     // 2 - 多少困難に思い出した
+  easy,     // 3 - 簡単に思い出した
 }
 
 @freezed
@@ -489,9 +489,9 @@ class SpacedRepetitionData with _$SpacedRepetitionData {
 
 ---
 
-## 3. Quest Generation System
+## 3. クエスト生成システム
 
-### 3.1 Quest Generation Engine
+### 3.1 クエスト生成エンジン
 
 ```dart
 abstract class QuestGenerator {
@@ -526,9 +526,8 @@ class VocabularyQuestGenerator implements QuestGenerator {
   
   @override
   bool canGenerateQuest(String userId, QuestType type) {
-    // Implementation would check if user has enough vocabulary words
-    // and hasn't completed similar quest recently
-    return true; // Simplified for example
+    // ユーザーが十分な語彙数を持ち、最近同様のクエストを完了していないかチェック
+    return true; // 例として簡略化
   }
   
   Future<Quest> _generateReviewQuest(String userId) async {
@@ -538,8 +537,8 @@ class VocabularyQuestGenerator implements QuestGenerator {
     return Quest(
       id: const Uuid().v4(),
       type: QuestType.vocabularyReview,
-      title: 'Daily Vocabulary Review',
-      description: 'Review $reviewCount vocabulary words to maintain your learning streak',
+      title: '日次語彙復習',
+      description: '学習ストリークを維持するために$reviewCount個の語彙を復習しましょう',
       questData: {
         'targetReviewCount': reviewCount,
         'wordIds': wordsToReview.take(reviewCount).map((w) => w.id).toList(),
@@ -557,12 +556,12 @@ class VocabularyQuestGenerator implements QuestGenerator {
     return Quest(
       id: const Uuid().v4(),
       type: QuestType.vocabularyQuiz,
-      title: 'Vocabulary Challenge',
-      description: 'Test your knowledge with a $difficulty vocabulary quiz',
+      title: '語彙チャレンジ',
+      description: '$difficulty難易度の語彙クイズで知識をテストしましょう',
       questData: {
         'questionCount': 10,
         'difficulty': difficulty,
-        'timeLimit': 300, // 5 minutes
+        'timeLimit': 300, // 5分
       },
       status: QuestStatus.available,
       xpReward: _calculateXpReward(10, difficulty: difficulty),
@@ -586,9 +585,9 @@ class VocabularyQuestGenerator implements QuestGenerator {
   }
   
   String _calculateQuizDifficulty(int userLevel) {
-    if (userLevel < 5) return 'easy';
-    if (userLevel < 15) return 'normal';
-    return 'hard';
+    if (userLevel < 5) return 'easy';      // 簡単
+    if (userLevel < 15) return 'normal';   // 普通
+    return 'hard';                         // 難しい
   }
 }
 
@@ -606,7 +605,7 @@ class QuestManagementService {
     
     final newQuests = <Quest>[];
     
-    // Generate one quest of each type if possible
+    // 可能であれば各タイプのクエストを1つずつ生成
     for (final generator in _generators) {
       for (final type in generator.supportedTypes) {
         if (generator.canGenerateQuest(userId, type) && newQuests.length < 3) {
@@ -615,8 +614,8 @@ class QuestManagementService {
             newQuests.add(quest);
             await _repository.create(quest);
           } catch (e) {
-            // Log error but continue generating other quests
-            print('Failed to generate quest of type $type: $e');
+            // エラーをログに記録するが、他のクエスト生成は継続
+            print('タイプ $type のクエスト生成に失敗: $e');
           }
         }
       }
@@ -628,11 +627,11 @@ class QuestManagementService {
   Future<Quest> completeQuest(String questId, Map<String, dynamic> completionData) async {
     final quest = await _repository.getById(questId);
     if (quest == null) {
-      throw QuestNotFoundException('Quest not found');
+      throw QuestNotFoundException('クエストが見つかりません');
     }
     
     if (quest.status != QuestStatus.inProgress) {
-      throw InvalidQuestStateException('Quest is not in progress');
+      throw InvalidQuestStateException('クエストが進行中ではありません');
     }
     
     final completedQuest = quest.copyWith(
@@ -642,7 +641,7 @@ class QuestManagementService {
     
     await _repository.update(completedQuest);
     
-    // Award XP to user
+    // ユーザーにXPを付与
     await _userService.updateProgress(
       quest.questData['userId'] as String,
       ProgressUpdate(xpGained: quest.xpReward, questsCompleted: 1),
@@ -655,12 +654,12 @@ class QuestManagementService {
 
 ---
 
-## 4. Database Layer
+## 4. データベース層
 
-### 4.1 Repository Pattern Implementation
+### 4.1 リポジトリパターン実装
 
 ```dart
-// Abstract Repository Interface
+// 抽象リポジトリインターフェース
 abstract class IRepository<T, ID> {
   Future<T?> getById(ID id);
   Future<List<T>> getAll();
@@ -669,7 +668,7 @@ abstract class IRepository<T, ID> {
   Future<void> delete(ID id);
 }
 
-// Firestore Repository Implementation
+// Firestore リポジトリ実装
 class FirestoreVocabularyRepository implements IVocabularyRepository {
   FirestoreVocabularyRepository(this._firestore);
   
@@ -687,7 +686,7 @@ class FirestoreVocabularyRepository implements IVocabularyRepository {
         ...doc.data()!,
       });
     } catch (e) {
-      throw RepositoryException('Failed to get vocabulary word: $e');
+      throw RepositoryException('語彙の取得に失敗しました: $e');
     }
   }
   
@@ -705,7 +704,7 @@ class FirestoreVocabularyRepository implements IVocabularyRepository {
         ...doc.data(),
       })).toList();
     } catch (e) {
-      throw RepositoryException('Failed to get user vocabulary: $e');
+      throw RepositoryException('ユーザー語彙の取得に失敗しました: $e');
     }
   }
   
@@ -718,7 +717,7 @@ class FirestoreVocabularyRepository implements IVocabularyRepository {
       
       return word.copyWith(id: docRef.id);
     } catch (e) {
-      throw RepositoryException('Failed to create vocabulary word: $e');
+      throw RepositoryException('語彙の作成に失敗しました: $e');
     }
   }
   
@@ -731,7 +730,7 @@ class FirestoreVocabularyRepository implements IVocabularyRepository {
       
       return word;
     } catch (e) {
-      throw RepositoryException('Failed to update vocabulary word: $e');
+      throw RepositoryException('語彙の更新に失敗しました: $e');
     }
   }
   
@@ -740,7 +739,7 @@ class FirestoreVocabularyRepository implements IVocabularyRepository {
     try {
       await _firestore.collection(_collection).doc(id).delete();
     } catch (e) {
-      throw RepositoryException('Failed to delete vocabulary word: $e');
+      throw RepositoryException('語彙の削除に失敗しました: $e');
     }
   }
   
@@ -749,8 +748,8 @@ class FirestoreVocabularyRepository implements IVocabularyRepository {
     String searchTerm,
   ) async {
     try {
-      // Firestore doesn't support full-text search natively
-      // This is a simplified implementation
+      // Firestoreはネイティブな全文検索をサポートしていません
+      // これは簡略化された実装です
       final query = await _firestore
           .collection(_collection)
           .where('userId', isEqualTo: userId)
@@ -763,13 +762,13 @@ class FirestoreVocabularyRepository implements IVocabularyRepository {
         ...doc.data(),
       })).toList();
     } catch (e) {
-      throw RepositoryException('Failed to search vocabulary: $e');
+      throw RepositoryException('語彙検索に失敗しました: $e');
     }
   }
 }
 ```
 
-### 4.2 Database Migration Strategy
+### 4.2 データベースマイグレーション戦略
 
 ```dart
 class DatabaseMigrationService {
@@ -794,25 +793,25 @@ class DatabaseMigrationService {
     return [
       DatabaseMigration(
         version: '1.0.0',
-        description: 'Initial schema setup',
+        description: '初期スキーマセットアップ',
         migrationFunction: _migration_1_0_0,
       ),
       DatabaseMigration(
         version: '1.1.0',
-        description: 'Add spaced repetition data to vocabulary',
+        description: '語彙に間隔反復データを追加',
         migrationFunction: _migration_1_1_0,
       ),
-      // Add more migrations as needed
+      // 必要に応じて更多のマイグレーションを追加
     ];
   }
   
   Future<void> _migration_1_0_0() async {
-    // Initial schema setup - usually handled by app initialization
-    print('Running initial schema setup');
+    // 初期スキーマセットアップ - 通常はアプリ初期化時に処理
+    print('初期スキーマセットアップを実行中');
   }
   
   Future<void> _migration_1_1_0() async {
-    // Add spaced repetition data to existing vocabulary words
+    // 既存の語彙に間隔反復データを追加
     final vocabularyQuery = await _firestore.collection('vocabulary').get();
     
     for (final doc in vocabularyQuery.docs) {
@@ -843,9 +842,9 @@ class DatabaseMigrationService {
   Future<void> _runMigration(DatabaseMigration migration) async {
     try {
       await migration.migrationFunction();
-      print('Successfully ran migration: ${migration.version}');
+      print('マイグレーション成功: ${migration.version}');
     } catch (e) {
-      throw MigrationException('Failed to run migration ${migration.version}: $e');
+      throw MigrationException('マイグレーション ${migration.version} の実行に失敗: $e');
     }
   }
   
@@ -873,9 +872,9 @@ class DatabaseMigration {
 
 ---
 
-## 5. API Integration Layer
+## 5. API統合層
 
-### 5.1 OpenAI API Integration
+### 5.1 OpenAI API統合
 
 ```dart
 class OpenAIService {
@@ -890,13 +889,12 @@ class OpenAIService {
   
   Future<String> generateVocabularyDefinition(String word) async {
     final prompt = '''
-    Provide a clear, concise definition for the technical term "$word" 
-    that would be helpful for someone learning technical English. 
-    Include:
-    1. A simple definition (1-2 sentences)
-    2. An example sentence using the word in a technical context
+    技術英語を学習している人にとって役立つ技術用語「$word」の明確で簡潔な定義を提供してください。
+    以下を含めてください：
+    1. 簡潔な定義（1-2文）
+    2. 技術的文脈での単語を使用した例文
     
-    Format the response as JSON:
+    レスポンスをJSONフォーマットで：
     {
       "definition": "...",
       "example": "..."
@@ -927,19 +925,19 @@ class OpenAIService {
     final wordList = words.map((w) => '${w.word}: ${w.definition}').join('\n');
     
     final prompt = '''
-    Generate multiple choice quiz questions for these vocabulary words:
+    これらの語彙のための多肢選択クイズ問題を生成してください：
     
     $wordList
     
-    For each word, create a question that tests understanding of the definition.
-    Provide 4 options (A, B, C, D) with only one correct answer.
+    各単語について、定義の理解をテストする問題を作成してください。
+    4つの選択肢（A、B、C、D）を提供し、正解は1つだけです。
     
-    Format as JSON array:
+    JSON配列でフォーマット：
     [
       {
         "word": "example",
-        "question": "What does 'example' mean?",
-        "options": ["Option A", "Option B", "Option C", "Option D"],
+        "question": "'example'の意味は何ですか？",
+        "options": ["選択肢A", "選択肢B", "選択肢C", "選択肢D"],
         "correctAnswer": 0
       }
     ]
@@ -981,7 +979,7 @@ class OpenAIService {
         if (response.statusCode == 200) {
           return json.decode(response.body) as Map<String, dynamic>;
         } else if (response.statusCode == 429) {
-          // Rate limited, wait and retry
+          // レート制限、待機してリトライ
           if (attempt < _maxRetries - 1) {
             await Future.delayed(_retryDelay * (attempt + 1));
             continue;
@@ -989,7 +987,7 @@ class OpenAIService {
         }
         
         throw OpenAIException(
-          'API request failed: ${response.statusCode} ${response.body}',
+          'APIリクエストが失敗しました: ${response.statusCode} ${response.body}',
         );
       } catch (e) {
         if (attempt == _maxRetries - 1) rethrow;
@@ -997,11 +995,11 @@ class OpenAIService {
       }
     }
     
-    throw OpenAIException('Failed to make request after $_maxRetries attempts');
+    throw OpenAIException('$_maxRetries回の試行後、リクエストに失敗しました');
   }
 }
 
-// API Response Caching
+// APIレスポンスキャッシュ
 class CachedOpenAIService extends OpenAIService {
   CachedOpenAIService(
     super.httpClient,
@@ -1030,12 +1028,12 @@ class CachedOpenAIService extends OpenAIService {
 
 ---
 
-## 6. Testing Strategy
+## 6. テスト戦略
 
-### 6.1 Unit Testing
+### 6.1 ユニットテスト
 
 ```dart
-// Example unit tests for VocabularyService
+// VocabularyService のユニットテスト例
 class MockVocabularyRepository extends Mock implements IVocabularyRepository {}
 class MockSpacedRepetitionEngine extends Mock implements SpacedRepetitionEngine {}
 
@@ -1052,15 +1050,15 @@ void main() {
     });
     
     group('getWordsForReview', () {
-      test('returns words that are due for review', () async {
+      test('復習期限の単語を返す', () async {
         // Arrange
         final userId = 'test-user';
         final now = DateTime.now();
         final dueWord = VocabularyWord(
           id: '1',
           word: 'test',
-          definition: 'test definition',
-          exampleSentence: 'test sentence',
+          definition: 'テスト定義',
+          exampleSentence: 'テスト例文',
           categories: ['test'],
           difficultyLevel: 1,
           createdAt: now,
@@ -1068,7 +1066,7 @@ void main() {
             lastReviewed: now.subtract(Duration(days: 2)),
             reviewCount: 1,
             retentionScore: 0.5,
-            nextReviewDate: now.subtract(Duration(hours: 1)), // Due
+            nextReviewDate: now.subtract(Duration(hours: 1)), // 期限切れ
             spacedRepetition: SpacedRepetitionData.initial(),
           ),
         );
@@ -1087,14 +1085,14 @@ void main() {
     });
     
     group('recordReview', () {
-      test('updates word with new review data', () async {
+      test('新しい復習データで単語を更新', () async {
         // Arrange
         final wordId = 'test-word';
         final word = VocabularyWord(
           id: wordId,
           word: 'test',
-          definition: 'test definition',
-          exampleSentence: 'test sentence',
+          definition: 'テスト定義',
+          exampleSentence: 'テスト例文',
           categories: ['test'],
           difficultyLevel: 1,
           createdAt: DateTime.now(),
@@ -1137,27 +1135,27 @@ void main() {
 }
 ```
 
-### 6.2 Integration Testing
+### 6.2 統合テスト
 
 ```dart
-// Example integration test for quest completion flow
+// クエスト完了フローの統合テスト例
 void main() {
-  group('Quest Completion Integration', () {
+  group('クエスト完了統合', () {
     late QuestManagementService questService;
     late UserService userService;
     late VocabularyService vocabularyService;
     
     setUpAll(() async {
-      // Set up test environment with real Firebase emulator
+      // 実際のFirebaseエミュレーターでテスト環境をセットアップ
       await Firebase.initializeApp();
-      // Configure services with test repositories
+      // テストリポジトリでサービスを設定
     });
     
     tearDownAll(() async {
-      // Clean up test data
+      // テストデータをクリーンアップ
     });
     
-    test('completing vocabulary review quest awards XP to user', () async {
+    test('語彙復習クエスト完了でユーザーにXPが付与される', () async {
       // Arrange
       final userId = 'test-user-integration';
       final user = await userService.create(User(
@@ -1166,7 +1164,7 @@ void main() {
         username: 'testuser',
         createdAt: DateTime.now(),
         profile: UserProfile(
-          displayName: 'Test User',
+          displayName: 'テストユーザー',
           learningGoals: ['vocabulary'],
           preferences: LearningPreferences.defaultPreferences(),
         ),
@@ -1180,13 +1178,13 @@ void main() {
         ),
       ));
       
-      // Create vocabulary words for review
+      // 復習用語彙を作成
       for (int i = 0; i < 5; i++) {
         await vocabularyService.create(VocabularyWord(
           id: 'word-$i',
           word: 'test-word-$i',
-          definition: 'definition $i',
-          exampleSentence: 'example $i',
+          definition: '定義 $i',
+          exampleSentence: '例文 $i',
           categories: ['test'],
           difficultyLevel: 1,
           createdAt: DateTime.now(),
@@ -1200,7 +1198,7 @@ void main() {
         ));
       }
       
-      // Generate daily quests
+      // 日次クエストを生成
       final quests = await questService.generateDailyQuests(userId);
       final vocabularyQuest = quests.firstWhere(
         (q) => q.type == QuestType.vocabularyReview,
@@ -1226,8 +1224,8 @@ void main() {
 
 ---
 
-## Version History
+## バージョン履歴
 
-| Version | Date | Author | Changes |
+| バージョン | 日付 | 作成者 | 変更内容 |
 |---------|------|--------|---------|
-| 1.0 | 2025-08-29 | GitHub Copilot Agent | Initial low-level design documentation |
+| 1.0 | 2025-08-29 | GitHub Copilot Agent | 初期低水準設計ドキュメント |

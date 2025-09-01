@@ -1,53 +1,53 @@
 # TechLingual Quest
 
-A gamified learning app for improving **technical English skills**.  
-This project combines **quests, vocabulary building, and technical article summaries** with a game-like experience.  
-All data (vocabulary, summaries, progress) is stored in a central database, so it can be reused for both **learning** and **work reference**.
+**技術英語力向上**のためのゲーミフィケーション学習アプリです。  
+このプロジェクトは、**クエスト、語彙構築、技術記事要約**をゲームライクな体験と組み合わせています。  
+すべてのデータ（語彙、要約、進捗）は中央データベースに保存され、**学習**と**業務参考**の両方で再利用できます。
 
 ---
 
-## ✨ Features
+## ✨ 機能
 
-- **Quests**
-  - Daily/weekly tasks: Read, Write, Listen, Speak
-  - XP, level-up, and achievement badges
-- **Vocabulary**
-  - Card-style word management with example sentences
-  - Quizzes with spaced repetition
-- **Summaries**
-  - Technical article summaries stored in DB
-  - Accessible from app and browser/PC
-- **Progress Dashboard**
-  - XP progress bar
-  - Graphs for words learned, articles summarized, and XP gained
-- **Integration**
-  - Links to official GPT app for conversation practice
-  - Database accessible from outside the app (work, research)
-
----
-
-## 🏗️ Tech Stack (Planned)
-
-- **Frontend:** Flutter (mobile & web)
-- **Backend:** Firebase / Supabase / PostgreSQL
-- **Auth:** Firebase Auth
-- **Data Storage:** Firestore / Supabase DB
-- **AI Integration:** OpenAI API (for auto-summary, quizzes, corrections)
+- **クエスト**
+  - 日次/週次タスク：読む、書く、聞く、話す
+  - XP、レベルアップ、実績バッジ
+- **語彙管理**
+  - 例文付きカードスタイルの単語管理
+  - 間隔反復を使ったクイズ
+- **要約機能**
+  - 技術記事要約をDBに保存
+  - アプリとブラウザ/PCからアクセス可能
+- **進捗ダッシュボード**
+  - XP進捗バー
+  - 学習語彙数、記事要約数、獲得XPのグラフ
+- **連携機能**
+  - 会話練習用の公式GPTアプリとのリンク
+  - アプリ外（業務、研究）からのデータベースアクセス
 
 ---
 
-## 🚀 Roadmap
+## 🏗️ 技術スタック（予定）
 
-1. Basic project setup (Flutter + DB connection)
-2. User auth & profile
-3. Vocabulary module (DB + UI)
-4. Quest system (XP, badges)
-5. Article summary storage & display
-6. Dashboard with progress visualization
-7. Integration with GPT official app (link sharing)
-8. Polishing UI/UX with gamified animations
+- **フロントエンド:** Flutter（モバイル & ウェブ）
+- **バックエンド:** Firebase / Supabase / PostgreSQL
+- **認証:** Firebase Auth
+- **データストレージ:** Firestore / Supabase DB
+- **AI統合:** OpenAI API（自動要約、クイズ、添削用）
 
 ---
 
-## 📜 License
+## 🚀 ロードマップ
+
+1. 基本プロジェクトセットアップ（Flutter + DB接続）
+2. ユーザー認証 & プロファイル
+3. 語彙モジュール（DB + UI）
+4. クエストシステム（XP、バッジ）
+5. 記事要約の保存 & 表示
+6. 進捗可視化ダッシュボード
+7. GPT公式アプリとの連携（リンク共有）
+8. ゲーミフィケーションアニメーションによるUI/UX磨き上げ
+
+---
+
+## 📜 ライセンス
 MIT License

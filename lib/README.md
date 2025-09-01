@@ -1,33 +1,33 @@
-# Source Code (lib/)
+# ソースコード（lib/）
 
-This directory contains the main Dart source code for the TechLingual Quest Flutter application.
+このディレクトリには、TechLingual Quest Flutter アプリケーションのメインDartソースコードが含まれています。
 
-## Structure
+## 構造
 
 ```
 lib/
-├── main.dart                 # App entry point
-├── app/                      # App-level configuration
-├── features/                 # Feature-based modules
-│   ├── auth/                 # Authentication
-│   ├── vocabulary/           # Vocabulary management
-│   ├── quests/               # Quest system
-│   ├── summaries/            # Article summaries
-│   └── dashboard/            # Progress dashboard
-├── shared/                   # Shared components
-│   ├── widgets/              # Reusable UI widgets
-│   ├── utils/                # Utility functions
-│   ├── constants/            # App constants
-│   └── models/               # Data models
-└── services/                 # External services
-    ├── api/                  # API clients
-    ├── database/             # Database services
-    └── auth/                 # Authentication services
+├── main.dart                 # アプリエントリーポイント
+├── app/                      # アプリレベル設定
+├── features/                 # 機能ベースモジュール
+│   ├── auth/                 # 認証
+│   ├── vocabulary/           # 語彙管理
+│   ├── quests/               # クエストシステム
+│   ├── summaries/            # 記事要約
+│   └── dashboard/            # 進捗ダッシュボード
+├── shared/                   # 共有コンポーネント
+│   ├── widgets/              # 再利用可能UIウィジェット
+│   ├── utils/                # ユーティリティ関数
+│   ├── constants/            # アプリ定数
+│   └── models/               # データモデル
+└── services/                 # 外部サービス
+    ├── api/                  # APIクライアント
+    ├── database/             # データベースサービス
+    └── auth/                 # 認証サービス
 ```
 
-## Guidelines
+## ガイドライン
 
-- Follow Flutter/Dart naming conventions
-- Use feature-based architecture
-- Implement proper error handling
-- Write clean, maintainable code
+- Flutter/Dartネーミング規則に従う
+- 機能ベースアーキテクチャを使用
+- 適切なエラーハンドリングを実装
+- クリーンで保守可能なコードを記述
