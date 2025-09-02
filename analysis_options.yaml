@@ -32,5 +32,4 @@ analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
-  # Exclude local tooling and embedded SDKs from analysis
-  - "tools/**"
+    - "tools/**"

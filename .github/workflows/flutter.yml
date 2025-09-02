@@ -13,7 +13,7 @@ permissions:
   security-events: write
 
 env:
-  FLUTTER_VERSION: '3.24.3'
+  FLUTTER_VERSION: '3.35.2'
 
 jobs:
   # 依存関係とコード品質チェック

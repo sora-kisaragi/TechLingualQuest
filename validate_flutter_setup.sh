@@ -31,6 +31,22 @@ check_file() {
     fi
 }
 
+# Function to check if a file exists (with fallback for .kts files)
+check_file_with_fallback() {
+    local file_path="$1"
+    local fallback_path="$2"
+    local description="$3"
+    TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+    
+    if [ -f "$file_path" ] || [ -f "$fallback_path" ]; then
+        echo -e "${GREEN}✅ $description${NC}"
+        SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+    else
+        echo -e "${RED}❌ $description${NC}"
+        echo -e "${YELLOW}   Missing: $file_path (or $fallback_path)${NC}"
+    fi
+}
+
 # Function to check if a directory exists
 check_dir() {
     local dir_path="$1"
@@ -63,9 +79,9 @@ check_dir "web" "Web platform"
 
 # Check Android files
 echo -e "\n🤖 Android Platform Files:"
-check_file "android/app/build.gradle" "Android app build configuration"
-check_file "android/build.gradle" "Android project build configuration"
-check_file "android/settings.gradle" "Android settings"
+check_file_with_fallback "android/app/build.gradle" "android/app/build.gradle.kts" "Android app build configuration"
+check_file_with_fallback "android/build.gradle" "android/build.gradle.kts" "Android project build configuration"
+check_file_with_fallback "android/settings.gradle" "android/settings.gradle.kts" "Android settings"
 check_file "android/gradle.properties" "Android gradle properties"
 check_file "android/app/src/main/AndroidManifest.xml" "Android manifest"
 check_file "android/app/src/main/kotlin/com/example/tech_lingual_quest/MainActivity.kt" "Android main activity"
