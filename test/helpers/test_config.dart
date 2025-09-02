@@ -24,7 +24,7 @@ ENABLE_CRASHLYTICS=false
 
     // AppConfigを初期化
     await AppConfig.initialize();
-    
+
     // テスト用のロガーを初期化
     AppLogger.initialize();
   }

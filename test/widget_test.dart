@@ -3,12 +3,55 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:tech_lingual_quest/app/router.dart';
-import 'package:tech_lingual_quest/shared/utils/config.dart';
+import 'package:tech_lingual_quest/features/dashboard/pages/home_page.dart';
+import 'package:tech_lingual_quest/features/auth/pages/auth_page.dart';
+import 'package:tech_lingual_quest/features/vocabulary/pages/vocabulary_page.dart';
+import 'package:tech_lingual_quest/features/quests/pages/quests_page.dart';
 import 'helpers/test_config.dart';
 
+/// テスト用のGoRouterを作成
+GoRouter createTestRouter() {
+  return GoRouter(
+    initialLocation: '/',
+    routes: <RouteBase>[
+      GoRoute(
+        path: '/',
+        name: 'home',
+        builder: (BuildContext context, GoRouterState state) {
+          return const HomePage();
+        },
+      ),
+      GoRoute(
+        path: '/auth',
+        name: 'auth',
+        builder: (BuildContext context, GoRouterState state) {
+          return const AuthPage();
+        },
+      ),
+      GoRoute(
+        path: '/vocabulary',
+        name: 'vocabulary',
+        builder: (BuildContext context, GoRouterState state) {
+          return const VocabularyPage();
+        },
+      ),
+      GoRoute(
+        path: '/quests',
+        name: 'quests',
+        builder: (BuildContext context, GoRouterState state) {
+          return const QuestsPage();
+        },
+      ),
+    ],
+    errorBuilder: (context, state) => Scaffold(
+      appBar: AppBar(title: const Text('Error')),
+      body: const Center(child: Text('Page not found')),
+    ),
+  );
+}
+
 /// テスト用のTechLingualQuestアプリケーションウィジェット
-/// 
+///
 /// データベースやロガーの初期化をスキップしてテストで使用する
 class TestTechLingualQuestApp extends StatelessWidget {
   const TestTechLingualQuestApp({super.key});
@@ -21,7 +64,7 @@ class TestTechLingualQuestApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routerConfig: AppRouter.router,
+      routerConfig: createTestRouter(), // 毎回新しいルーターを作成
       debugShowCheckedModeBanner: false, // テスト環境では常にfalse
     );
   }
@@ -145,6 +188,9 @@ void main() {
           .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
+      // Ensure we're on home page by checking for navigation buttons
+      expect(find.text('Quests'), findsOneWidget);
+
       // Tap quests button
       await tester.tap(find.text('Quests'));
       await tester.pumpAndSettle();
@@ -162,6 +208,9 @@ void main() {
       await tester
           .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
+
+      // Ensure we're on home page by checking for navigation buttons
+      expect(find.text('Profile'), findsOneWidget);
 
       // Tap profile button
       await tester.tap(find.text('Profile'));
