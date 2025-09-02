@@ -85,14 +85,14 @@ jobs:
         echo "AAB_SIZE=$(du -h build/app/outputs/bundle/*/*.aab | cut -f1)" >> $GITHUB_ENV
     
     - name: Upload Android Release APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: android-release-apk
         path: build/app/outputs/flutter-apk/*.apk
         retention-days: 30
     
     - name: Upload Android Release Bundle
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: android-release-bundle
         path: build/app/outputs/bundle/*/*.aab
@@ -124,7 +124,7 @@ jobs:
         echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
     
     - name: Upload Web Release
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: web-release
         path: build/web/
@@ -175,19 +175,19 @@ jobs:
         fi
     
     - name: Download Android APK
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: android-release-apk
         path: ./release-assets/
     
     - name: Download Android Bundle
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: android-release-bundle
         path: ./release-assets/
     
     - name: Download Web Release
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: web-release
         path: ./web-release/
