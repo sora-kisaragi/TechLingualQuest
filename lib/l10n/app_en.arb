@@ -1,0 +1,95 @@
+{
+  "@@locale": "en",
+  "appTitle": "TechLingual Quest",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "welcomeMessage": "Welcome to TechLingual Quest!",
+  "@welcomeMessage": {
+    "description": "Welcome message on the home page"
+  },
+  "gamifiedJourney": "Your gamified journey to master technical English",
+  "@gamifiedJourney": {
+    "description": "Subtitle describing the app's purpose"
+  },
+  "xpLabel": "XP:",
+  "@xpLabel": {
+    "description": "Experience points label"
+  },
+  "earnXpTooltip": "Earn XP",
+  "@earnXpTooltip": {
+    "description": "Tooltip for the earn XP button"
+  },
+  "featuresTitle": "Features:",
+  "@featuresTitle": {
+    "description": "Title for the features section"
+  },
+  "feature1": "• Daily quests and challenges",
+  "@feature1": {
+    "description": "First feature description"
+  },
+  "feature2": "• Vocabulary building with spaced repetition",
+  "@feature2": {
+    "description": "Second feature description"
+  },
+  "feature3": "• Technical article summaries",
+  "@feature3": {
+    "description": "Third feature description"
+  },
+  "feature4": "• Progress tracking and achievements",
+  "@feature4": {
+    "description": "Fourth feature description"
+  },
+  "feature5": "• AI-powered conversation practice",
+  "@feature5": {
+    "description": "Fifth feature description"
+  },
+  "vocabulary": "Vocabulary",
+  "@vocabulary": {
+    "description": "Vocabulary button text"
+  },
+  "quests": "Quests",
+  "@quests": {
+    "description": "Quests button text"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile button text"
+  },
+  "vocabularyLearning": "Vocabulary Learning",
+  "@vocabularyLearning": {
+    "description": "Vocabulary page title"
+  },
+  "vocabularyDescription": "Vocabulary cards and learning features will be implemented here",
+  "@vocabularyDescription": {
+    "description": "Vocabulary page description"
+  },
+  "dailyQuests": "Daily Quests",
+  "@dailyQuests": {
+    "description": "Quests page title"
+  },
+  "questsDescription": "Quest system and gamification features will be implemented here",
+  "@questsDescription": {
+    "description": "Quests page description"
+  },
+  "authentication": "Authentication",
+  "@authentication": {
+    "description": "Auth page title"
+  },
+  "authDescription": "User authentication will be implemented here",
+  "@authDescription": {
+    "description": "Auth page description"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language selection label"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "japanese": "Japanese",
+  "@japanese": {
+    "description": "Japanese language option"
+  }
+}

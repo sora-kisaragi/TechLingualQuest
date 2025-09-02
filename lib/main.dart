@@ -4,6 +4,7 @@ import 'shared/utils/config.dart';
 import 'app/router.dart';
 import 'shared/utils/logger.dart';
 import 'services/database/database_service.dart';
+import 'shared/services/dynamic_localization_service.dart';
 
 /// TechLingual Questアプリケーションのメインエントリーポイント
 ///
@@ -35,13 +36,23 @@ void main() async {
 ///
 /// 技術英語スキル向上のためのゲーミフィケーション学習アプリ。
 /// クエスト、語彙学習、技術記事要約をゲームライクな体験で提供する。
-class TechLingualQuestApp extends StatelessWidget {
+class TechLingualQuestApp extends ConsumerWidget {
   const TechLingualQuestApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentLocale = ref.watch(dynamicLanguageProvider);
+    
     return MaterialApp.router(
       title: 'TechLingual Quest',
+      locale: currentLocale,
+      // Remove Flutter's built-in localization delegates since we're using our own system
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ja'),
+        Locale('ko'),
+        Locale('zh'),
+      ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
