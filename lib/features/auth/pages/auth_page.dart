@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 /// ユーザーログインと登録のための認証ページ
 ///
@@ -9,32 +10,34 @@ class AuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(l10n.profile),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/'),
         ),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.person,
               size: 80,
               color: Colors.deepPurple,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
-              'Authentication',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              l10n.authentication,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
-              'User authentication will be implemented here',
-              style: TextStyle(fontSize: 16),
+              l10n.authDescription,
+              style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
           ],

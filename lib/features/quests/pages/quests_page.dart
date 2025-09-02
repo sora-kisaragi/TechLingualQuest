@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 /// ゲーミフィケーション機能のためのクエストページ
 ///
@@ -9,32 +10,34 @@ class QuestsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quests'),
+        title: Text(l10n.quests),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/'),
         ),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.flag,
               size: 80,
               color: Colors.deepPurple,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
-              'Daily Quests',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              l10n.dailyQuests,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
-              'Quest system and gamification features will be implemented here',
-              style: TextStyle(fontSize: 16),
+              l10n.questsDescription,
+              style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
           ],
