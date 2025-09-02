@@ -3,7 +3,7 @@ author: "GitHub Copilot Agent"
 date: "2025-08-29"
 version: "1.1"
 related_issues: ["#10"]
-related_docs: ["development-tasks.md", "issue-creation-plan.md", "requirements/requirements.md", "design/HLD.md", "design/LLD.md"]
+related_docs: ["development-tasks.md", "issue-creation-plan.md", "github-issues-creation-guide.md", "requirements/requirements.md", "design/HLD.md", "design/LLD.md"]
 ---
 
 # Issue #10 Implementation Summary
@@ -14,6 +14,7 @@ related_docs: ["development-tasks.md", "issue-creation-plan.md", "requirements/r
 ## Related Documents
 - [Development Tasks](development-tasks.md) - Complete task breakdown and implementation plan
 - [Issue Creation Plan](issue-creation-plan.md) - GitHub Issues templates and implementation guide
+- [GitHub Issues Creation Guide](github-issues-creation-guide.md) - 日本語でのIssue作成ガイド（手作業用）
 - [System Requirements](requirements/requirements.md) - Detailed technical requirements
 - [High-Level Design](design/HLD.md) - System architecture overview
 - [Low-Level Design](design/LLD.md) - Detailed technical design
@@ -27,6 +28,7 @@ Issue #10の要求に応じて、以下の作業を完了しました：
 ### 1. ドキュメント作成 (Document Creation)
 - **`docs/development-tasks.md`**: 詳細な開発タスク一覧（8フェーズ、16の主要機能、12週間のタイムライン）
 - **`docs/issue-creation-plan.md`**: GitHub Issues作成のための具体的な実装計画
+- **`docs/github-issues-creation-guide.md`**: 手作業でのIssue作成用日本語ガイド（18個のIssue詳細）
 - **`docs/issue-10-summary.md`**: 本サマリードキュメント
 
 ### 2. タスク設定 (Task Setup)
@@ -77,7 +79,7 @@ README.mdのロードマップと機能仕様に基づいて、以下のタス�
 ## 次のアクションステップ (Next Action Steps)
 
 ### 即座に実行可能なアクション
-1. **GitHub Issues作成**: `docs/issue-creation-plan.md` に基づいて18のIssueを作成
+1. **GitHub Issues作成**: `docs/github-issues-creation-guide.md` に基づいて18のIssueを作成
 2. **マイルストーン設定**: 8つのフェーズマイルストーンを作成
 3. **ラベル設定**: 優先度、タイプ、コンポーネント、フェーズラベルを作成
 4. **プロジェクトボード作成**: フェーズ別の進捗管理ボードを設定
@@ -151,6 +153,7 @@ Issue #4 (HLD作成) と Issue #5 (LLD作成) が未完了のため、以下の�
 - [x] 詳細なタスク分解の完了
 - [x] 各タスクへの期限設定
 - [x] GitHub Issues作成計画の策定
+- [x] 手作業用日本語Issuesガイドの作成
 - [ ] 実際のGitHub Issues作成（次ステップ）
 - [ ] プロジェクト管理ツール設定（次ステップ）
 
