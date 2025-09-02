@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tech_lingual_quest/main.dart';
 
@@ -8,7 +9,10 @@ void main() {
     testWidgets('App should display title and welcome message',
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
-      await tester.pumpWidget(const TechLingualQuestApp());
+      await tester.pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      
+      // Wait for initialization to complete
+      await tester.pumpAndSettle();
 
       // Verify that the app title is displayed
       expect(find.text('TechLingual Quest'), findsOneWidget);
@@ -23,7 +27,8 @@ void main() {
     testWidgets('Tap floating action button to earn XP',
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
-      await tester.pumpWidget(const TechLingualQuestApp());
+      await tester.pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      await tester.pumpAndSettle();
 
       // Verify initial XP is 0
       expect(find.text('0'), findsOneWidget);
@@ -41,7 +46,8 @@ void main() {
     testWidgets('Multiple taps should accumulate XP',
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
-      await tester.pumpWidget(const TechLingualQuestApp());
+      await tester.pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      await tester.pumpAndSettle();
 
       // Tap the '+' icon multiple times
       await tester.tap(find.byIcon(Icons.add));
@@ -55,18 +61,38 @@ void main() {
       expect(find.text('30'), findsOneWidget);
     });
 
-    testWidgets('Should display feature list', (WidgetTester tester) async {
+    testWidgets('Should display feature list and navigation buttons', (WidgetTester tester) async {
       // Build our app and trigger a frame.
-      await tester.pumpWidget(const TechLingualQuestApp());
+      await tester.pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      await tester.pumpAndSettle();
 
       // Verify that feature list is displayed
-      expect(find.text('Features coming soon:'), findsOneWidget);
+      expect(find.text('Features:'), findsOneWidget);
       expect(find.text('• Daily quests and challenges'), findsOneWidget);
       expect(find.text('• Vocabulary building with spaced repetition'),
           findsOneWidget);
       expect(find.text('• Technical article summaries'), findsOneWidget);
       expect(find.text('• Progress tracking and achievements'), findsOneWidget);
       expect(find.text('• AI-powered conversation practice'), findsOneWidget);
+      
+      // Verify navigation buttons are present
+      expect(find.text('Vocabulary'), findsOneWidget);
+      expect(find.text('Quests'), findsOneWidget);
+      expect(find.text('Profile'), findsOneWidget);
+    });
+
+    testWidgets('Should navigate to vocabulary page', (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      await tester.pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      await tester.pumpAndSettle();
+
+      // Tap vocabulary button
+      await tester.tap(find.text('Vocabulary'));
+      await tester.pumpAndSettle();
+
+      // Verify navigation to vocabulary page
+      expect(find.text('Vocabulary Learning'), findsOneWidget);
+      expect(find.text('Vocabulary cards and learning features will be implemented here'), findsOneWidget);
     });
   });
 }
