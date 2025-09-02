@@ -3,35 +3,35 @@ description: A gamified learning app for improving technical English skills
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: ">=3.10.0"
+  sdk: ">=3.9.0 <4.0.0"
+  flutter: ">=3.35.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  
+
   # Core dependencies for the app
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
+
   # Linting rules
   flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
-  
+
   # Assets
   # assets:
   #   - images/
-  
+
   # Fonts
   # fonts:
   #   - family: Schyler

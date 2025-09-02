@@ -6,7 +6,7 @@
 
 始める前に、以下がインストールされていることを確認してください：
 
-1. **Flutter SDK**（3.10.0以降）
+1. **Flutter SDK**（3.35.x以降）
    ```bash
    # Flutter SDK のダウンロード
    git clone https://github.com/flutter/flutter.git -b stable

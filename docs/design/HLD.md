@@ -157,7 +157,7 @@ graph TB
 
 | レイヤー | 技術 | 説明 |
 |---------|------|------|
-| **フロントエンド** | Flutter 3.x | クロスプラットフォーム（iOS/Android/Web） |
+| **フロントエンド** | Flutter 3.35.x | クロスプラットフォーム（iOS/Android/Web） |
 | **状態管理** | Riverpod/Provider | リアクティブ状態管理 |
 | **認証** | ローカル認証 | 端末内でのユーザー識別・セッション管理 |
 | **データベース** | SQLite | ローカルリレーショナルDB |
@@ -170,7 +170,7 @@ graph TB
 
 | レイヤー | 技術 | 説明 |
 |---------|------|------|
-| **フロントエンド** | Flutter 3.x | クロスプラットフォーム（iOS/Android/Web） |
+| **フロントエンド** | Flutter 3.35.x | クロスプラットフォーム（iOS/Android/Web） |
 | **状態管理** | Riverpod/Provider | リアクティブ状態管理 |
 | **認証** | Firebase Auth | Google/Email認証 |
 | **データベース** | Firestore | NoSQLドキュメントDB |
