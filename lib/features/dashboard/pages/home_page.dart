@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../generated/l10n/app_localizations.dart';
-import '../../../shared/widgets/language_selector.dart';
+import '../../../shared/services/dynamic_localization_service.dart';
+import '../../../shared/widgets/dynamic_language_selector.dart';
 
 /// メインのクエストインターフェースを表示するホームページウィジェット
 ///
@@ -25,14 +25,33 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final translationsAsync = ref.watch(appTranslationsProvider);
     
+    return translationsAsync.when(
+      data: (translations) => _buildHomeContent(context, translations),
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        body: Center(
+          child: Text('Failed to load translations: $error'),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHomeContent(BuildContext context, AppTranslations translations) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(l10n.appTitle),
+        title: FutureBuilder<String>(
+          future: translations.appTitle,
+          builder: (context, snapshot) {
+            return Text(snapshot.data ?? 'TechLingual Quest');
+          },
+        ),
         actions: const [
-          LanguageSelector(),
+          DynamicLanguageSelector(),
         ],
       ),
       body: Center(
@@ -45,15 +64,25 @@ class _HomePageState extends ConsumerState<HomePage> {
               color: Colors.deepPurple,
             ),
             const SizedBox(height: 20),
-            Text(
-              l10n.welcomeMessage,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            FutureBuilder<String>(
+              future: translations.welcomeMessage,
+              builder: (context, snapshot) {
+                return Text(
+                  snapshot.data ?? 'Welcome to TechLingual Quest!',
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                );
+              },
             ),
             const SizedBox(height: 10),
-            Text(
-              l10n.gamifiedJourney,
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
+            FutureBuilder<String>(
+              future: translations.gamifiedJourney,
+              builder: (context, snapshot) {
+                return Text(
+                  snapshot.data ?? 'Your gamified journey to master technical English',
+                  style: const TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                );
+              },
             ),
             const SizedBox(height: 30),
             Card(
@@ -65,7 +94,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(l10n.xpLabel, style: const TextStyle(fontSize: 18)),
+                        FutureBuilder<String>(
+                          future: translations.xpLabel,
+                          builder: (context, snapshot) {
+                            return Text(
+                              snapshot.data ?? 'XP:',
+                              style: const TextStyle(fontSize: 18),
+                            );
+                          },
+                        ),
                         Text(
                           '$_xpCounter',
                           style: Theme.of(context).textTheme.headlineMedium,
@@ -85,56 +122,95 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
             const SizedBox(height: 30),
-            _buildNavigationButtons(context, l10n),
+            _buildNavigationButtons(context, translations),
             const SizedBox(height: 30),
-            Text(
-              l10n.featuresTitle,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            FutureBuilder<String>(
+              future: translations.featuresTitle,
+              builder: (context, snapshot) {
+                return Text(
+                  snapshot.data ?? 'Features:',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                );
+              },
             ),
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.feature1),
-                  Text(l10n.feature2),
-                  Text(l10n.feature3),
-                  Text(l10n.feature4),
-                  Text(l10n.feature5),
-                ],
-              ),
+              child: _buildFeaturesList(translations),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _earnXp,
-        tooltip: l10n.earnXpTooltip,
+        tooltip: 'Earn XP', // Will be replaced with dynamic translation
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Widget _buildNavigationButtons(BuildContext context, AppLocalizations l10n) {
+  Widget _buildFeaturesList(AppTranslations translations) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FutureBuilder<String>(
+          future: translations.feature1,
+          builder: (context, snapshot) => Text(snapshot.data ?? ''),
+        ),
+        FutureBuilder<String>(
+          future: translations.feature2,
+          builder: (context, snapshot) => Text(snapshot.data ?? ''),
+        ),
+        FutureBuilder<String>(
+          future: translations.feature3,
+          builder: (context, snapshot) => Text(snapshot.data ?? ''),
+        ),
+        FutureBuilder<String>(
+          future: translations.feature4,
+          builder: (context, snapshot) => Text(snapshot.data ?? ''),
+        ),
+        FutureBuilder<String>(
+          future: translations.feature5,
+          builder: (context, snapshot) => Text(snapshot.data ?? ''),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavigationButtons(BuildContext context, AppTranslations translations) {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
       children: [
-        ElevatedButton.icon(
-          onPressed: () => context.go('/vocabulary'),
-          icon: const Icon(Icons.book),
-          label: Text(l10n.vocabulary),
+        FutureBuilder<String>(
+          future: translations.vocabulary,
+          builder: (context, snapshot) {
+            return ElevatedButton.icon(
+              onPressed: () => context.go('/vocabulary'),
+              icon: const Icon(Icons.book),
+              label: Text(snapshot.data ?? 'Vocabulary'),
+            );
+          },
         ),
-        ElevatedButton.icon(
-          onPressed: () => context.go('/quests'),
-          icon: const Icon(Icons.flag),
-          label: Text(l10n.quests),
+        FutureBuilder<String>(
+          future: translations.quests,
+          builder: (context, snapshot) {
+            return ElevatedButton.icon(
+              onPressed: () => context.go('/quests'),
+              icon: const Icon(Icons.flag),
+              label: Text(snapshot.data ?? 'Quests'),
+            );
+          },
         ),
-        ElevatedButton.icon(
-          onPressed: () => context.go('/auth'),
-          icon: const Icon(Icons.person),
-          label: Text(l10n.profile),
+        FutureBuilder<String>(
+          future: translations.profile,
+          builder: (context, snapshot) {
+            return ElevatedButton.icon(
+              onPressed: () => context.go('/auth'),
+              icon: const Icon(Icons.person),
+              label: Text(snapshot.data ?? 'Profile'),
+            );
+          },
         ),
       ],
     );

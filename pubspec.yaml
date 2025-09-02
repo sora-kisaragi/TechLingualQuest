@@ -63,6 +63,7 @@ flutter:
   # Assets
   assets:
     - assets/images/
+    - assets/translations/
   
   # Fonts
   # fonts:

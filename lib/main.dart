@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import '../generated/l10n/app_localizations.dart';
 import 'shared/utils/config.dart';
 import 'app/router.dart';
 import 'shared/utils/logger.dart';
 import 'services/database/database_service.dart';
-import 'shared/services/language_service.dart';
+import 'shared/services/dynamic_localization_service.dart';
 
 /// TechLingual Questアプリケーションのメインエントリーポイント
 ///
@@ -43,18 +41,18 @@ class TechLingualQuestApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentLocale = ref.watch(languageProvider);
+    final currentLocale = ref.watch(dynamicLanguageProvider);
     
     return MaterialApp.router(
       title: 'TechLingual Quest',
       locale: currentLocale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+      // Remove Flutter's built-in localization delegates since we're using our own system
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ja'),
+        Locale('ko'),
+        Locale('zh'),
       ],
-      supportedLocales: LanguageService.getSupportedLocales(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
