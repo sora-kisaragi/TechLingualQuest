@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// アプリケーション環境設定
@@ -9,12 +10,29 @@ class AppConfig {
   /// 環境設定を初期化
   /// main()でrunApp()の前に呼び出す必要がある
   static Future<void> initialize() async {
-    await dotenv.load(fileName: '.env');
+    try {
+      await dotenv.load(fileName: '.env');
+    } catch (e) {
+      // .envファイルが存在しない場合、デフォルト設定を使用
+      // CI/CDや本番環境では環境変数から設定を読み取る
+      dotenv.testLoad(fileInput: '''
+APP_ENV=dev
+DATABASE_NAME=tech_lingual_quest.db
+API_BASE_URL=https://api.example.com
+API_KEY=
+LOG_LEVEL=info
+ENABLE_ANALYTICS=false
+ENABLE_CRASHLYTICS=false
+''');
+    }
     _setEnvironmentFromConfig();
   }
   
   static void _setEnvironmentFromConfig() {
-    final envString = dotenv.env['APP_ENV'] ?? 'dev';
+    // 最初に環境変数から取得を試行し、次に.envファイルから取得
+    final envString = Platform.environment['APP_ENV'] ?? 
+                     dotenv.env['APP_ENV'] ?? 
+                     'dev';
     switch (envString.toLowerCase()) {
       case 'prod':
       case 'production':
@@ -36,27 +54,39 @@ class AppConfig {
   
   /// 現在の環境のデータベース名
   static String get databaseName => 
-      dotenv.env['DATABASE_NAME'] ?? 'tech_lingual_quest.db';
+      Platform.environment['DATABASE_NAME'] ??
+      dotenv.env['DATABASE_NAME'] ?? 
+      'tech_lingual_quest.db';
   
   /// 現在の環境のAPIベースURL
   static String get apiBaseUrl => 
-      dotenv.env['API_BASE_URL'] ?? 'https://api.example.com';
+      Platform.environment['API_BASE_URL'] ??
+      dotenv.env['API_BASE_URL'] ?? 
+      'https://api.example.com';
   
   /// 現在の環境のAPIキー
   static String get apiKey => 
-      dotenv.env['API_KEY'] ?? '';
+      Platform.environment['API_KEY'] ??
+      dotenv.env['API_KEY'] ?? 
+      '';
   
   /// 現在の環境のログレベル
   static String get logLevel => 
-      dotenv.env['LOG_LEVEL'] ?? 'info';
+      Platform.environment['LOG_LEVEL'] ??
+      dotenv.env['LOG_LEVEL'] ?? 
+      'info';
   
   /// アナリティクスが有効かどうか
   static bool get isAnalyticsEnabled => 
-      dotenv.env['ENABLE_ANALYTICS']?.toLowerCase() == 'true';
+      (Platform.environment['ENABLE_ANALYTICS'] ??
+       dotenv.env['ENABLE_ANALYTICS'] ?? 
+       'false').toLowerCase() == 'true';
   
   /// クラッシュリティクスが有効かどうか
   static bool get isCrashlyticsEnabled => 
-      dotenv.env['ENABLE_CRASHLYTICS']?.toLowerCase() == 'true';
+      (Platform.environment['ENABLE_CRASHLYTICS'] ??
+       dotenv.env['ENABLE_CRASHLYTICS'] ?? 
+       'false').toLowerCase() == 'true';
   
   /// アプリが開発モードかどうか
   static bool get isDevelopment => _currentEnvironment == AppEnvironment.dev;
