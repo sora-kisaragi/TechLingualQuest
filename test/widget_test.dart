@@ -3,10 +3,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:tech_lingual_quest/main.dart';
+import 'helpers/test_config.dart';
 
 void main() {
   group('TechLingual Quest App Tests', () {
-    testWidgets('App should display title and welcome message',
+    // ウィジェットテストのセットアップ
+    setUpAll(() async {
+      // テスト用のモック環境設定
+      await TestConfig.initializeForTest();
+    });
+
+    tearDownAll(() {
+      // テスト終了後のクリーンアップ
+      TestConfig.cleanup();
+    });
+
+    testWidgets('App should initialize and display home page',
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
@@ -103,6 +115,60 @@ void main() {
           find.text(
               'Vocabulary cards and learning features will be implemented here'),
           findsOneWidget);
+    });
+
+    testWidgets('Should navigate to quests page', (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      await tester
+          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      await tester.pumpAndSettle();
+
+      // Tap quests button
+      await tester.tap(find.text('Quests'));
+      await tester.pumpAndSettle();
+
+      // Verify navigation to quests page
+      expect(find.text('Daily Quests'), findsOneWidget);
+      expect(
+          find.text(
+              'Quest system and gamification features will be implemented here'),
+          findsOneWidget);
+    });
+
+    testWidgets('Should navigate to profile page',
+        (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      await tester
+          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      await tester.pumpAndSettle();
+
+      // Tap profile button
+      await tester.tap(find.text('Profile'));
+      await tester.pumpAndSettle();
+
+      // Verify navigation to profile page
+      expect(find.text('Authentication'), findsOneWidget);
+      expect(find.text('User authentication will be implemented here'),
+          findsOneWidget);
+    });
+
+    testWidgets('Should navigate back to home from other pages',
+        (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      await tester
+          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+      await tester.pumpAndSettle();
+
+      // Navigate to vocabulary page
+      await tester.tap(find.text('Vocabulary'));
+      await tester.pumpAndSettle();
+
+      // Tap back button
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      // Verify we're back on home page
+      expect(find.text('Welcome to TechLingual Quest!'), findsOneWidget);
     });
   });
 }

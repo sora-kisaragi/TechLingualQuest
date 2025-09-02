@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../../app/config.dart';
+import '../../shared/utils/config.dart';
 import '../../shared/utils/logger.dart';
 
 /// ローカルSQLiteデータベースのサービス
