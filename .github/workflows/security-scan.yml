@@ -12,6 +12,10 @@ on:
 permissions:
   contents: read
   actions: read
+  security-events: write
+
+env:
+  FLUTTER_VERSION: '3.35.2'
 
 jobs:
   security-scan:
@@ -25,14 +29,24 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.3'
+        flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
     
     - name: Get dependencies
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: flutter pub get
     
     - name: Run dependency audit
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: |
         # Flutter/Dart依存関係の脆弱性チェック
         echo "📦 依存関係の取得中..."
@@ -62,6 +76,11 @@ jobs:
         fi
     
     - name: Dart Static Analysis
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: |
         echo "🔍 Dartコードの静的解析を実行中..."
         flutter analyze --no-fatal-infos || echo "静的解析で警告が検出されました"

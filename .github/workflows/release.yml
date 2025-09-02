@@ -16,7 +16,7 @@ permissions:
   actions: read
 
 env:
-  FLUTTER_VERSION: '3.24.3'
+  FLUTTER_VERSION: '3.35.2'
 
 jobs:
   # リリース前の最終チェック
@@ -36,12 +36,29 @@ jobs:
         cache: true
     
     - name: Get dependencies
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: flutter pub get
     
     - name: Run all tests
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
+        ENABLE_ANALYTICS: false
+        ENABLE_CRASHLYTICS: false
       run: flutter test --coverage
     
     - name: Analyze code
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: flutter analyze
     
     - name: Check formatting
@@ -74,16 +91,29 @@ jobs:
         java-version: '11'
     
     - name: Get dependencies
+      env:
+        APP_ENV: prod
+        DATABASE_NAME: tech_lingual_quest.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: flutter pub get
     
     - name: Build Android APK (Release)
       run: |
+        export APP_ENV=prod
+        export DATABASE_NAME=tech_lingual_quest.db
+        export API_BASE_URL=https://api.example.com
+        export GRADLE_OPTS="-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError"
         flutter build apk --release
         echo "APK_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)" >> $GITHUB_ENV
         echo "APK_SIZE=$(du -h build/app/outputs/flutter-apk/*.apk | cut -f1)" >> $GITHUB_ENV
     
     - name: Build Android App Bundle (Release)
       run: |
+        export APP_ENV=prod
+        export DATABASE_NAME=tech_lingual_quest.db
+        export API_BASE_URL=https://api.example.com
+        export GRADLE_OPTS="-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError"
         flutter build appbundle --release
         echo "AAB_PATH=$(find build/app/outputs/bundle -name '*.aab' | head -1)" >> $GITHUB_ENV
         echo "AAB_SIZE=$(du -h build/app/outputs/bundle/*/*.aab | cut -f1)" >> $GITHUB_ENV
@@ -120,10 +150,18 @@ jobs:
         cache: true
     
     - name: Get dependencies
+      env:
+        APP_ENV: prod
+        DATABASE_NAME: tech_lingual_quest.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: flutter pub get
     
     - name: Build Web (Release)
       run: |
+        export APP_ENV=prod
+        export DATABASE_NAME=tech_lingual_quest.db
+        export API_BASE_URL=https://api.example.com
         flutter build web --release --web-renderer canvaskit
         echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
     
