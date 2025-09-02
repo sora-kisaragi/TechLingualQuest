@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:tech_lingual_quest/main.dart';
+import 'package:tech_lingual_quest/app/router.dart';
+import 'package:tech_lingual_quest/shared/utils/config.dart';
 import 'helpers/test_config.dart';
+
+/// テスト用のTechLingualQuestアプリケーションウィジェット
+/// 
+/// データベースやロガーの初期化をスキップしてテストで使用する
+class TestTechLingualQuestApp extends StatelessWidget {
+  const TestTechLingualQuestApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      title: 'TechLingual Quest',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      routerConfig: AppRouter.router,
+      debugShowCheckedModeBanner: false, // テスト環境では常にfalse
+    );
+  }
+}
 
 void main() {
   group('TechLingual Quest App Tests', () {
@@ -22,7 +44,7 @@ void main() {
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
 
       // Wait for initialization to complete
       await tester.pumpAndSettle();
@@ -41,7 +63,7 @@ void main() {
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
       // Verify initial XP is 0
@@ -61,7 +83,7 @@ void main() {
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
       // Tap the '+' icon multiple times
@@ -80,7 +102,7 @@ void main() {
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
       // Verify that feature list is displayed
@@ -102,7 +124,7 @@ void main() {
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
       // Tap vocabulary button
@@ -120,7 +142,7 @@ void main() {
     testWidgets('Should navigate to quests page', (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
       // Tap quests button
@@ -138,7 +160,7 @@ void main() {
     testWidgets('Should navigate to profile page', (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
       // Tap profile button
@@ -155,7 +177,7 @@ void main() {
         (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
-          .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
+          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
       await tester.pumpAndSettle();
 
       // Navigate to vocabulary page

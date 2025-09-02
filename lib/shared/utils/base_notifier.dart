@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../shared/utils/logger.dart';
+import 'logger.dart';
 
 /// 一貫したエラーハンドリングとローディング状態のためのベース通知クラス
 ///

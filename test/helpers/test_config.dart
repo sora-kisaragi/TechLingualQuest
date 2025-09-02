@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tech_lingual_quest/shared/utils/config.dart';
+import 'package:tech_lingual_quest/shared/utils/logger.dart';
 
 /// テスト用の設定ヘルパー
 ///
@@ -9,12 +11,27 @@ class TestConfig {
   static Future<void> initializeForTest() async {
     TestWidgetsFlutterBinding.ensureInitialized();
 
-    // テスト環境用のモック設定で初期化
+    // テスト環境用のモック設定で直接dotenvを初期化
+    dotenv.testLoad(fileInput: '''
+APP_ENV=test
+DATABASE_NAME=tech_lingual_quest_test.db
+API_BASE_URL=https://api.test.example.com
+API_KEY=test_api_key
+LOG_LEVEL=error
+ENABLE_ANALYTICS=false
+ENABLE_CRASHLYTICS=false
+''');
+
+    // AppConfigを初期化
     await AppConfig.initialize();
+    
+    // テスト用のロガーを初期化
+    AppLogger.initialize();
   }
 
   /// テスト後のクリーンアップ
   static void cleanup() {
-    // 必要に応じてテスト後のクリーンアップ処理
+    // dotenvの内容をクリア
+    dotenv.clean();
   }
 }

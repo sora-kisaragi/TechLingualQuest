@@ -40,6 +40,9 @@ ENABLE_CRASHLYTICS=false
       case 'staging':
         _currentEnvironment = AppEnvironment.staging;
         break;
+      case 'test':
+        _currentEnvironment = AppEnvironment.dev; // テスト環境は開発環境として扱う
+        break;
       case 'dev':
       case 'development':
       default:
