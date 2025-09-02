@@ -1,74 +1,74 @@
-# TechLingual Quest - App Preview
+# TechLingual Quest - アプリプレビュー
 
-## Expected UI Layout
+## 期待されるUIレイアウト
 
-When you run the Flutter app with `flutter run`, you should see the following:
+Flutterアプリを `flutter run` で実行すると、以下のような画面が表示されます：
 
-### Home Screen Features
+### ホーム画面の機能
 
-🎯 **App Title**: "TechLingual Quest" in the app bar  
-📱 **Welcome Message**: Large welcome text with app description  
-🏆 **XP Counter**: Displays current experience points in a card  
-📊 **Progress Bar**: Visual representation of XP progress (0-100)  
-➕ **Floating Action Button**: Tap to earn +10 XP  
-📋 **Feature List**: Overview of planned features  
+🎯 **アプリタイトル**: アプリバーに "TechLingual Quest"  
+📱 **ウェルカムメッセージ**: アプリの説明付きの大きなウェルカムテキスト  
+🏆 **XPカウンター**: 現在の経験値をカードで表示  
+📊 **プログレスバー**: XP進捗の視覚的表現（0-100）  
+➕ **フローティングアクションボタン**: タップして+10 XPを獲得  
+📋 **機能リスト**: 予定されている機能の概要  
 
-### Visual Design
+### ビジュアルデザイン
 
-- **Theme**: Material Design 3 with deep purple color scheme
-- **Icon**: School/education icon (📚) as main visual element
-- **Layout**: Centered vertical layout with cards and spacing
-- **Responsive**: Works on mobile, tablet, and web
+- **テーマ**: ディープパープルカラースキームのMaterial Design 3
+- **アイコン**: メインビジュアル要素として学校/教育アイコン（📚）
+- **レイアウト**: カードとスペーシングを使った中央揃えの縦レイアウト
+- **レスポンシブ**: モバイル、タブレット、ウェブで動作
 
-### Interactive Elements
+### インタラクティブ要素
 
-1. **XP System**: 
-   - Tap the floating action button to earn 10 XP
-   - Progress bar fills as you accumulate XP (resets every 100 XP)
-   - XP counter updates in real-time
+1. **XPシステム**: 
+   - フローティングアクションボタンをタップして10 XPを獲得
+   - XPが蓄積されるとプログレスバーが埋まる（100 XPごとにリセット）
+   - XPカウンターがリアルタイムで更新
 
-2. **Multi-Platform Support**:
-   - Android: Native Android app experience
-   - iOS: Native iOS app experience  
-   - Web: Responsive web application
+2. **マルチプラットフォーム対応**:
+   - Android: ネイティブAndroidアプリ体験
+   - iOS: ネイティブiOSアプリ体験  
+   - Web: レスポンシブウェブアプリケーション
 
-### Sample App Flow
+### サンプルアプリフロー
 
 ```
-[App Launch] → [Home Screen with XP: 0]
+[アプリ起動] → [XP: 0のホーム画面]
      ↓
-[Tap +] → [XP increases to 10, progress bar updates]
+[+をタップ] → [XPが10に増加、プログレスバー更新]
      ↓
-[Multiple taps] → [XP accumulates: 20, 30, 40...]
+[複数回タップ] → [XPが蓄積: 20, 30, 40...]
      ↓
-[Continue using] → [Future: Navigate to quests, vocabulary, etc.]
+[使用継続] → [将来: クエスト、語彙などへのナビゲーション]
 ```
 
-### Screenshots (When Running)
+### スクリーンショット（実行時）
 
-**Mobile View**:
-- Compact layout optimized for phone screens
-- Touch-friendly buttons and interactions
-- Material Design animations
+**モバイル表示**:
+- 電話画面向けに最適化されたコンパクトレイアウト
+- タッチフレンドリーなボタンとインタラクション
+- Material Designアニメーション
 
-**Web View**:
-- Responsive design adapts to browser window
-- Mouse and keyboard interactions
-- Same functionality across platforms
+**ウェブ表示**:
+- ブラウザウィンドウに適応するレスポンシブデザイン
+- マウスとキーボードのインタラクション
+- プラットフォーム間で同じ機能
 
-### Development Status
+### 開発ステータス
 
-✅ **Ready for Development**
-- Basic app structure complete
-- Build system configured
-- Tests passing
-- Multi-platform support enabled
-- CI/CD pipeline active
+✅ **開発準備完了**
+- 基本アプリ構造完了
+- ビルドシステム設定済み
+- テスト通過
+- マルチプラットフォーム対応有効
+- CI/CDパイプライン稼働中
 
-🚀 **Next Steps**
-- Install Flutter SDK on your development machine
-- Run `flutter pub get` to install dependencies
-- Start development with `flutter run`
-- Begin implementing quest and vocabulary features
+🚀 **次のステップ**
+- 開発マシンにFlutter SDKをインストール
+- `flutter pub get` を実行して依存関係をインストール
+- `flutter run` で開発を開始
+- クエストと語彙機能の実装を開始
 
-For detailed setup instructions, see [README_FLUTTER.md](README_FLUTTER.md)
+詳細なセットアップ手順については、[README_FLUTTER.md](README_FLUTTER.md) を参照してください。
