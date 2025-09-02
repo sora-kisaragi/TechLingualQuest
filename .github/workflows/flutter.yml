@@ -7,6 +7,11 @@ on:
     branches: [ main, develop ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
 env:
   FLUTTER_VERSION: '3.24.3'
 
@@ -67,6 +72,7 @@ jobs:
       with:
         file: coverage/lcov.info
         fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   # ビルド (Android, iOS, Web)
   build:

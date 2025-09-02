@@ -9,6 +9,11 @@ on:
     # 毎日午前2時（UTC）にセキュリティスキャンを実行
     - cron: '0 2 * * *'
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
 jobs:
   security-scan:
     runs-on: ubuntu-latest
@@ -51,13 +56,13 @@ jobs:
         fi
     
     - name: CodeQL Analysis
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: dart
         queries: security-extended
     
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
     
     - name: Upload security scan results
       uses: actions/upload-artifact@v4
