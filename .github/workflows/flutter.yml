@@ -140,6 +140,8 @@ jobs:
         export APP_ENV=prod
         export DATABASE_NAME=tech_lingual_quest.db
         export API_BASE_URL=https://api.example.com
+        # CI環境でのGradleヒープサイズを増加（ローカル開発には影響しない）
+        export GRADLE_OPTS="-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError"
         flutter build apk --release
         echo "APK_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)" >> $GITHUB_ENV
     
