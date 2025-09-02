@@ -11,7 +11,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeMessage => 'Welcome to TechLingual Quest!';
 
   @override
-  String get gamifiedJourney => 'Your gamified journey to master technical English';
+  String get gamifiedJourney =>
+      'Your gamified journey to master technical English';
 
   @override
   String get xpLabel => 'XP:';
@@ -50,13 +51,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vocabularyLearning => 'Vocabulary Learning';
 
   @override
-  String get vocabularyDescription => 'Vocabulary cards and learning features will be implemented here';
+  String get vocabularyDescription =>
+      'Vocabulary cards and learning features will be implemented here';
 
   @override
   String get dailyQuests => 'Daily Quests';
 
   @override
-  String get questsDescription => 'Quest system and gamification features will be implemented here';
+  String get questsDescription =>
+      'Quest system and gamification features will be implemented here';
 
   @override
   String get authentication => 'Authentication';

@@ -29,13 +29,14 @@ class LanguageInfo {
 }
 
 /// Dynamic localization system that uses JSON-based translations
-/// 
+///
 /// This system allows for easy addition of new languages without code changes
 /// by simply adding translations to the JSON file
 class DynamicLocalizationService {
   static const String _languageKey = 'selected_language';
   static const String _defaultLanguageCode = 'en';
-  static const String _translationsPath = 'assets/translations/translations.json';
+  static const String _translationsPath =
+      'assets/translations/translations.json';
 
   // Cache for loaded translations
   static Map<String, dynamic>? _translationsData;
@@ -48,13 +49,14 @@ class DynamicLocalizationService {
     try {
       final String jsonString = await rootBundle.loadString(_translationsPath);
       final Map<String, dynamic> data = json.decode(jsonString);
-      
+
       _translationsData = data['translations'] ?? {};
-      
+
       // Parse supported languages
-      final Map<String, dynamic> languagesData = data['supportedLanguages'] ?? {};
+      final Map<String, dynamic> languagesData =
+          data['supportedLanguages'] ?? {};
       _supportedLanguages = {};
-      
+
       for (final entry in languagesData.entries) {
         _supportedLanguages![entry.key] = LanguageInfo.fromJson(
           entry.key,
@@ -96,24 +98,24 @@ class DynamicLocalizationService {
   /// Get translated text for a given key and language
   static Future<String> translate(String key, String languageCode) async {
     await _loadTranslations();
-    
+
     final translationMap = _translationsData![key];
     if (translationMap == null) {
       return key; // Return key if no translation found
     }
-    
+
     // Try to get translation for the specified language
     final translation = translationMap[languageCode];
     if (translation != null) {
       return translation;
     }
-    
+
     // Fallback to English if available
     final englishTranslation = translationMap[_defaultLanguageCode];
     if (englishTranslation != null) {
       return englishTranslation;
     }
-    
+
     // Return the key as last resort
     return key;
   }
@@ -122,7 +124,7 @@ class DynamicLocalizationService {
   static Future<String> getSavedLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     final savedCode = prefs.getString(_languageKey) ?? _defaultLanguageCode;
-    
+
     // Validate that the saved language is still supported
     final isSupported = await isLanguageSupported(savedCode);
     return isSupported ? savedCode : _defaultLanguageCode;
@@ -134,7 +136,7 @@ class DynamicLocalizationService {
     if (!isSupported) {
       return false;
     }
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_languageKey, languageCode);
     return true;
@@ -155,13 +157,13 @@ class DynamicLocalizationService {
   /// Get default language
   static Future<LanguageInfo> getDefaultLanguage() async {
     await _loadTranslations();
-    return _supportedLanguages![_defaultLanguageCode] ?? 
-           const LanguageInfo(
-             code: _defaultLanguageCode,
-             nativeName: 'English',
-             englishName: 'English',
-             locale: Locale(_defaultLanguageCode),
-           );
+    return _supportedLanguages![_defaultLanguageCode] ??
+        const LanguageInfo(
+          code: _defaultLanguageCode,
+          nativeName: 'English',
+          englishName: 'English',
+          locale: Locale(_defaultLanguageCode),
+        );
   }
 
   /// Reload translations (useful for hot reload or dynamic updates)
@@ -181,7 +183,9 @@ class DynamicLanguageNotifier extends StateNotifier<Locale> {
   /// Load saved language from preferences
   Future<void> _loadSavedLanguage() async {
     final languageCode = await DynamicLocalizationService.getSavedLanguage();
-    final locale = await DynamicLocalizationService.getLocaleFromCode(languageCode);
+    final locale = await DynamicLocalizationService.getLocaleFromCode(
+      languageCode,
+    );
     state = locale;
   }
 
@@ -189,7 +193,9 @@ class DynamicLanguageNotifier extends StateNotifier<Locale> {
   Future<bool> changeLanguage(String languageCode) async {
     final success = await DynamicLocalizationService.saveLanguage(languageCode);
     if (success) {
-      final locale = await DynamicLocalizationService.getLocaleFromCode(languageCode);
+      final locale = await DynamicLocalizationService.getLocaleFromCode(
+        languageCode,
+      );
       state = locale;
     }
     return success;
@@ -197,19 +203,22 @@ class DynamicLanguageNotifier extends StateNotifier<Locale> {
 
   /// Get current language info
   Future<LanguageInfo?> getCurrentLanguage() async {
-    return await DynamicLocalizationService.getLanguageByCode(state.languageCode);
+    return await DynamicLocalizationService.getLanguageByCode(
+      state.languageCode,
+    );
   }
 }
 
 /// Provider for the dynamic language system
-final dynamicLanguageProvider = StateNotifierProvider<DynamicLanguageNotifier, Locale>((ref) {
-  return DynamicLanguageNotifier();
-});
+final dynamicLanguageProvider =
+    StateNotifierProvider<DynamicLanguageNotifier, Locale>((ref) {
+      return DynamicLanguageNotifier();
+    });
 
 /// Translation helper class that provides easy access to translations
 class AppTranslations {
   final String _languageCode;
-  
+
   const AppTranslations._(this._languageCode);
 
   /// Create translations instance for a specific language
@@ -228,35 +237,37 @@ class AppTranslations {
     if (DynamicLocalizationService._translationsData == null) {
       return fallback;
     }
-    
+
     final translationMap = DynamicLocalizationService._translationsData![key];
     if (translationMap == null) {
       return fallback.isNotEmpty ? fallback : key;
     }
-    
+
     final translation = translationMap[_languageCode];
     if (translation != null) {
       return translation;
     }
-    
+
     // Fallback to English
     final englishTranslation = translationMap['en'];
     if (englishTranslation != null) {
       return englishTranslation;
     }
-    
+
     return fallback.isNotEmpty ? fallback : key;
   }
 
   // Convenience getters for common translations (async)
   Future<String> get appTitle => get('TechLingual Quest');
   Future<String> get welcomeMessage => get('Welcome to TechLingual Quest!');
-  Future<String> get gamifiedJourney => get('Your gamified journey to master technical English');
+  Future<String> get gamifiedJourney =>
+      get('Your gamified journey to master technical English');
   Future<String> get xpLabel => get('XP:');
   Future<String> get earnXpTooltip => get('Earn XP');
   Future<String> get featuresTitle => get('Features:');
   Future<String> get feature1 => get('• Daily quests and challenges');
-  Future<String> get feature2 => get('• Vocabulary building with spaced repetition');
+  Future<String> get feature2 =>
+      get('• Vocabulary building with spaced repetition');
   Future<String> get feature3 => get('• Technical article summaries');
   Future<String> get feature4 => get('• Progress tracking and achievements');
   Future<String> get feature5 => get('• AI-powered conversation practice');
@@ -264,11 +275,14 @@ class AppTranslations {
   Future<String> get quests => get('Quests');
   Future<String> get profile => get('Profile');
   Future<String> get vocabularyLearning => get('Vocabulary Learning');
-  Future<String> get vocabularyDescription => get('Vocabulary cards and learning features will be implemented here');
+  Future<String> get vocabularyDescription =>
+      get('Vocabulary cards and learning features will be implemented here');
   Future<String> get dailyQuests => get('Daily Quests');
-  Future<String> get questsDescription => get('Quest system and gamification features will be implemented here');
+  Future<String> get questsDescription =>
+      get('Quest system and gamification features will be implemented here');
   Future<String> get authentication => get('Authentication');
-  Future<String> get authDescription => get('User authentication will be implemented here');
+  Future<String> get authDescription =>
+      get('User authentication will be implemented here');
   Future<String> get language => get('Language');
   Future<String> get english => get('English');
   Future<String> get japanese => get('Japanese');
@@ -276,8 +290,12 @@ class AppTranslations {
   Future<String> get chinese => get('Chinese');
 
   // Convenience getters for common translations (sync)
-  String get appTitleSync => getSync('TechLingual Quest', fallback: 'TechLingual Quest');
-  String get welcomeMessageSync => getSync('Welcome to TechLingual Quest!', fallback: 'Welcome to TechLingual Quest!');
+  String get appTitleSync =>
+      getSync('TechLingual Quest', fallback: 'TechLingual Quest');
+  String get welcomeMessageSync => getSync(
+    'Welcome to TechLingual Quest!',
+    fallback: 'Welcome to TechLingual Quest!',
+  );
   String get vocabularySync => getSync('Vocabulary', fallback: 'Vocabulary');
   String get questsSync => getSync('Quests', fallback: 'Quests');
   String get profileSync => getSync('Profile', fallback: 'Profile');

@@ -9,7 +9,9 @@ import 'package:tech_lingual_quest/shared/widgets/language_selector.dart';
 
 void main() {
   group('Localization Tests', () {
-    testWidgets('Should display English text by default', (WidgetTester tester) async {
+    testWidgets('Should display English text by default', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -49,7 +51,9 @@ void main() {
       expect(find.text('Profile'), findsOneWidget);
     });
 
-    testWidgets('Should display Japanese text when locale is Japanese', (WidgetTester tester) async {
+    testWidgets('Should display Japanese text when locale is Japanese', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -89,7 +93,9 @@ void main() {
       expect(find.text('プロフィール'), findsOneWidget);
     });
 
-    testWidgets('Language selector should show language options', (WidgetTester tester) async {
+    testWidgets('Language selector should show language options', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -101,9 +107,7 @@ void main() {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: LanguageService.getSupportedLocales(),
-            home: const Scaffold(
-              body: LanguageSelector(),
-            ),
+            home: const Scaffold(body: LanguageSelector()),
           ),
         ),
       );
@@ -111,7 +115,7 @@ void main() {
       // Find and tap the language selector
       final languageButton = find.byIcon(Icons.language);
       expect(languageButton, findsOneWidget);
-      
+
       await tester.tap(languageButton);
       await tester.pumpAndSettle();
 
@@ -127,23 +131,29 @@ void main() {
       expect(supportedLocales.contains(const Locale('ja')), true);
     });
 
-    test('LanguageService should convert language codes to locales correctly', () {
-      expect(LanguageService.getLocaleFromCode('en'), const Locale('en'));
-      expect(LanguageService.getLocaleFromCode('ja'), const Locale('ja'));
-      expect(LanguageService.getLocaleFromCode('unknown'), const Locale('en')); // Default fallback
-    });
+    test(
+      'LanguageService should convert language codes to locales correctly',
+      () {
+        expect(LanguageService.getLocaleFromCode('en'), const Locale('en'));
+        expect(LanguageService.getLocaleFromCode('ja'), const Locale('ja'));
+        expect(
+          LanguageService.getLocaleFromCode('unknown'),
+          const Locale('en'),
+        ); // Default fallback
+      },
+    );
 
     test('LanguageService should handle supported languages correctly', () {
       final supportedLanguages = LanguageService.getSupportedLanguages();
       expect(supportedLanguages.length, 2);
-      
+
       // Test English language
       final english = LanguageService.getLanguageByCode('en');
       expect(english, isNotNull);
       expect(english!.code, 'en');
       expect(english.englishName, 'English');
       expect(english.locale, const Locale('en'));
-      
+
       // Test Japanese language
       final japanese = LanguageService.getLanguageByCode('ja');
       expect(japanese, isNotNull);
@@ -151,7 +161,7 @@ void main() {
       expect(japanese.englishName, 'Japanese');
       expect(japanese.nativeName, '日本語');
       expect(japanese.locale, const Locale('ja'));
-      
+
       // Test unsupported language
       final unsupported = LanguageService.getLanguageByCode('fr');
       expect(unsupported, isNull);

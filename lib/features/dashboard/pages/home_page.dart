@@ -26,16 +26,13 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final translationsAsync = ref.watch(appTranslationsProvider);
-    
+
     return translationsAsync.when(
       data: (translations) => _buildHomeContent(context, translations),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
-        body: Center(
-          child: Text('Failed to load translations: $error'),
-        ),
+        body: Center(child: Text('Failed to load translations: $error')),
       ),
     );
   }
@@ -50,9 +47,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             return Text(snapshot.data ?? 'TechLingual Quest');
           },
         ),
-        actions: const [
-          DynamicLanguageSelector(),
-        ],
+        actions: const [DynamicLanguageSelector()],
       ),
       body: Center(
         child: Column(
@@ -65,7 +60,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               builder: (context, snapshot) {
                 return Text(
                   snapshot.data ?? 'Welcome to TechLingual Quest!',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 );
               },
             ),
@@ -74,7 +72,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               future: translations.gamifiedJourney,
               builder: (context, snapshot) {
                 return Text(
-                  snapshot.data ?? 'Your gamified journey to master technical English',
+                  snapshot.data ??
+                      'Your gamified journey to master technical English',
                   style: const TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 );
@@ -125,7 +124,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               builder: (context, snapshot) {
                 return Text(
                   snapshot.data ?? 'Features:',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 );
               },
             ),
@@ -173,7 +175,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildNavigationButtons(BuildContext context, AppTranslations translations) {
+  Widget _buildNavigationButtons(
+    BuildContext context,
+    AppTranslations translations,
+  ) {
     return Wrap(
       spacing: 10,
       runSpacing: 10,

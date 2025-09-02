@@ -12,21 +12,21 @@ class VocabularyPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final translationsAsync = ref.watch(appTranslationsProvider);
-    
+
     return translationsAsync.when(
       data: (translations) => _buildVocabularyContent(context, translations),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
-        body: Center(
-          child: Text('Failed to load translations: $error'),
-        ),
+        body: Center(child: Text('Failed to load translations: $error')),
       ),
     );
   }
 
-  Widget _buildVocabularyContent(BuildContext context, AppTranslations translations) {
+  Widget _buildVocabularyContent(
+    BuildContext context,
+    AppTranslations translations,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: FutureBuilder<String>(
@@ -44,18 +44,17 @@ class VocabularyPage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.book,
-              size: 80,
-              color: Colors.deepPurple,
-            ),
+            const Icon(Icons.book, size: 80, color: Colors.deepPurple),
             const SizedBox(height: 20),
             FutureBuilder<String>(
               future: translations.vocabularyLearning,
               builder: (context, snapshot) {
                 return Text(
                   snapshot.data ?? 'Vocabulary Learning',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 );
               },
             ),
@@ -64,7 +63,8 @@ class VocabularyPage extends ConsumerWidget {
               future: translations.vocabularyDescription,
               builder: (context, snapshot) {
                 return Text(
-                  snapshot.data ?? 'Vocabulary cards and learning features will be implemented here',
+                  snapshot.data ??
+                      'Vocabulary cards and learning features will be implemented here',
                   style: const TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 );
