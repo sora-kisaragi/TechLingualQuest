@@ -49,5 +49,49 @@
 
 ---
 
+## 🔧 開発・デプロイメント
+
+### CI/CD パイプライン
+
+本プロジェクトは **GitHub Actions** を使用した自動CI/CDパイプラインを構築しています。
+
+#### 🚀 自動実行される処理
+
+| ワークフロー | トリガー | 実行内容 |
+|-------------|----------|----------|
+| **Flutter CI/CD** | push, PR | コード品質チェック、テスト、ビルド、通知 |
+| **Security Scan** | push, PR, 定期実行 | 脆弱性スキャン、依存関係チェック |
+| **Release Build** | タグプッシュ | リリースビルド、GitHub Release作成 |
+
+#### 📢 通知機能
+
+- **Discord**: リアルタイムでCI/CD結果を通知
+- **Slack**: チーム向けに構造化されたビルド情報を配信
+- **カバレッジレポート**: Codecovでテストカバレッジを追跡
+
+#### ⚙️ 設定方法
+
+詳細な設定手順は [CI/CDセットアップガイド](docs/ci-cd-setup.md) を参照してください。
+
+```bash
+# CI/CD環境の初期設定
+./scripts/setup_ci_cd.sh setup
+
+# Webhook設定とテスト
+./scripts/setup_ci_cd.sh webhook discord YOUR_WEBHOOK_URL
+./scripts/setup_ci_cd.sh webhook slack YOUR_WEBHOOK_URL
+
+# ローカルでCI/CDテスト
+./scripts/setup_ci_cd.sh test all
+```
+
+### 📱 ビルド成果物
+
+- **Android APK**: デバッグ・リリース版
+- **Android App Bundle**: Google Play Store向け
+- **Web版**: ブラウザで動作するバージョン
+
+---
+
 ## 📜 ライセンス
 MIT License
