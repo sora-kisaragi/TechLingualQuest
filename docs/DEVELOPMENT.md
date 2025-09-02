@@ -52,6 +52,76 @@ git checkout android/gradle.properties
 
 CI/CDパイプラインでは、クラウド環境での安定したビルドを保証するため、自動的により高いメモリ設定（4GBヒープ）を使用します。ローカル開発者は、システムクラッシュを避けるためより保守的な2GBデフォルトを維持します。
 
+## 自動コードフォーマッティング設定
+
+### CI/CDフォーマットエラーの予防
+
+プロジェクトでは、コミット時に自動的にDartコードをフォーマットするpre-commitフックを設定できます。これにより、CI/CDでのフォーマットエラーを事前に防げます。
+
+#### 自動セットアップ（推奨）
+
+```bash
+# プロジェクトルートで実行
+./scripts/setup_precommit_hooks.sh
+```
+
+このスクリプトは以下を自動実行します：
+- pre-commitフレームワークのインストール
+- pre-commitフックの設定
+- Dartフォーマッターの設定
+
+#### 手動セットアップ
+
+```bash
+# 1. pre-commitをインストール
+pip3 install pre-commit --user
+
+# 2. フックをインストール
+pre-commit install
+
+# 3. テスト実行
+pre-commit run --all-files
+```
+
+#### 設定される機能
+
+- ✅ **Dartコードの自動フォーマット**: `dart format`がコミット時に自動実行
+- ✅ **行末空白の除去**: 不要な空白を自動削除
+- ✅ **ファイル末端の改行統一**: ファイル末端の改行を統一
+- ✅ **YAML/JSON構文チェック**: 設定ファイルの構文を検証
+- ✅ **マージコンフリクトの検出**: コンフリクトマーカーを検出
+
+#### 使用方法
+
+セットアップ後は、通常通り`git commit`を実行するだけで、自動的にコードがフォーマットされます：
+
+```bash
+git add .
+git commit -m "feat: add new feature"
+# → Dartコードが自動的にフォーマットされ、コミットされます
+```
+
+#### トラブルシューティング
+
+**Flutter/Dartが見つからない場合:**
+```bash
+# Flutter/DartへのPATHを確認
+which flutter
+which dart
+
+# PATHに追加（必要に応じて）
+export PATH="$PATH:/path/to/flutter/bin"
+```
+
+**pre-commitを無効にする場合:**
+```bash
+# 一時的に無効化
+git commit --no-verify -m "commit message"
+
+# 完全に無効化
+pre-commit uninstall
+```
+
 ## トラブルシューティング
 
 ### 一般的なメモリ問題

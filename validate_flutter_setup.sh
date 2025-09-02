@@ -21,7 +21,7 @@ check_file() {
     local file_path="$1"
     local description="$2"
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    
+
     if [ -f "$file_path" ]; then
         echo -e "${GREEN}✅ $description${NC}"
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
@@ -37,7 +37,7 @@ check_file_with_fallback() {
     local fallback_path="$2"
     local description="$3"
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    
+
     if [ -f "$file_path" ] || [ -f "$fallback_path" ]; then
         echo -e "${GREEN}✅ $description${NC}"
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
@@ -52,7 +52,7 @@ check_dir() {
     local dir_path="$1"
     local description="$2"
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
-    
+
     if [ -d "$dir_path" ]; then
         echo -e "${GREEN}✅ $description${NC}"
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))

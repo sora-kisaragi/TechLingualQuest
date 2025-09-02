@@ -16,12 +16,12 @@ Follow [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.htm
   - Other C++ frameworks: standard include/lib separation.
 
 ## Class, Function, and Variable Naming
-- Classes: `PascalCase` (e.g., `PlayerController`)  
-  クラス名は PascalCase （例: `PlayerController`）  
-  类名使用 PascalCase（例: `PlayerController`）  
+- Classes: `PascalCase` (e.g., `PlayerController`)
+  クラス名は PascalCase （例: `PlayerController`）
+  类名使用 PascalCase（例: `PlayerController`）
   클래스명은 PascalCase 사용 (예: `PlayerController`)
-- Functions / Methods: `CamelCase` (e.g., `GetPlayerName()`)  
-- Variables: `snake_case` (e.g., `player_score`)  
+- Functions / Methods: `CamelCase` (e.g., `GetPlayerName()`)
+- Variables: `snake_case` (e.g., `player_score`)
 - Constants / Macros: `kUpperSnakeCase` for constants, `UPPER_SNAKE_CASE` for macros
 
 ## Coding Style
@@ -45,5 +45,5 @@ Follow [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.htm
 - Human review recommended for engine integration, memory management, and performance-critical code.
 
 ## Comments
-- Main language: English  
+- Main language: English
 - Supplement: 日本語 / 中文 / 한국語

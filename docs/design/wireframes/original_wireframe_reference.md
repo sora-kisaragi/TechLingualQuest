@@ -17,7 +17,7 @@
 - **プログレスバー**: 青色のXP進捗表示
 - **クイックアクション**:
   - 📖 Read: Summary of Quantum Computing
-  - ✏️ Write: Summarize last article  
+  - ✏️ Write: Summarize last article
   - 🎧 Listen: Technical podcast
   - 💬 Speak: Discuss distributed systems
 - **単語学習統計**: 週間グラフ（棒グラフ形式）
@@ -27,7 +27,7 @@
 - **タイトル**: "Vocabulary"
 - **学習済み単語リスト**:
   - synchronous (✅) - "to ctaske shown に only thesis auses rangal discipeign" - [B2] [⭐] [SFB]
-  - dedicated (✅) - "Internett letterd oncor foliation" - [B2] [⭐] [SFE]  
+  - dedicated (✅) - "Internett letterd oncor foliation" - [B2] [⭐] [SFE]
   - latent (✅) - "Accuuntrithe a progressrant" - [B1] [⭐⭐] [#]
 - **クイズボタン**: 画面下部の青いボタン
 
@@ -49,7 +49,7 @@
 - **統計グラフ**: 855の値を示す棒グラフ（Apr 8, 2023:1の表示）
 - **技術要約セクション**:
   - ⚛️ Quantum Computing - Quantum Computers
-  - 🕸️ Distributed Systems - Systems  
+  - 🕸️ Distributed Systems - Systems
   - 🧠 Neural Networks - AI
 - **データベース連携**: "View Database"ボタン
 

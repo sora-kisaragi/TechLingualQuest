@@ -11,10 +11,10 @@
    # Flutter SDK のダウンロード
    git clone https://github.com/flutter/flutter.git -b stable
    export PATH="$PATH:`pwd`/flutter/bin"
-   
+
    # または snap を使用（Ubuntu/Linux）
    sudo snap install flutter --classic
-   
+
    # または homebrew を使用（macOS）
    brew install --cask flutter
    ```
@@ -35,7 +35,7 @@ TechLingualQuest/
 ├── test/
 │   └── widget_test.dart    # ウィジェットテスト
 ├── android/                # Android プラットフォーム固有ファイル
-├── ios/                    # iOS プラットフォーム固有ファイル  
+├── ios/                    # iOS プラットフォーム固有ファイル
 ├── web/                    # Web プラットフォーム固有ファイル
 ├── pubspec.yaml           # プロジェクトの依存関係とメタデータ
 ├── analysis_options.yaml  # Dart アナライザー設定
@@ -58,10 +58,10 @@ TechLingualQuest/
    ```bash
    # Web
    flutter run -d chrome
-   
+
    # Android（接続されたデバイス/エミュレーターで）
    flutter run -d android
-   
+
    # iOS（macOS のみ、シミュレーター/デバイスで）
    flutter run -d ios
    ```
@@ -75,13 +75,13 @@ TechLingualQuest/
    ```bash
    # Web
    flutter build web
-   
+
    # Android APK
    flutter build apk
-   
+
    # Android App Bundle
    flutter build appbundle
-   
+
    # iOS（macOS のみ）
    flutter build ios
    ```

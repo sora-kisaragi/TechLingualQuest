@@ -31,9 +31,9 @@ Follow modern web standards and best practices for consistent, maintainable, and
 - Separate layout, typography, and color styles for maintainability
 
 ## Comments and Documentation
-- Main comments in English  
-  主要なコメントは英語で記述  
-  主要注释使用英语  
+- Main comments in English
+  主要なコメントは英語で記述
+  主要注释使用英语
   주요 주석은 영어로 작성
 - Use `<!-- -->` for HTML comments, `/* */` for CSS comments
 - Document complex layouts or interactions

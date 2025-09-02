@@ -70,7 +70,7 @@ class MyWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final translationsAsync = ref.watch(appTranslationsProvider);
-    
+
     return translationsAsync.when(
       data: (translations) => FutureBuilder<String>(
         future: translations.get('Welcome to TechLingual Quest!'),

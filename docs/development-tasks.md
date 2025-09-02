@@ -23,10 +23,10 @@ This document outlines detailed development tasks based on the project roadmap a
 ## Phase 1: Project Foundation (Weeks 1-2)
 
 ### Issue: Basic Flutter Project Setup
-**Priority:** High  
-**Estimated Effort:** 3-5 days  
-**Deadline:** Week 1  
-**Labels:** `setup`, `flutter`, `foundation`  
+**Priority:** High
+**Estimated Effort:** 3-5 days
+**Deadline:** Week 1
+**Labels:** `setup`, `flutter`, `foundation`
 **Dependencies:** Issue #8 (Flutter environment setup)
 
 **Description:**
@@ -51,10 +51,10 @@ Set up the basic Flutter project structure with database connectivity.
 ## Phase 2: Authentication & User Management (Week 3)
 
 ### Issue: User Authentication System
-**Priority:** High  
-**Estimated Effort:** 5-7 days  
-**Deadline:** Week 3  
-**Labels:** `auth`, `user-management`, `security`  
+**Priority:** High
+**Estimated Effort:** 5-7 days
+**Deadline:** Week 3
+**Labels:** `auth`, `user-management`, `security`
 
 **Description:**
 Implement complete user authentication and profile management system.
@@ -76,10 +76,10 @@ Implement complete user authentication and profile management system.
 - Biometric authentication support (optional)
 
 ### Issue: User Profile & Progress Tracking
-**Priority:** Medium  
-**Estimated Effort:** 3-4 days  
-**Deadline:** Week 3  
-**Labels:** `user-profile`, `progress-tracking`  
+**Priority:** Medium
+**Estimated Effort:** 3-4 days
+**Deadline:** Week 3
+**Labels:** `user-profile`, `progress-tracking`
 
 **Description:**
 Create user profile system with progress tracking capabilities.
@@ -97,10 +97,10 @@ Create user profile system with progress tracking capabilities.
 ## Phase 3: Vocabulary Management System (Weeks 4-5)
 
 ### Issue: Vocabulary Database Schema
-**Priority:** High  
-**Estimated Effort:** 2-3 days  
-**Deadline:** Week 4  
-**Labels:** `database`, `vocabulary`, `schema`  
+**Priority:** High
+**Estimated Effort:** 2-3 days
+**Deadline:** Week 4
+**Labels:** `database`, `vocabulary`, `schema`
 
 **Description:**
 Design and implement vocabulary database schema with efficient querying.
@@ -114,10 +114,10 @@ Design and implement vocabulary database schema with efficient querying.
 - [ ] Import/export functionality design
 
 ### Issue: Vocabulary Card UI System
-**Priority:** High  
-**Estimated Effort:** 5-7 days  
-**Deadline:** Week 5  
-**Labels:** `ui`, `vocabulary`, `cards`  
+**Priority:** High
+**Estimated Effort:** 5-7 days
+**Deadline:** Week 5
+**Labels:** `ui`, `vocabulary`, `cards`
 
 **Description:**
 Implement card-style vocabulary management interface.
@@ -132,10 +132,10 @@ Implement card-style vocabulary management interface.
 - [ ] Responsive design for mobile/tablet
 
 ### Issue: Vocabulary Quiz System
-**Priority:** Medium  
-**Estimated Effort:** 4-6 days  
-**Deadline:** Week 5  
-**Labels:** `quiz`, `vocabulary`, `spaced-repetition`  
+**Priority:** Medium
+**Estimated Effort:** 4-6 days
+**Deadline:** Week 5
+**Labels:** `quiz`, `vocabulary`, `spaced-repetition`
 
 **Description:**
 Implement vocabulary quiz system with spaced repetition algorithm.
@@ -153,10 +153,10 @@ Implement vocabulary quiz system with spaced repetition algorithm.
 ## Phase 4: Quest & Gamification System (Weeks 6-7)
 
 ### Issue: XP and Leveling System
-**Priority:** Medium  
-**Estimated Effort:** 4-5 days  
-**Deadline:** Week 6  
-**Labels:** `gamification`, `xp`, `levels`  
+**Priority:** Medium
+**Estimated Effort:** 4-5 days
+**Deadline:** Week 6
+**Labels:** `gamification`, `xp`, `levels`
 
 **Description:**
 Implement experience points and leveling system for user engagement.
@@ -170,10 +170,10 @@ Implement experience points and leveling system for user engagement.
 - [ ] Activity-based XP rewards
 
 ### Issue: Achievement & Badge System
-**Priority:** Medium  
-**Estimated Effort:** 3-4 days  
-**Deadline:** Week 6  
-**Labels:** `achievements`, `badges`, `gamification`  
+**Priority:** Medium
+**Estimated Effort:** 3-4 days
+**Deadline:** Week 6
+**Labels:** `achievements`, `badges`, `gamification`
 
 **Description:**
 Create achievement and badge system to motivate users.
@@ -187,10 +187,10 @@ Create achievement and badge system to motivate users.
 - [ ] Progress tracking for multi-step achievements
 
 ### Issue: Daily/Weekly Quest System
-**Priority:** High  
-**Estimated Effort:** 5-7 days  
-**Deadline:** Week 7  
-**Labels:** `quests`, `daily-tasks`, `scheduling`  
+**Priority:** High
+**Estimated Effort:** 5-7 days
+**Deadline:** Week 7
+**Labels:** `quests`, `daily-tasks`, `scheduling`
 
 **Description:**
 Implement daily and weekly quest system with various task types.
@@ -209,10 +209,10 @@ Implement daily and weekly quest system with various task types.
 ## Phase 5: Article Summary System (Week 8)
 
 ### Issue: Article Summary Storage
-**Priority:** Medium  
-**Estimated Effort:** 3-4 days  
-**Deadline:** Week 8  
-**Labels:** `articles`, `summaries`, `storage`  
+**Priority:** Medium
+**Estimated Effort:** 3-4 days
+**Deadline:** Week 8
+**Labels:** `articles`, `summaries`, `storage`
 
 **Description:**
 Implement system for storing and managing technical article summaries.
@@ -226,10 +226,10 @@ Implement system for storing and managing technical article summaries.
 - [ ] Export functionality
 
 ### Issue: Article Summary UI & Management
-**Priority:** Medium  
-**Estimated Effort:** 4-5 days  
-**Deadline:** Week 8  
-**Labels:** `ui`, `articles`, `management`  
+**Priority:** Medium
+**Estimated Effort:** 4-5 days
+**Deadline:** Week 8
+**Labels:** `ui`, `articles`, `management`
 
 **Description:**
 Create user interface for managing and displaying article summaries.
@@ -247,10 +247,10 @@ Create user interface for managing and displaying article summaries.
 ## Phase 6: Progress Dashboard (Week 9)
 
 ### Issue: Progress Visualization Dashboard
-**Priority:** Medium  
-**Estimated Effort:** 5-7 days  
-**Deadline:** Week 9  
-**Labels:** `dashboard`, `analytics`, `visualization`  
+**Priority:** Medium
+**Estimated Effort:** 5-7 days
+**Deadline:** Week 9
+**Labels:** `dashboard`, `analytics`, `visualization`
 
 **Description:**
 Create comprehensive progress dashboard with charts and statistics.
@@ -265,10 +265,10 @@ Create comprehensive progress dashboard with charts and statistics.
 - [ ] Export progress reports
 
 ### Issue: Analytics & Insights
-**Priority:** Low  
-**Estimated Effort:** 3-4 days  
-**Deadline:** Week 9  
-**Labels:** `analytics`, `insights`, `performance`  
+**Priority:** Low
+**Estimated Effort:** 3-4 days
+**Deadline:** Week 9
+**Labels:** `analytics`, `insights`, `performance`
 
 **Description:**
 Implement analytics system to provide learning insights.
@@ -286,10 +286,10 @@ Implement analytics system to provide learning insights.
 ## Phase 7: External Integration (Week 10)
 
 ### Issue: OpenAI API Integration
-**Priority:** Medium  
-**Estimated Effort:** 4-5 days  
-**Deadline:** Week 10  
-**Labels:** `ai`, `openai`, `integration`  
+**Priority:** Medium
+**Estimated Effort:** 4-5 days
+**Deadline:** Week 10
+**Labels:** `ai`, `openai`, `integration`
 
 **Description:**
 Integrate OpenAI API for automated features.
@@ -303,10 +303,10 @@ Integrate OpenAI API for automated features.
 - [ ] Rate limiting implementation
 
 ### Issue: GPT App Integration
-**Priority:** Low  
-**Estimated Effort:** 2-3 days  
-**Deadline:** Week 10  
-**Labels:** `integration`, `external-app`, `sharing`  
+**Priority:** Low
+**Estimated Effort:** 2-3 days
+**Deadline:** Week 10
+**Labels:** `integration`, `external-app`, `sharing`
 
 **Description:**
 Implement integration with official GPT app for conversation practice.
@@ -323,10 +323,10 @@ Implement integration with official GPT app for conversation practice.
 ## Phase 8: UI/UX Polish & Optimization (Weeks 11-12)
 
 ### Issue: UI/UX Refinement & Animations
-**Priority:** Medium  
-**Estimated Effort:** 7-10 days  
-**Deadline:** Week 12  
-**Labels:** `ui-polish`, `animations`, `ux`  
+**Priority:** Medium
+**Estimated Effort:** 7-10 days
+**Deadline:** Week 12
+**Labels:** `ui-polish`, `animations`, `ux`
 
 **Description:**
 Polish the user interface and add gamified animations.
@@ -340,10 +340,10 @@ Polish the user interface and add gamified animations.
 - [ ] Responsive design for different screen sizes
 
 ### Issue: Performance Optimization
-**Priority:** Medium  
-**Estimated Effort:** 3-5 days  
-**Deadline:** Week 12  
-**Labels:** `performance`, `optimization`  
+**Priority:** Medium
+**Estimated Effort:** 3-5 days
+**Deadline:** Week 12
+**Labels:** `performance`, `optimization`
 
 **Description:**
 Optimize app performance for smooth user experience.
@@ -361,10 +361,10 @@ Optimize app performance for smooth user experience.
 ## Additional Infrastructure Tasks
 
 ### Issue: Testing Implementation
-**Priority:** High  
-**Estimated Effort:** Ongoing  
-**Deadline:** Continuous  
-**Labels:** `testing`, `quality-assurance`  
+**Priority:** High
+**Estimated Effort:** Ongoing
+**Deadline:** Continuous
+**Labels:** `testing`, `quality-assurance`
 
 **Description:**
 Implement comprehensive testing strategy.
@@ -378,10 +378,10 @@ Implement comprehensive testing strategy.
 - [ ] Performance testing
 
 ### Issue: Documentation & Deployment
-**Priority:** Medium  
-**Estimated Effort:** 3-5 days  
-**Deadline:** Week 12  
-**Labels:** `documentation`, `deployment`  
+**Priority:** Medium
+**Estimated Effort:** 3-5 days
+**Deadline:** Week 12
+**Labels:** `documentation`, `deployment`
 
 **Description:**
 Complete project documentation and deployment setup.
@@ -398,11 +398,11 @@ Complete project documentation and deployment setup.
 
 ## Summary
 
-**Total Estimated Timeline:** 12 weeks  
-**Total Issues:** 16 major development issues  
+**Total Estimated Timeline:** 12 weeks
+**Total Issues:** 16 major development issues
 **Key Milestones:**
 - Week 3: Authentication complete
-- Week 5: Vocabulary system complete  
+- Week 5: Vocabulary system complete
 - Week 7: Gamification system complete
 - Week 10: Core features complete
 - Week 12: Production-ready release
