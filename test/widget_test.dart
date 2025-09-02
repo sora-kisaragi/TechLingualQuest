@@ -135,8 +135,7 @@ void main() {
           findsOneWidget);
     });
 
-    testWidgets('Should navigate to profile page',
-        (WidgetTester tester) async {
+    testWidgets('Should navigate to profile page', (WidgetTester tester) async {
       // Build our app and trigger a frame.
       await tester
           .pumpWidget(const ProviderScope(child: TechLingualQuestApp()));
@@ -172,4 +171,3 @@ void main() {
     });
   });
 }
-
