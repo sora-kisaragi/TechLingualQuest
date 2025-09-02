@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'logger.dart';
 
 /// アプリケーション全体のエラーハンドリングユーティリティ
-/// 
+///
 /// 一貫したエラーハンドリングとユーザーフレンドリーなエラーメッセージを提供する
 class ErrorHandler {
   /// オプションのユーザー通知付きでエラーをハンドリングしてログ
@@ -14,26 +15,26 @@ class ErrorHandler {
   }) {
     // エラーをログ
     AppLogger.error('Error occurred: $error', error, stackTrace);
-    
+
     // コンテキストが提供されている場合はユーザーフレンドリーなメッセージを表示
     if (context != null && context.mounted) {
       final message = userMessage ?? _getErrorMessage(error);
       _showErrorSnackBar(context, message);
     }
   }
-  
+
   /// 例外からユーザーフレンドリーなエラーメッセージを取得
   static String _getErrorMessage(Object error) {
     if (error.toString().contains('database')) {
       return 'データベースエラーが発生しました。後でもう一度お試しください。';
-    } else if (error.toString().contains('network') || 
-               error.toString().contains('connection')) {
+    } else if (error.toString().contains('network') ||
+        error.toString().contains('connection')) {
       return 'ネットワークエラーが発生しました。接続を確認してください。';
     } else {
       return '予期しないエラーが発生しました。後でもう一度お試しください。';
     }
   }
-  
+
   /// SnackBarでユーザーにエラーメッセージを表示
   static void _showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -55,12 +56,12 @@ class ErrorHandler {
 /// AsyncValueの一貫したエラーハンドリングのための拡張
 extension AsyncValueErrorHandling<T> on AsyncValue<T> {
   /// 一貫したエラー表示でエラーをハンドリング
-  Widget when({
+  Widget whenOrError({
     required Widget Function(T data) data,
     required Widget Function() loading,
     Widget Function(Object error, StackTrace stackTrace)? error,
   }) {
-    return super.when(
+    return when(
       data: data,
       loading: loading,
       error: error ?? (err, stack) => _DefaultErrorWidget(error: err),
@@ -71,9 +72,9 @@ extension AsyncValueErrorHandling<T> on AsyncValue<T> {
 /// AsyncValueエラーをハンドリングするためのデフォルトエラーウィジェット
 class _DefaultErrorWidget extends StatelessWidget {
   const _DefaultErrorWidget({required this.error});
-  
+
   final Object error;
-  
+
   @override
   Widget build(BuildContext context) {
     return Center(

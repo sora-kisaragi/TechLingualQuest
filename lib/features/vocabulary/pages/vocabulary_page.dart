@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// 語彙学習ページ
-/// 
+///
 /// これは語彙管理機能のためのプレースホルダーページです
 class VocabularyPage extends StatelessWidget {
   const VocabularyPage({super.key});

@@ -4,31 +4,31 @@ import '../../app/config.dart';
 import '../../shared/utils/logger.dart';
 
 /// ローカルSQLiteデータベースのサービス
-/// 
+///
 /// データベース接続、初期化、基本操作を管理する
 /// 設計書に基づき、最初はSQLiteを使用し、後にFirestoreに移行する
 class DatabaseService {
   static Database? _database;
   static const int _databaseVersion = 1;
-  
+
   /// データベースインスタンスを取得（シングルトンパターン）
   static Future<Database> get database async {
     if (_database != null) return _database!;
-    
+
     _database = await _initDatabase();
     return _database!;
   }
-  
+
   /// データベースを初期化
   static Future<Database> _initDatabase() async {
     AppLogger.info('Initializing database...');
-    
+
     try {
       final databasesPath = await getDatabasesPath();
       final path = join(databasesPath, AppConfig.databaseName);
-      
+
       AppLogger.debug('Database path: $path');
-      
+
       return await openDatabase(
         path,
         version: _databaseVersion,
@@ -40,11 +40,11 @@ class DatabaseService {
       rethrow;
     }
   }
-  
+
   /// データベーステーブルを作成
   static Future<void> _onCreate(Database db, int version) async {
     AppLogger.info('Creating database tables...');
-    
+
     try {
       // 基本的なユーザー情報のためのユーザーテーブル
       await db.execute('''
@@ -58,7 +58,7 @@ class DatabaseService {
           updated_at INTEGER NOT NULL
         )
       ''');
-      
+
       // 語彙カードを保存するための語彙テーブル
       await db.execute('''
         CREATE TABLE vocabulary (
@@ -74,7 +74,7 @@ class DatabaseService {
           updated_at INTEGER NOT NULL
         )
       ''');
-      
+
       // ユーザー語彙進捗テーブル
       await db.execute('''
         CREATE TABLE user_vocabulary_progress (
@@ -93,7 +93,7 @@ class DatabaseService {
           UNIQUE(user_id, vocabulary_id)
         )
       ''');
-      
+
       // ゲーミフィケーションのためのクエストテーブル
       await db.execute('''
         CREATE TABLE quests (
@@ -108,7 +108,7 @@ class DatabaseService {
           updated_at INTEGER NOT NULL
         )
       ''');
-      
+
       // ユーザークエスト進捗テーブル
       await db.execute('''
         CREATE TABLE user_quest_progress (
@@ -124,20 +124,22 @@ class DatabaseService {
           UNIQUE(user_id, quest_id)
         )
       ''');
-      
+
       AppLogger.info('Database tables created successfully');
     } catch (e, stackTrace) {
       AppLogger.error('Failed to create database tables', e, stackTrace);
       rethrow;
     }
   }
-  
+
   /// データベースアップグレードを処理
-  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    AppLogger.info('Upgrading database from version $oldVersion to $newVersion');
+  static Future<void> _onUpgrade(
+      Database db, int oldVersion, int newVersion) async {
+    AppLogger.info(
+        'Upgrading database from version $oldVersion to $newVersion');
     // 将来のデータベースマイグレーションはここで処理される
   }
-  
+
   /// データベース接続を閉じる
   static Future<void> close() async {
     if (_database != null) {
@@ -146,7 +148,7 @@ class DatabaseService {
       _database = null;
     }
   }
-  
+
   /// データベースが開いているかチェック
   static bool get isOpen => _database?.isOpen ?? false;
 }

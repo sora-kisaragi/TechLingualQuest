@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// ゲーミフィケーション機能のためのクエストページ
-/// 
+///
 /// これはクエスト管理機能のためのプレースホルダーページです
 class QuestsPage extends StatelessWidget {
   const QuestsPage({super.key});

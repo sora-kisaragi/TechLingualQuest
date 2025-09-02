@@ -7,7 +7,7 @@ import '../features/quests/pages/quests_page.dart';
 import '../shared/utils/logger.dart';
 
 /// go_routerを使用したアプリケーションルーター設定
-/// 
+///
 /// アプリのルートとナビゲーション構造を定義する
 class AppRouter {
   static final GoRouter _router = GoRouter(
@@ -43,11 +43,11 @@ class AppRouter {
     ],
     errorBuilder: (context, state) => _ErrorPage(error: state.error.toString()),
     redirect: (context, state) {
-      AppLogger.debug('Navigating to: ${state.location}');
+      AppLogger.debug('Navigating to: ${state.uri.toString()}');
       return null; // 現在はリダイレクト処理なし
     },
   );
-  
+
   /// ルーターインスタンスを取得
   static GoRouter get router => _router;
 }
@@ -55,9 +55,9 @@ class AppRouter {
 /// ナビゲーションエラーを処理するエラーページ
 class _ErrorPage extends StatelessWidget {
   const _ErrorPage({required this.error});
-  
+
   final String error;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
