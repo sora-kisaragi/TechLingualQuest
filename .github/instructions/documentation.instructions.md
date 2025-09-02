@@ -20,15 +20,15 @@ applyTo: "docs/**/*.md"
 - Inline: `$ ... $`, Block: `$$ ... $$`
 
 ## Required Documents
-- Requirements (`requirements/`): System & user requirements
-- HLD (`design/HLD.md`): High-level architecture
-- LLD (`design/LLD.md`): Low-level design, classes, functions
+- Requirements (`docs/requirements/`): System & user requirements
+- HLD (`docs/design/HLD.md`): High-level architecture
+- LLD (`docs/design/LLD.md`): Low-level design, classes, functions
 
 ## Optional Documents
-- DB design (`optional/db_design.md`)
-- Business workflow (`optional/business_flow.md`)
-- API spec (`optional/api_spec.md`)
-- Other supplements (`optional/calculations.md`)
+- DB design (`docs/optional/db_design.md`)
+- Business workflow (`docs/optional/business_flow.md`)
+- API spec (`docs/optional/api_spec.md`)
+- Other supplements (`docs/optional/calculations.md`)
 - Only generate if explicitly requested.
 
 ## General Guidelines

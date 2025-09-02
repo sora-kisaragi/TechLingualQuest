@@ -3,7 +3,7 @@ author: "GitHub Copilot Agent"
 date: "2025-08-29"
 version: "1.1"
 related_issues: ["#10"]
-related_docs: ["issue-creation-plan.md", "issue-10-summary.md", "../requirements/system-requirements.md", "../design/HLD.md"]
+related_docs: ["issue-creation-plan.md", "issue-10-summary.md", "requirements/requirements.md", "design/HLD.md"]
 ---
 
 # Development Tasks and Issues
@@ -15,8 +15,8 @@ This document outlines detailed development tasks based on the project roadmap a
 ## Related Documents
 - [Issue Creation Plan](issue-creation-plan.md) - GitHub Issues implementation templates
 - [Issue #10 Summary](issue-10-summary.md) - Bilingual implementation summary
-- [System Requirements](../requirements/system-requirements.md) - Detailed system requirements
-- [High-Level Design](../design/HLD.md) - System architecture overview
+- [System Requirements](requirements/requirements.md) - Detailed system requirements
+- [High-Level Design](design/HLD.md) - System architecture overview
 
 ---
 
