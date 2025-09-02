@@ -22,7 +22,7 @@
 #### 最適化内容
 - **Gradleメモリ設定**:
   ```properties
-  org.gradle.jvmargs=-Xmx4G -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError
+  org.gradle.jvmargs=-Xmx2G -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=256m -XX:+HeapDumpOnOutOfMemoryError
   ```
 - **Kotlin DSL採用**による型安全性とIDE補完の向上
 - **Windows/Android両対応**を維持
