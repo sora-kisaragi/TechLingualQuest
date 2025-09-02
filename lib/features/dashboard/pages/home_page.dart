@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Home page widget displaying the main quest interface
+/// メインのクエストインターフェースを表示するホームページウィジェット
 /// 
-/// This is the main dashboard page for the app
+/// これはアプリのメインダッシュボードページです
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 

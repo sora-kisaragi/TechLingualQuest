@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Quests page for gamification features
+/// ゲーミフィケーション機能のためのクエストページ
 /// 
-/// This is a placeholder page for quest management features
+/// これはクエスト管理機能のためのプレースホルダーページです
 class QuestsPage extends StatelessWidget {
   const QuestsPage({super.key});
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Vocabulary learning page
+/// 語彙学習ページ
 /// 
-/// This is a placeholder page for vocabulary management features
+/// これは語彙管理機能のためのプレースホルダーページです
 class VocabularyPage extends StatelessWidget {
   const VocabularyPage({super.key});
 

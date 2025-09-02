@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/utils/logger.dart';
 
-/// Base notifier class for consistent error handling and loading states
+/// 一貫したエラーハンドリングとローディング状態のためのベース通知クラス
 /// 
-/// Provides common functionality for all state notifiers in the app
-/// Based on the LLD design document
+/// アプリ内のすべての状態通知に共通の機能を提供する
+/// LLD設計書に基づく
 abstract class BaseNotifier<T> extends StateNotifier<AsyncValue<T>> {
   BaseNotifier() : super(const AsyncValue.loading());
   
-  /// Execute an async operation with consistent error handling
+  /// 一貫したエラーハンドリングで非同期操作を実行
   Future<void> execute(Future<T> Function() operation) async {
     state = const AsyncValue.loading();
     try {
@@ -20,7 +20,7 @@ abstract class BaseNotifier<T> extends StateNotifier<AsyncValue<T>> {
     }
   }
   
-  /// Execute an operation without changing loading state
+  /// ローディング状態を変更せずに操作を実行
   Future<void> executeWithoutLoading(Future<T> Function() operation) async {
     try {
       final result = await operation();

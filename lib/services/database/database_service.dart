@@ -3,15 +3,15 @@ import 'package:path/path.dart';
 import '../../app/config.dart';
 import '../../shared/utils/logger.dart';
 
-/// Database service for local SQLite database
+/// ローカルSQLiteデータベースのサービス
 /// 
-/// Manages database connection, initialization, and basic operations
-/// Based on the design documents, this will initially use SQLite and later migrate to Firestore
+/// データベース接続、初期化、基本操作を管理する
+/// 設計書に基づき、最初はSQLiteを使用し、後にFirestoreに移行する
 class DatabaseService {
   static Database? _database;
   static const int _databaseVersion = 1;
   
-  /// Get database instance (singleton pattern)
+  /// データベースインスタンスを取得（シングルトンパターン）
   static Future<Database> get database async {
     if (_database != null) return _database!;
     
@@ -19,7 +19,7 @@ class DatabaseService {
     return _database!;
   }
   
-  /// Initialize the database
+  /// データベースを初期化
   static Future<Database> _initDatabase() async {
     AppLogger.info('Initializing database...');
     
@@ -41,12 +41,12 @@ class DatabaseService {
     }
   }
   
-  /// Create database tables
+  /// データベーステーブルを作成
   static Future<void> _onCreate(Database db, int version) async {
     AppLogger.info('Creating database tables...');
     
     try {
-      // User table for basic user information
+      // 基本的なユーザー情報のためのユーザーテーブル
       await db.execute('''
         CREATE TABLE users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +59,7 @@ class DatabaseService {
         )
       ''');
       
-      // Vocabulary table for storing vocabulary cards
+      // 語彙カードを保存するための語彙テーブル
       await db.execute('''
         CREATE TABLE vocabulary (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,7 +75,7 @@ class DatabaseService {
         )
       ''');
       
-      // User vocabulary progress table
+      // ユーザー語彙進捗テーブル
       await db.execute('''
         CREATE TABLE user_vocabulary_progress (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -94,7 +94,7 @@ class DatabaseService {
         )
       ''');
       
-      // Quests table for gamification
+      // ゲーミフィケーションのためのクエストテーブル
       await db.execute('''
         CREATE TABLE quests (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -109,7 +109,7 @@ class DatabaseService {
         )
       ''');
       
-      // User quest progress table
+      // ユーザークエスト進捗テーブル
       await db.execute('''
         CREATE TABLE user_quest_progress (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -132,13 +132,13 @@ class DatabaseService {
     }
   }
   
-  /// Handle database upgrades
+  /// データベースアップグレードを処理
   static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     AppLogger.info('Upgrading database from version $oldVersion to $newVersion');
-    // Future database migrations will be handled here
+    // 将来のデータベースマイグレーションはここで処理される
   }
   
-  /// Close database connection
+  /// データベース接続を閉じる
   static Future<void> close() async {
     if (_database != null) {
       AppLogger.info('Closing database connection');
@@ -147,6 +147,6 @@ class DatabaseService {
     }
   }
   
-  /// Check if database is open
+  /// データベースが開いているかチェック
   static bool get isOpen => _database?.isOpen ?? false;
 }

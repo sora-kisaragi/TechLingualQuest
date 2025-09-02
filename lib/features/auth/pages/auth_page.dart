@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Authentication page for user login and registration
+/// ユーザーログインと登録のための認証ページ
 /// 
-/// This is a placeholder page for future auth implementation
+/// これは将来の認証実装のためのプレースホルダーページです
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
 

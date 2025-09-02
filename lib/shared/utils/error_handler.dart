@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'logger.dart';
 
-/// Application-wide error handling utilities
+/// アプリケーション全体のエラーハンドリングユーティリティ
 /// 
-/// Provides consistent error handling and user-friendly error messages
+/// 一貫したエラーハンドリングとユーザーフレンドリーなエラーメッセージを提供する
 class ErrorHandler {
-  /// Handle and log errors with optional user notification
+  /// オプションのユーザー通知付きでエラーをハンドリングしてログ
   static void handleError(
     Object error,
     StackTrace stackTrace, {
     String? userMessage,
     BuildContext? context,
   }) {
-    // Log the error
+    // エラーをログ
     AppLogger.error('Error occurred: $error', error, stackTrace);
     
-    // Show user-friendly message if context is provided
+    // コンテキストが提供されている場合はユーザーフレンドリーなメッセージを表示
     if (context != null && context.mounted) {
       final message = userMessage ?? _getErrorMessage(error);
       _showErrorSnackBar(context, message);
     }
   }
   
-  /// Get user-friendly error message from exception
+  /// 例外からユーザーフレンドリーなエラーメッセージを取得
   static String _getErrorMessage(Object error) {
     if (error.toString().contains('database')) {
       return 'データベースエラーが発生しました。後でもう一度お試しください。';
@@ -34,7 +34,7 @@ class ErrorHandler {
     }
   }
   
-  /// Show error message to user via SnackBar
+  /// SnackBarでユーザーにエラーメッセージを表示
   static void _showErrorSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -52,9 +52,9 @@ class ErrorHandler {
   }
 }
 
-/// Extension for AsyncValue to handle errors consistently
+/// AsyncValueの一貫したエラーハンドリングのための拡張
 extension AsyncValueErrorHandling<T> on AsyncValue<T> {
-  /// Handle errors with consistent error display
+  /// 一貫したエラー表示でエラーをハンドリング
   Widget when({
     required Widget Function(T data) data,
     required Widget Function() loading,
@@ -68,7 +68,7 @@ extension AsyncValueErrorHandling<T> on AsyncValue<T> {
   }
 }
 
-/// Default error widget for handling AsyncValue errors
+/// AsyncValueエラーをハンドリングするためのデフォルトエラーウィジェット
 class _DefaultErrorWidget extends StatelessWidget {
   const _DefaultErrorWidget({required this.error});
   
@@ -94,7 +94,7 @@ class _DefaultErrorWidget extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              // In a real app, this might trigger a retry
+              // 実際のアプリでは、これは再試行をトリガーするかもしれません
             },
             child: const Text('再試行'),
           ),

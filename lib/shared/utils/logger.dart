@@ -1,13 +1,13 @@
 import 'package:logger/logger.dart';
 import '../app/config.dart';
 
-/// Centralized logging service for the application
+/// アプリケーションの中央ログサービス
 /// 
-/// Provides structured logging with different levels and consistent formatting
+/// 異なるレベルと一貫したフォーマットで構造化ログを提供する
 class AppLogger {
   static Logger? _logger;
   
-  /// Initialize the logger based on app configuration
+  /// アプリ設定に基づいてロガーを初期化
   static void initialize() {
     final level = _getLogLevelFromConfig();
     
@@ -46,32 +46,32 @@ class AppLogger {
     }
   }
   
-  /// Log trace level message
+  /// トレースレベルメッセージをログ
   static void trace(String message, [Object? error, StackTrace? stackTrace]) {
     _logger?.t(message, error: error, stackTrace: stackTrace);
   }
   
-  /// Log debug level message
+  /// デバッグレベルメッセージをログ
   static void debug(String message, [Object? error, StackTrace? stackTrace]) {
     _logger?.d(message, error: error, stackTrace: stackTrace);
   }
   
-  /// Log info level message
+  /// 情報レベルメッセージをログ
   static void info(String message, [Object? error, StackTrace? stackTrace]) {
     _logger?.i(message, error: error, stackTrace: stackTrace);
   }
   
-  /// Log warning level message
+  /// 警告レベルメッセージをログ
   static void warning(String message, [Object? error, StackTrace? stackTrace]) {
     _logger?.w(message, error: error, stackTrace: stackTrace);
   }
   
-  /// Log error level message
+  /// エラーレベルメッセージをログ
   static void error(String message, [Object? error, StackTrace? stackTrace]) {
     _logger?.e(message, error: error, stackTrace: stackTrace);
   }
   
-  /// Log fatal level message
+  /// 致命的レベルメッセージをログ
   static void fatal(String message, [Object? error, StackTrace? stackTrace]) {
     _logger?.f(message, error: error, stackTrace: stackTrace);
   }

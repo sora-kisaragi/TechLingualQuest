@@ -6,9 +6,9 @@ import '../features/vocabulary/pages/vocabulary_page.dart';
 import '../features/quests/pages/quests_page.dart';
 import '../shared/utils/logger.dart';
 
-/// Application router configuration using go_router
+/// go_routerを使用したアプリケーションルーター設定
 /// 
-/// Defines routes and navigation structure for the app
+/// アプリのルートとナビゲーション構造を定義する
 class AppRouter {
   static final GoRouter _router = GoRouter(
     routes: <RouteBase>[
@@ -44,15 +44,15 @@ class AppRouter {
     errorBuilder: (context, state) => _ErrorPage(error: state.error.toString()),
     redirect: (context, state) {
       AppLogger.debug('Navigating to: ${state.location}');
-      return null; // No redirect logic for now
+      return null; // 現在はリダイレクト処理なし
     },
   );
   
-  /// Get the router instance
+  /// ルーターインスタンスを取得
   static GoRouter get router => _router;
 }
 
-/// Error page for handling navigation errors
+/// ナビゲーションエラーを処理するエラーページ
 class _ErrorPage extends StatelessWidget {
   const _ErrorPage({required this.error});
   

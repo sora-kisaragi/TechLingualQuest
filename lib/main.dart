@@ -5,37 +5,36 @@ import 'app/router.dart';
 import 'shared/utils/logger.dart';
 import 'services/database/database_service.dart';
 
-/// Main entry point for the TechLingual Quest application
+/// TechLingual Questアプリケーションのメインエントリーポイント
 /// 
-/// Initializes app configuration, logging, and database before starting the app
+/// アプリ開始前に設定、ログ、データベースを初期化する
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    // Initialize app configuration and environment
+    // アプリ設定と環境を初期化
     await AppConfig.initialize();
     AppLogger.initialize();
     
     AppLogger.info('Starting TechLingual Quest...');
     AppLogger.debug('Environment: ${AppConfig.environment.name}');
     
-    // Initialize database
+    // データベースを初期化
     await DatabaseService.database;
     AppLogger.info('Database initialized successfully');
     
     runApp(const ProviderScope(child: TechLingualQuestApp()));
   } catch (e, stackTrace) {
     AppLogger.error('Failed to initialize app', e, stackTrace);
-    // Still run the app but with a fallback configuration
+    // フォールバック設定でアプリを実行
     runApp(const ProviderScope(child: TechLingualQuestApp()));
   }
 }
 
-/// Main application widget for TechLingual Quest
+/// TechLingual Questのメインアプリケーションウィジェット
 ///
-/// A gamified learning app for improving technical English skills.
-/// This app combines quests, vocabulary building, and technical article
-/// summaries with a game-like experience.
+/// 技術英語スキル向上のためのゲーミフィケーション学習アプリ。
+/// クエスト、語彙学習、技術記事要約をゲームライクな体験で提供する。
 class TechLingualQuestApp extends StatelessWidget {
   const TechLingualQuestApp({super.key});
 

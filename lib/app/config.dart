@@ -1,13 +1,13 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Application environment configuration
+/// アプリケーション環境設定
 /// 
-/// Manages different environments (dev, staging, prod) and their configurations
+/// 異なる環境（dev、staging、prod）とその設定を管理する
 class AppConfig {
   static AppEnvironment _currentEnvironment = AppEnvironment.dev;
   
-  /// Initialize environment configuration
-  /// Should be called in main() before runApp()
+  /// 環境設定を初期化
+  /// main()でrunApp()の前に呼び出す必要がある
   static Future<void> initialize() async {
     await dotenv.load(fileName: '.env');
     _setEnvironmentFromConfig();
@@ -31,44 +31,44 @@ class AppConfig {
     }
   }
   
-  /// Current environment
+  /// 現在の環境
   static AppEnvironment get environment => _currentEnvironment;
   
-  /// Database name for current environment
+  /// 現在の環境のデータベース名
   static String get databaseName => 
       dotenv.env['DATABASE_NAME'] ?? 'tech_lingual_quest.db';
   
-  /// API base URL for current environment
+  /// 現在の環境のAPIベースURL
   static String get apiBaseUrl => 
       dotenv.env['API_BASE_URL'] ?? 'https://api.example.com';
   
-  /// API key for current environment
+  /// 現在の環境のAPIキー
   static String get apiKey => 
       dotenv.env['API_KEY'] ?? '';
   
-  /// Log level for current environment
+  /// 現在の環境のログレベル
   static String get logLevel => 
       dotenv.env['LOG_LEVEL'] ?? 'info';
   
-  /// Whether analytics is enabled
+  /// アナリティクスが有効かどうか
   static bool get isAnalyticsEnabled => 
       dotenv.env['ENABLE_ANALYTICS']?.toLowerCase() == 'true';
   
-  /// Whether crashlytics is enabled
+  /// クラッシュリティクスが有効かどうか
   static bool get isCrashlyticsEnabled => 
       dotenv.env['ENABLE_CRASHLYTICS']?.toLowerCase() == 'true';
   
-  /// Whether app is in development mode
+  /// アプリが開発モードかどうか
   static bool get isDevelopment => _currentEnvironment == AppEnvironment.dev;
   
-  /// Whether app is in staging mode
+  /// アプリがステージングモードかどうか
   static bool get isStaging => _currentEnvironment == AppEnvironment.staging;
   
-  /// Whether app is in production mode
+  /// アプリが本番モードかどうか
   static bool get isProduction => _currentEnvironment == AppEnvironment.prod;
 }
 
-/// Application environments
+/// アプリケーション環境
 enum AppEnvironment {
   dev,
   staging,
