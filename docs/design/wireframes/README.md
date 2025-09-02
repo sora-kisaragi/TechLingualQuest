@@ -7,20 +7,20 @@
 ```
 wireframes/
 ├── README.md                    # このファイル
-├── main_app_wireframe.png       # メインアプリケーションワイヤーフレーム
+├── original_wireframe_reference.md # オリジナル画像の説明
 ├── mobile/                      # モバイルアプリのワイヤーフレーム
 │   ├── dashboard.md             # ダッシュボード画面
 │   ├── vocabulary.md            # 単語学習画面
 │   ├── article_summary.md       # 記事要約画面
 │   ├── discussion.md            # ディスカッション画面
-│   └── progress.md              # 進捗画面
+│   ├── progress.md              # 進捗画面
+│   ├── auth_onboarding.md       # 認証・オンボーディング画面
+│   └── settings_profile.md      # 設定・プロフィール画面
 ├── web/                         # Webアプリケーションのワイヤーフレーム
-│   ├── desktop_layout.md        # デスクトップレイアウト
-│   └── responsive_design.md     # レスポンシブデザイン
+│   └── desktop_layout.md        # デスクトップレイアウト
 └── flows/                       # ユーザーフロー図
     ├── learning_flow.md         # 学習フロー
-    ├── quest_flow.md            # クエストフロー
-    └── data_sync_flow.md        # データ同期フロー
+    └── quest_flow.md            # クエストフロー
 ```
 
 ## メインワイヤーフレーム
@@ -76,3 +76,7 @@ wireframes/
 
 - 2025-09-02: 初期ワイヤーフレーム構造作成
 - 2025-09-02: メインアプリケーションワイヤーフレーム追加
+- 2025-09-02: 認証・オンボーディングフロー追加
+- 2025-09-02: 設定・プロフィール管理画面追加
+- 2025-09-02: クエストシステムフロー追加
+- 2025-09-02: デスクトップレイアウト対応完了
