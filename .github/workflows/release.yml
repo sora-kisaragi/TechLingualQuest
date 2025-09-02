@@ -1,0 +1,318 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+env:
+  FLUTTER_VERSION: '3.24.3'
+
+jobs:
+  # リリース前の最終チェック
+  pre-release-checks:
+    runs-on: ubuntu-latest
+    name: Pre-Release Quality Checks
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Run all tests
+      run: flutter test --coverage
+    
+    - name: Analyze code
+      run: flutter analyze
+    
+    - name: Check formatting
+      run: dart format --output=none --set-exit-if-changed .
+    
+    - name: Validate project structure
+      run: ./validate_flutter_setup.sh
+
+  # Android Release Build
+  build-android:
+    runs-on: ubuntu-latest
+    name: Build Android Release
+    needs: pre-release-checks
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+    
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Build Android APK (Release)
+      run: |
+        flutter build apk --release
+        echo "APK_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)" >> $GITHUB_ENV
+        echo "APK_SIZE=$(du -h build/app/outputs/flutter-apk/*.apk | cut -f1)" >> $GITHUB_ENV
+    
+    - name: Build Android App Bundle (Release)
+      run: |
+        flutter build appbundle --release
+        echo "AAB_PATH=$(find build/app/outputs/bundle -name '*.aab' | head -1)" >> $GITHUB_ENV
+        echo "AAB_SIZE=$(du -h build/app/outputs/bundle/*/*.aab | cut -f1)" >> $GITHUB_ENV
+    
+    - name: Upload Android Release APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-release-apk
+        path: build/app/outputs/flutter-apk/*.apk
+        retention-days: 30
+    
+    - name: Upload Android Release Bundle
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-release-bundle
+        path: build/app/outputs/bundle/*/*.aab
+        retention-days: 30
+
+  # Web Release Build
+  build-web:
+    runs-on: ubuntu-latest
+    name: Build Web Release
+    needs: pre-release-checks
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Build Web (Release)
+      run: |
+        flutter build web --release --web-renderer canvaskit
+        echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
+    
+    - name: Upload Web Release
+      uses: actions/upload-artifact@v3
+      with:
+        name: web-release
+        path: build/web/
+        retention-days: 30
+
+  # リリースノート作成とGitHub Release
+  create-release:
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+    needs: [pre-release-checks, build-android, build-web]
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Get version from tag
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "version_number=${VERSION#v}" >> $GITHUB_OUTPUT
+    
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        # 前回のタグを取得
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        
+        if [ -n "$PREVIOUS_TAG" ]; then
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "## 🚀 新機能と改善" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD --grep="feat" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "## 🐛 バグ修正" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD --grep="fix" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "## 📚 ドキュメント" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD --grep="docs" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        else
+          echo "changelog=初回リリース" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Download Android APK
+      uses: actions/download-artifact@v3
+      with:
+        name: android-release-apk
+        path: ./release-assets/
+    
+    - name: Download Android Bundle
+      uses: actions/download-artifact@v3
+      with:
+        name: android-release-bundle
+        path: ./release-assets/
+    
+    - name: Download Web Release
+      uses: actions/download-artifact@v3
+      with:
+        name: web-release
+        path: ./web-release/
+    
+    - name: Create Web Release Archive
+      run: |
+        cd web-release
+        zip -r ../release-assets/tech-lingual-quest-web-${{ steps.version.outputs.version }}.zip .
+    
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        release_name: TechLingual Quest ${{ steps.version.outputs.version }}
+        body: |
+          # TechLingual Quest ${{ steps.version.outputs.version }}
+          
+          ${{ steps.release_notes.outputs.changelog }}
+          
+          ## 📱 ダウンロード
+          
+          - **Android APK**: スマートフォン・タブレット用（Google Play 外での配布）
+          - **Android Bundle**: Google Play Store 向け配布用
+          - **Web版**: ブラウザで動作するバージョン
+          
+          ## 🛠️ 技術仕様
+          
+          - Flutter SDK: ${{ env.FLUTTER_VERSION }}
+          - 対応プラットフォーム: Android 5.0+, iOS 11.0+, Web (Chrome, Firefox, Safari)
+          - ビルド日時: $(date '+%Y-%m-%d %H:%M:%S UTC')
+        draft: false
+        prerelease: false
+    
+    - name: Upload Android APK to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release-assets/app-release.apk
+        asset_name: tech-lingual-quest-${{ steps.version.outputs.version }}.apk
+        asset_content_type: application/vnd.android.package-archive
+    
+    - name: Upload Web Release to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./release-assets/tech-lingual-quest-web-${{ steps.version.outputs.version }}.zip
+        asset_name: tech-lingual-quest-web-${{ steps.version.outputs.version }}.zip
+        asset_content_type: application/zip
+
+  # リリース通知
+  notify-release:
+    runs-on: ubuntu-latest
+    name: Send Release Notifications
+    needs: [create-release]
+    if: always()
+    
+    steps:
+    - name: Get version from tag
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+    
+    - name: Send Discord release notification
+      if: vars.DISCORD_WEBHOOK_URL
+      run: |
+        curl -H "Content-Type: application/json" \
+        -d '{
+          "embeds": [{
+            "title": "🎉 TechLingual Quest 新バージョンリリース!",
+            "description": "バージョン ${{ steps.version.outputs.version }} がリリースされました！",
+            "color": 3447003,
+            "fields": [
+              {"name": "バージョン", "value": "${{ steps.version.outputs.version }}", "inline": true},
+              {"name": "プラットフォーム", "value": "Android・Web", "inline": true},
+              {"name": "Flutter SDK", "value": "${{ env.FLUTTER_VERSION }}", "inline": true}
+            ],
+            "footer": {"text": "GitHub Releases"},
+            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+            "url": "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
+          }]
+        }' \
+        ${{ vars.DISCORD_WEBHOOK_URL }}
+    
+    - name: Send Slack release notification
+      if: vars.SLACK_WEBHOOK_URL
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{
+          "text": "🎉 TechLingual Quest 新バージョンリリース!",
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "🎉 TechLingual Quest ${{ steps.version.outputs.version }}"
+              }
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "新しいバージョンがリリースされました！Android APK と Web版 が利用可能です。"
+              }
+            },
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "ダウンロードページを開く"
+                  },
+                  "url": "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
+                }
+              ]
+            }
+          ]
+        }' \
+        ${{ vars.SLACK_WEBHOOK_URL }}

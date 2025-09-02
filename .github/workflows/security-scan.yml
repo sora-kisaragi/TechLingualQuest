@@ -1,0 +1,117 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # 毎日午前2時（UTC）にセキュリティスキャンを実行
+    - cron: '0 2 * * *'
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Security Vulnerability Scan
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.3'
+        channel: 'stable'
+        cache: true
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Run dependency audit
+      run: |
+        # Flutter/Dart依存関係の脆弱性チェック
+        dart pub deps --json > deps.json
+        if command -v jq &> /dev/null; then
+          echo "📦 依存関係分析結果:"
+          jq '.packages[] | select(.kind == "direct") | {name: .name, version: .version}' deps.json
+        fi
+        
+        # pubspec.lock の内容をチェック
+        if [ -f "pubspec.lock" ]; then
+          echo "🔒 ロックファイル確認: pubspec.lock が存在します"
+        else
+          echo "⚠️ 警告: pubspec.lock が見つかりません"
+        fi
+        
+        # 既知の脆弱性パッケージのチェック（例）
+        if grep -q "vulnerable_package" pubspec.yaml; then
+          echo "🚨 危険: 既知の脆弱性を持つパッケージが検出されました"
+          exit 1
+        fi
+    
+    - name: CodeQL Analysis
+      uses: github/codeql-action/init@v2
+      with:
+        languages: dart
+        queries: security-extended
+    
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+    
+    - name: Upload security scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-scan-results
+        path: |
+          deps.json
+          pubspec.lock
+        retention-days: 30
+    
+    - name: Send security notification
+      if: failure() && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+      run: |
+        if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🚨 セキュリティスキャン警告",
+              "description": "TechLingual Questプロジェクトでセキュリティ上の問題が検出されました",
+              "color": 16711680,
+              "fields": [
+                {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
+                {"name": "コミット", "value": "$(echo ${{ github.sha }} | cut -c1-7)", "inline": true},
+                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
+              ],
+              "footer": {"text": "緊急対応が必要です"},
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+              "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }]
+          }' \
+          ${{ vars.DISCORD_WEBHOOK_URL }}
+        fi
+        
+        if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "text": "🚨 セキュリティスキャン警告",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "🚨 セキュリティスキャン警告"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "TechLingual Questプロジェクトでセキュリティ上の問題が検出されました。緊急対応が必要です。"
+                }
+              }
+            ]
+          }' \
+          ${{ vars.SLACK_WEBHOOK_URL }}
+        fi

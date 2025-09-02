@@ -1,23 +1,31 @@
-name: Flutter CI
+name: Flutter CI/CD
 
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: '3.24.3'
 
 jobs:
-  test:
+  # 依存関係とコード品質チェック
+  quality-check:
     runs-on: ubuntu-latest
+    name: Code Quality & Dependency Check
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
     
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.3'
+        flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
+        cache: true
     
     - name: Get dependencies
       run: flutter pub get
@@ -28,14 +36,184 @@ jobs:
     - name: Analyze project source
       run: flutter analyze
     
-    - name: Run tests
-      run: flutter test
-    
-    - name: Build APK
-      run: flutter build apk --debug
-    
-    - name: Build web
-      run: flutter build web
-    
     - name: Validate project structure
       run: ./validate_flutter_setup.sh
+
+  # テスト実行
+  test:
+    runs-on: ubuntu-latest
+    name: Unit & Widget Tests
+    needs: quality-check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Run tests with coverage
+      run: flutter test --coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage/lcov.info
+        fail_ci_if_error: false
+
+  # ビルド (Android, iOS, Web)
+  build:
+    runs-on: ubuntu-latest
+    name: Build Applications
+    needs: [quality-check, test]
+    strategy:
+      matrix:
+        build-type: [android, web]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Build Android APK
+      if: matrix.build-type == 'android'
+      run: |
+        flutter build apk --release
+        echo "APK_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)" >> $GITHUB_ENV
+    
+    - name: Build Web
+      if: matrix.build-type == 'web'
+      run: |
+        flutter build web --release
+        echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
+    
+    - name: Upload Android APK artifact
+      if: matrix.build-type == 'android'
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-apk
+        path: build/app/outputs/flutter-apk/*.apk
+        retention-days: 7
+    
+    - name: Upload Web build artifact
+      if: matrix.build-type == 'web'
+      uses: actions/upload-artifact@v3
+      with:
+        name: web-build
+        path: build/web/
+        retention-days: 7
+
+  # 通知処理
+  notify:
+    runs-on: ubuntu-latest
+    name: Send Notifications
+    needs: [quality-check, test, build]
+    if: always()
+    
+    steps:
+    - name: Evaluate workflow results
+      id: evaluate
+      run: |
+        if [[ "${{ needs.quality-check.result }}" == "success" && "${{ needs.test.result }}" == "success" && "${{ needs.build.result }}" == "success" ]]; then
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "message=✅ CI/CD パイプラインが正常に完了しました" >> $GITHUB_OUTPUT
+          echo "color=3066993" >> $GITHUB_OUTPUT
+        else
+          echo "status=failure" >> $GITHUB_OUTPUT
+          echo "message=❌ CI/CD パイプラインでエラーが発生しました" >> $GITHUB_OUTPUT
+          echo "color=15158332" >> $GITHUB_OUTPUT
+        fi
+        
+        echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        echo "commit=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+        echo "actor=${{ github.actor }}" >> $GITHUB_OUTPUT
+        echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+        echo "run_id=${{ github.run_id }}" >> $GITHUB_OUTPUT
+    
+    - name: Send Discord notification
+      if: vars.DISCORD_WEBHOOK_URL
+      run: |
+        curl -H "Content-Type: application/json" \
+        -d '{
+          "embeds": [{
+            "title": "TechLingual Quest CI/CD",
+            "description": "${{ steps.evaluate.outputs.message }}",
+            "color": ${{ steps.evaluate.outputs.color }},
+            "fields": [
+              {"name": "ブランチ", "value": "${{ steps.evaluate.outputs.branch }}", "inline": true},
+              {"name": "コミット", "value": "${{ steps.evaluate.outputs.commit }}", "inline": true},
+              {"name": "実行者", "value": "${{ steps.evaluate.outputs.actor }}", "inline": true},
+              {"name": "品質チェック", "value": "${{ needs.quality-check.result }}", "inline": true},
+              {"name": "テスト", "value": "${{ needs.test.result }}", "inline": true},
+              {"name": "ビルド", "value": "${{ needs.build.result }}", "inline": true}
+            ],
+            "footer": {"text": "GitHub Actions"},
+            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+            "url": "https://github.com/${{ steps.evaluate.outputs.repo }}/actions/runs/${{ steps.evaluate.outputs.run_id }}"
+          }]
+        }' \
+        ${{ vars.DISCORD_WEBHOOK_URL }}
+    
+    - name: Send Slack notification
+      if: vars.SLACK_WEBHOOK_URL
+      run: |
+        STATUS_EMOJI="${{ steps.evaluate.outputs.status == 'success' && ':white_check_mark:' || ':x:' }}"
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{
+          "text": "'$STATUS_EMOJI' TechLingual Quest CI/CD",
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "'$STATUS_EMOJI' TechLingual Quest CI/CD"
+              }
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "${{ steps.evaluate.outputs.message }}"
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {"type": "mrkdwn", "text": "*ブランチ:*\n${{ steps.evaluate.outputs.branch }}"},
+                {"type": "mrkdwn", "text": "*コミット:*\n${{ steps.evaluate.outputs.commit }}"},
+                {"type": "mrkdwn", "text": "*実行者:*\n${{ steps.evaluate.outputs.actor }}"},
+                {"type": "mrkdwn", "text": "*ステータス:*\n品質: ${{ needs.quality-check.result }}\nテスト: ${{ needs.test.result }}\nビルド: ${{ needs.build.result }}"}
+              ]
+            },
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "GitHub Actionsで詳細を見る"
+                  },
+                  "url": "https://github.com/${{ steps.evaluate.outputs.repo }}/actions/runs/${{ steps.evaluate.outputs.run_id }}"
+                }
+              ]
+            }
+          ]
+        }' \
+        ${{ vars.SLACK_WEBHOOK_URL }}
