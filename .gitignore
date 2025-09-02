@@ -1,3 +1,13 @@
+# Environment configuration files
+.env
+.env.local
+.env.production
+.env.staging
+
+# Local Flutter SDK installation
+flutter/
+flutter.tar.xz
+
 # Miscellaneous
 *.class
 *.lock
