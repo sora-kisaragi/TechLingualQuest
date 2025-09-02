@@ -1,5 +1,7 @@
 # オリジナルワイヤーフレーム画像
 
+![TechLingual Quest Main App Wireframe](./main_app_wireframe.png)
+
 ## 画像情報
 - **ファイル名**: main_app_wireframe.png
 - **ソース**: GitHub Issue #7 コメント

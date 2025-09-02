@@ -25,6 +25,10 @@ wireframes/
 
 ## メインワイヤーフレーム
 
+![TechLingual Quest Main App Wireframe](./main_app_wireframe.png)
+
+*詳細な画面説明については [original_wireframe_reference.md](./original_wireframe_reference.md) を参照してください。*
+
 ### 主要画面構成
 
 メインワイヤーフレーム（main_app_wireframe.png）には以下の画面が含まれています：
