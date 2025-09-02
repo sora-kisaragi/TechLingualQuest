@@ -8,11 +8,11 @@ class TestConfig {
   /// テスト用のアプリ設定を初期化
   static Future<void> initializeForTest() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    
+
     // テスト環境用のモック設定で初期化
     await AppConfig.initialize();
   }
-  
+
   /// テスト後のクリーンアップ
   static void cleanup() {
     // 必要に応じてテスト後のクリーンアップ処理
