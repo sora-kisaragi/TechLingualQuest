@@ -81,8 +81,8 @@ void main() {
         ),
       );
 
-      // Verify Japanese text is displayed
-      expect(find.text('テックリンガルクエスト'), findsOneWidget);
+      // Verify Japanese text is displayed (app title stays in English)
+      expect(find.text('TechLingual Quest'), findsOneWidget);
       expect(find.text('テックリンガルクエストへようこそ！'), findsOneWidget);
       expect(find.text('語彙'), findsOneWidget);
       expect(find.text('クエスト'), findsOneWidget);
@@ -131,6 +131,43 @@ void main() {
       expect(LanguageService.getLocaleFromCode('en'), const Locale('en'));
       expect(LanguageService.getLocaleFromCode('ja'), const Locale('ja'));
       expect(LanguageService.getLocaleFromCode('unknown'), const Locale('en')); // Default fallback
+    });
+
+    test('LanguageService should handle supported languages correctly', () {
+      final supportedLanguages = LanguageService.getSupportedLanguages();
+      expect(supportedLanguages.length, 2);
+      
+      // Test English language
+      final english = LanguageService.getLanguageByCode('en');
+      expect(english, isNotNull);
+      expect(english!.code, 'en');
+      expect(english.englishName, 'English');
+      expect(english.locale, const Locale('en'));
+      
+      // Test Japanese language
+      final japanese = LanguageService.getLanguageByCode('ja');
+      expect(japanese, isNotNull);
+      expect(japanese!.code, 'ja');
+      expect(japanese.englishName, 'Japanese');
+      expect(japanese.nativeName, '日本語');
+      expect(japanese.locale, const Locale('ja'));
+      
+      // Test unsupported language
+      final unsupported = LanguageService.getLanguageByCode('fr');
+      expect(unsupported, isNull);
+    });
+
+    test('LanguageService should validate language support correctly', () {
+      expect(LanguageService.isLanguageSupported('en'), true);
+      expect(LanguageService.isLanguageSupported('ja'), true);
+      expect(LanguageService.isLanguageSupported('fr'), false);
+      expect(LanguageService.isLanguageSupported(''), false);
+    });
+
+    test('LanguageService should return default language', () {
+      final defaultLang = LanguageService.getDefaultLanguage();
+      expect(defaultLang.code, 'en');
+      expect(defaultLang.englishName, 'English');
     });
   });
 }

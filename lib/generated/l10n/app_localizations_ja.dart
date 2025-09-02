@@ -5,7 +5,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => 'テックリンガルクエスト';
+  String get appTitle => 'TechLingual Quest';
 
   @override
   String get welcomeMessage => 'テックリンガルクエストへようこそ！';
