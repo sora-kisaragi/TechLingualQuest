@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Supported language configuration
-/// 
+///
 /// Defines the languages supported by the app with metadata
 class SupportedLanguage {
   final String code;
@@ -28,7 +28,7 @@ class LanguageService {
   static const String _defaultLanguageCode = 'en';
 
   /// All supported languages in the app
-  /// 
+  ///
   /// To add a new language:
   /// 1. Add the language here
   /// 2. Create the corresponding ARB file (app_[code].arb)
@@ -86,7 +86,7 @@ class LanguageService {
   static Future<String> getSavedLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     final savedCode = prefs.getString(_languageKey) ?? _defaultLanguageCode;
-    
+
     // Validate that the saved language is still supported
     return isLanguageSupported(savedCode) ? savedCode : _defaultLanguageCode;
   }
@@ -97,7 +97,7 @@ class LanguageService {
     if (!isLanguageSupported(languageCode)) {
       return false;
     }
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_languageKey, languageCode);
     return true;

@@ -12,16 +12,13 @@ class AuthPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final translationsAsync = ref.watch(appTranslationsProvider);
-    
+
     return translationsAsync.when(
       data: (translations) => _buildAuthContent(context, translations),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
-        body: Center(
-          child: Text('Failed to load translations: $error'),
-        ),
+        body: Center(child: Text('Failed to load translations: $error')),
       ),
     );
   }
@@ -44,18 +41,17 @@ class AuthPage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.person,
-              size: 80,
-              color: Colors.deepPurple,
-            ),
+            const Icon(Icons.person, size: 80, color: Colors.deepPurple),
             const SizedBox(height: 20),
             FutureBuilder<String>(
               future: translations.authentication,
               builder: (context, snapshot) {
                 return Text(
                   snapshot.data ?? 'Authentication',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 );
               },
             ),
@@ -64,7 +60,8 @@ class AuthPage extends ConsumerWidget {
               future: translations.authDescription,
               builder: (context, snapshot) {
                 return Text(
-                  snapshot.data ?? 'User authentication will be implemented here',
+                  snapshot.data ??
+                      'User authentication will be implemented here',
                   style: const TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 );

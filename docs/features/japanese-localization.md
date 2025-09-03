@@ -55,7 +55,7 @@ The following UI elements have been localized:
 
 **Feature Pages:**
 - Vocabulary page: Title and description
-- Quests page: Title and description  
+- Quests page: Title and description
 - Authentication page: Title and description
 
 **UI Components:**

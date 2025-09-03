@@ -42,7 +42,7 @@ print_usage() {
 
 check_prerequisites() {
     echo -e "${YELLOW}📋 前提条件の確認...${NC}"
-    
+
     # Flutter SDKの確認
     if command -v flutter &> /dev/null; then
         FLUTTER_VERSION=$(flutter --version | head -n 1)
@@ -52,7 +52,7 @@ check_prerequisites() {
         echo "   Flutter SDKをインストールしてください: https://flutter.dev/docs/get-started/install"
         return 1
     fi
-    
+
     # Git の確認
     if command -v git &> /dev/null; then
         echo -e "${GREEN}✅ Git がインストールされています${NC}"
@@ -60,7 +60,7 @@ check_prerequisites() {
         echo -e "${RED}❌ Git が見つかりません${NC}"
         return 1
     fi
-    
+
     # jq の確認（オプション）
     if command -v jq &> /dev/null; then
         echo -e "${GREEN}✅ jq がインストールされています (JSON処理用)${NC}"
@@ -68,7 +68,7 @@ check_prerequisites() {
         echo -e "${YELLOW}⚠️  jq がインストールされていません (オプション)${NC}"
         echo "   JSON処理を改善するために jq のインストールを推奨します"
     fi
-    
+
     # curl の確認
     if command -v curl &> /dev/null; then
         echo -e "${GREEN}✅ curl がインストールされています${NC}"
@@ -80,19 +80,19 @@ check_prerequisites() {
 
 setup_environment() {
     echo -e "${YELLOW}🔧 CI/CD環境の初期設定...${NC}"
-    
+
     # プロジェクト構造の確認
     if [ ! -f "pubspec.yaml" ]; then
         echo -e "${RED}❌ pubspec.yaml が見つかりません。Flutterプロジェクトのルートディレクトリで実行してください。${NC}"
         exit 1
     fi
-    
+
     # ワークフローディレクトリの確認
     if [ ! -d ".github/workflows" ]; then
         echo -e "${YELLOW}📁 .github/workflows ディレクトリを作成します...${NC}"
         mkdir -p .github/workflows
     fi
-    
+
     # 設定ファイルの初期化
     if [ ! -f "$CONFIG_FILE" ]; then
         echo -e "${YELLOW}📄 設定ファイルを作成します...${NC}"
@@ -117,24 +117,24 @@ setup_environment() {
 EOF
         echo -e "${GREEN}✅ 設定ファイルが作成されました: $CONFIG_FILE${NC}"
     fi
-    
+
     # 依存関係の取得
     echo -e "${YELLOW}📦 依存関係を取得しています...${NC}"
     flutter pub get
-    
+
     echo -e "${GREEN}✅ CI/CD環境の初期設定が完了しました${NC}"
 }
 
 setup_webhook() {
     local service="$1"
     local webhook_url="$2"
-    
+
     if [ -z "$service" ] || [ -z "$webhook_url" ]; then
         echo -e "${RED}❌ 使用法: $0 webhook <service> <webhook_url>${NC}"
         echo "   service: discord または slack"
         exit 1
     fi
-    
+
     case "$service" in
         discord)
             echo -e "${YELLOW}🔗 Discord Webhook の設定...${NC}"
@@ -148,10 +148,10 @@ setup_webhook() {
             exit 1
             ;;
     esac
-    
+
     # Webhook URLのテスト
     echo -e "${YELLOW}🧪 Webhook URLをテストしています...${NC}"
-    
+
     if [ "$service" = "discord" ]; then
         response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
             -H "Content-Type: application/json" \
@@ -163,7 +163,7 @@ setup_webhook() {
             -d '{"text": "TechLingual Quest CI/CD テストメッセージ"}' \
             "$webhook_url")
     fi
-    
+
     if [ "$response" = "200" ] || [ "$response" = "204" ]; then
         echo -e "${GREEN}✅ Webhook URLのテストが成功しました${NC}"
         echo -e "${BLUE}📝 次のステップ:${NC}"
@@ -183,9 +183,9 @@ setup_webhook() {
 
 run_tests() {
     local test_type="$1"
-    
+
     echo -e "${YELLOW}🧪 CI/CDテストを実行しています...${NC}"
-    
+
     case "$test_type" in
         build|"")
             echo -e "${YELLOW}🔨 ビルドテスト...${NC}"
@@ -229,13 +229,13 @@ run_tests() {
 
 validate_workflows() {
     echo -e "${YELLOW}✅ ワークフロー設定の検証...${NC}"
-    
+
     local workflows=(".github/workflows/flutter.yml" ".github/workflows/security-scan.yml" ".github/workflows/release.yml")
-    
+
     for workflow in "${workflows[@]}"; do
         if [ -f "$workflow" ]; then
             echo -e "${GREEN}✅ $workflow が存在します${NC}"
-            
+
             # YAML構文の基本チェック
             if command -v yq &> /dev/null; then
                 if yq eval '.' "$workflow" > /dev/null 2>&1; then
@@ -248,7 +248,7 @@ validate_workflows() {
             echo -e "${RED}❌ $workflow が見つかりません${NC}"
         fi
     done
-    
+
     # Repository Variables の確認指示
     echo -e "${BLUE}📝 Repository Variables の確認:${NC}"
     echo "   GitHub リポジトリの Settings → Secrets and variables → Actions で以下を確認:"
@@ -258,20 +258,20 @@ validate_workflows() {
 
 show_status() {
     echo -e "${YELLOW}📊 現在の設定状況...${NC}"
-    
+
     # プロジェクト情報
     if [ -f "pubspec.yaml" ]; then
         PROJECT_NAME=$(grep "^name:" pubspec.yaml | cut -d: -f2 | xargs)
         PROJECT_VERSION=$(grep "^version:" pubspec.yaml | cut -d: -f2 | xargs)
         echo -e "${GREEN}📱 プロジェクト: $PROJECT_NAME ($PROJECT_VERSION)${NC}"
     fi
-    
+
     # Flutter バージョン
     if command -v flutter &> /dev/null; then
         FLUTTER_VERSION=$(flutter --version | head -n 1 | cut -d' ' -f2)
         echo -e "${GREEN}🔧 Flutter: $FLUTTER_VERSION${NC}"
     fi
-    
+
     # ワークフロー状況
     echo -e "${BLUE}⚙️  ワークフロー:${NC}"
     local workflows=("flutter.yml" "security-scan.yml" "release.yml")
@@ -282,7 +282,7 @@ show_status() {
             echo -e "${RED}   ❌ $workflow${NC}"
         fi
     done
-    
+
     # 設定ファイル
     if [ -f "$CONFIG_FILE" ]; then
         echo -e "${GREEN}📄 設定ファイル: $CONFIG_FILE${NC}"
@@ -294,7 +294,7 @@ show_status() {
 # メイン処理
 main() {
     print_header
-    
+
     case "${1:-help}" in
         setup)
             check_prerequisites

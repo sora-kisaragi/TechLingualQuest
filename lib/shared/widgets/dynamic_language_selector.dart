@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/dynamic_localization_service.dart';
 
 /// Dynamic language selector widget that works with JSON-based translations
-/// 
+///
 /// This widget automatically adapts to all languages defined in the JSON file
 /// without requiring code changes for new language additions
 class DynamicLanguageSelector extends ConsumerWidget {
@@ -32,11 +32,13 @@ class DynamicLanguageSelector extends ConsumerWidget {
                 final success = await ref
                     .read(dynamicLanguageProvider.notifier)
                     .changeLanguage(languageCode);
-                
+
                 if (!success && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Failed to change language to $languageCode'),
+                      content: Text(
+                        'Failed to change language to $languageCode',
+                      ),
                       duration: const Duration(seconds: 2),
                     ),
                   );
@@ -44,8 +46,9 @@ class DynamicLanguageSelector extends ConsumerWidget {
               },
               itemBuilder: (BuildContext context) {
                 return supportedLanguages.map((language) {
-                  final isSelected = currentLocale.languageCode == language.code;
-                  
+                  final isSelected =
+                      currentLocale.languageCode == language.code;
+
                   return PopupMenuItem<String>(
                     value: language.code,
                     child: Row(
@@ -57,9 +60,14 @@ class DynamicLanguageSelector extends ConsumerWidget {
                         if (!isSelected)
                           const SizedBox(width: 24), // Space for alignment
                         FutureBuilder<String>(
-                          future: _getLanguageDisplayName(language, translations),
+                          future: _getLanguageDisplayName(
+                            language,
+                            translations,
+                          ),
                           builder: (context, nameSnapshot) {
-                            return Text(nameSnapshot.data ?? language.nativeName);
+                            return Text(
+                              nameSnapshot.data ?? language.nativeName,
+                            );
                           },
                         ),
                       ],
@@ -78,7 +86,7 @@ class DynamicLanguageSelector extends ConsumerWidget {
 
   /// Get the display name for a language using dynamic translations
   Future<String> _getLanguageDisplayName(
-    LanguageInfo language, 
+    LanguageInfo language,
     AppTranslations translations,
   ) async {
     switch (language.code) {

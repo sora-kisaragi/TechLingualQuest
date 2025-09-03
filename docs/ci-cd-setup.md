@@ -225,6 +225,6 @@ Microsoft Teams、LINE、カスタムAPIエンドポイントなど、他の通�
 
 ---
 
-**作成日**: 2025年9月2日  
-**作成者**: GitHub Copilot Agent  
+**作成日**: 2025年9月2日
+**作成者**: GitHub Copilot Agent
 **関連Issue**: #9 - CI/CDの構築

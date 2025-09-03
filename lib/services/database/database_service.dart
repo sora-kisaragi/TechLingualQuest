@@ -134,9 +134,13 @@ class DatabaseService {
 
   /// データベースアップグレードを処理
   static Future<void> _onUpgrade(
-      Database db, int oldVersion, int newVersion) async {
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
     AppLogger.info(
-        'Upgrading database from version $oldVersion to $newVersion');
+      'Upgrading database from version $oldVersion to $newVersion',
+    );
     // 将来のデータベースマイグレーションはここで処理される
   }
 

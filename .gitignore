@@ -69,7 +69,11 @@ unlinked_spec.ds
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
+# Local gradle configuration override files
+**/android/gradle.properties.local
 *.jks
+# Gradle heap dump files (generated when OutOfMemoryError occurs)
+*.hprof
 
 # iOS/XCode related
 **/ios/**/*.mode1v3

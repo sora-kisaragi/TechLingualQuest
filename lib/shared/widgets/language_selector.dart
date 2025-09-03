@@ -4,7 +4,7 @@ import '../services/language_service.dart';
 import '../../generated/l10n/app_localizations.dart';
 
 /// Language selector widget for switching between supported languages
-/// 
+///
 /// Displays a dropdown or popup menu to allow users to select their preferred language
 /// Automatically adapts to support any number of languages defined in LanguageService
 class LanguageSelector extends ConsumerWidget {
@@ -20,7 +20,9 @@ class LanguageSelector extends ConsumerWidget {
       icon: const Icon(Icons.language),
       tooltip: l10n.language,
       onSelected: (String languageCode) async {
-        final success = await ref.read(languageProvider.notifier).changeLanguage(languageCode);
+        final success = await ref
+            .read(languageProvider.notifier)
+            .changeLanguage(languageCode);
         if (!success && context.mounted) {
           // Show error if language change failed (though this shouldn't happen with valid codes)
           ScaffoldMessenger.of(context).showSnackBar(
@@ -34,7 +36,7 @@ class LanguageSelector extends ConsumerWidget {
       itemBuilder: (BuildContext context) {
         return supportedLanguages.map((language) {
           final isSelected = currentLocale.languageCode == language.code;
-          
+
           return PopupMenuItem<String>(
             value: language.code,
             child: Row(
@@ -55,9 +57,12 @@ class LanguageSelector extends ConsumerWidget {
   }
 
   /// Get the display name for a language based on current localization
-  /// 
+  ///
   /// Uses localized names when available, falls back to native names
-  String _getLanguageDisplayName(SupportedLanguage language, AppLocalizations l10n) {
+  String _getLanguageDisplayName(
+    SupportedLanguage language,
+    AppLocalizations l10n,
+  ) {
     switch (language.code) {
       case 'en':
         return l10n.english;

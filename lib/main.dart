@@ -42,7 +42,7 @@ class TechLingualQuestApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(dynamicLanguageProvider);
-    
+
     return MaterialApp.router(
       title: 'TechLingual Quest',
       locale: currentLocale,
