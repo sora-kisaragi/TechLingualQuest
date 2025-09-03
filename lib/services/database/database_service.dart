@@ -10,13 +10,60 @@ import '../../shared/utils/logger.dart';
 class DatabaseService {
   static Database? _database;
   static const int _databaseVersion = 1;
+  static const int _maxRetryAttempts = 3;
+  static const Duration _retryDelay = Duration(seconds: 1);
+  
+  /// データベース接続状態
+  static DatabaseConnectionStatus _connectionStatus = DatabaseConnectionStatus.disconnected;
 
   /// データベースインスタンスを取得（シングルトンパターン）
   static Future<Database> get database async {
-    if (_database != null) return _database!;
+    if (_database != null && await isConnectionHealthy()) {
+      return _database!;
+    }
 
-    _database = await _initDatabase();
+    _database = await _initDatabaseWithRetry();
     return _database!;
+  }
+
+  /// リトライ機能付きデータベース初期化
+  static Future<Database> _initDatabaseWithRetry() async {
+    _connectionStatus = DatabaseConnectionStatus.connecting;
+    
+    for (int attempt = 1; attempt <= _maxRetryAttempts; attempt++) {
+      try {
+        AppLogger.info('Database connection attempt $attempt/$_maxRetryAttempts');
+        final database = await _initDatabase();
+        _connectionStatus = DatabaseConnectionStatus.connected;
+        AppLogger.info('Database connection established successfully');
+        return database;
+      } catch (e, stackTrace) {
+        AppLogger.warning(
+          'Database connection attempt $attempt failed: $e',
+          e,
+          stackTrace,
+        );
+        
+        if (attempt == _maxRetryAttempts) {
+          _connectionStatus = DatabaseConnectionStatus.failed;
+          AppLogger.error(
+            'Failed to establish database connection after $_maxRetryAttempts attempts',
+            e,
+            stackTrace,
+          );
+          rethrow;
+        }
+        
+        // 指数バックオフによる遅延
+        final delay = Duration(
+          milliseconds: _retryDelay.inMilliseconds * (1 << (attempt - 1))
+        );
+        AppLogger.debug('Retrying database connection in ${delay.inMilliseconds}ms');
+        await Future.delayed(delay);
+      }
+    }
+    
+    throw Exception('Unable to establish database connection');
   }
 
   /// データベースを初期化
@@ -146,9 +193,102 @@ class DatabaseService {
       AppLogger.info('Closing database connection');
       await _database!.close();
       _database = null;
+      _connectionStatus = DatabaseConnectionStatus.disconnected;
     }
   }
 
   /// データベースが開いているかチェック
   static bool get isOpen => _database?.isOpen ?? false;
+  
+  /// データベース接続状態を取得
+  static DatabaseConnectionStatus get connectionStatus => _connectionStatus;
+  
+  /// データベース接続の健全性をチェック
+  static Future<bool> isConnectionHealthy() async {
+    if (_database == null || !_database!.isOpen) {
+      _connectionStatus = DatabaseConnectionStatus.disconnected;
+      return false;
+    }
+    
+    try {
+      // 簡単なクエリを実行して接続をテスト
+      await _database!.rawQuery('SELECT 1');
+      _connectionStatus = DatabaseConnectionStatus.connected;
+      return true;
+    } catch (e) {
+      AppLogger.warning('Database connection health check failed: $e');
+      _connectionStatus = DatabaseConnectionStatus.failed;
+      return false;
+    }
+  }
+  
+  /// データベース接続を強制的に再確立
+  static Future<Database> reconnect() async {
+    AppLogger.info('Forcing database reconnection');
+    await close();
+    return await database;
+  }
+  
+  /// データベース接続情報を取得
+  static Future<DatabaseConnectionInfo> getConnectionInfo() async {
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, AppConfig.databaseName);
+    
+    return DatabaseConnectionInfo(
+      databasePath: path,
+      databaseName: AppConfig.databaseName,
+      version: _databaseVersion,
+      isOpen: isOpen,
+      connectionStatus: _connectionStatus,
+    );
+  }
+}
+
+/// データベース接続状態を表す列挙型
+enum DatabaseConnectionStatus {
+  /// 接続されていない
+  disconnected,
+  /// 接続中
+  connecting,
+  /// 接続済み
+  connected,
+  /// 接続失敗
+  failed,
+}
+
+/// データベース接続情報を保持するクラス
+class DatabaseConnectionInfo {
+  const DatabaseConnectionInfo({
+    required this.databasePath,
+    required this.databaseName,
+    required this.version,
+    required this.isOpen,
+    required this.connectionStatus,
+  });
+
+  /// データベースファイルパス
+  final String databasePath;
+  
+  /// データベース名
+  final String databaseName;
+  
+  /// データベースバージョン
+  final int version;
+  
+  /// データベースが開いているかどうか
+  final bool isOpen;
+  
+  /// 接続状態
+  final DatabaseConnectionStatus connectionStatus;
+
+  @override
+  String toString() {
+    return 'DatabaseConnectionInfo('
+        'path: $databasePath, '
+        'name: $databaseName, '
+        'version: $version, '
+        'isOpen: $isOpen, '
+        'status: $connectionStatus'
+        ')';
+  }
 }
