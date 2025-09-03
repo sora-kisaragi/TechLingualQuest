@@ -15,23 +15,23 @@ Follow official Microsoft C# coding conventions and framework-specific best prac
   - Keep solution files (`.sln`) at the root.
 
 ## Class, Method, and Variable Naming
-- Class and interface names: PascalCase (e.g., `UserManager`)  
-  クラス・インターフェイス名は PascalCase （例: `UserManager`）  
-  类与接口名称使用 PascalCase（例: `UserManager`）  
+- Class and interface names: PascalCase (e.g., `UserManager`)
+  クラス・インターフェイス名は PascalCase （例: `UserManager`）
+  类与接口名称使用 PascalCase（例: `UserManager`）
   클래스 및 인터페이스 이름은 PascalCase 사용 (예: `UserManager`)
-- Methods: PascalCase  
-  メソッド名は PascalCase  
-  方法名使用 PascalCase  
+- Methods: PascalCase
+  メソッド名は PascalCase
+  方法名使用 PascalCase
   메서드 이름은 PascalCase
-- Variables and private fields: camelCase or _camelCase  
+- Variables and private fields: camelCase or _camelCase
 - Constants: UPPER_SNAKE_CASE or PascalCase
 - Properties: PascalCase
 
 ## Coding Style
-- Use explicit access modifiers (public/private/protected/internal).  
-- Prefer `var` only when type is obvious.  
-- Use `async/await` for asynchronous operations.  
-- Keep methods small and focused.  
+- Use explicit access modifiers (public/private/protected/internal).
+- Prefer `var` only when type is obvious.
+- Use `async/await` for asynchronous operations.
+- Keep methods small and focused.
 - Use XML documentation comments for public APIs.
 - Framework-specific patterns:
   - **ASP.NET / ASP.NET Core:** MVC pattern, controllers, views, dependency injection.
@@ -50,5 +50,5 @@ Follow official Microsoft C# coding conventions and framework-specific best prac
 - Human review is recommended for critical business logic, database migrations, and platform-specific integration.
 
 ## Comments
-- Main language: English  
+- Main language: English
 - Supplement: 日本語 / 中文 / 한국어

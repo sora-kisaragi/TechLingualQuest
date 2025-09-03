@@ -12,32 +12,46 @@ on:
 permissions:
   contents: read
   actions: read
+  security-events: write
+
+env:
+  FLUTTER_VERSION: '3.35.2'
 
 jobs:
   security-scan:
     runs-on: ubuntu-latest
     name: Security Vulnerability Scan
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.24.3'
+        flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
     - name: Get dependencies
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: flutter pub get
-    
+
     - name: Run dependency audit
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: |
         # Flutter/Dart依存関係の脆弱性チェック
         echo "📦 依存関係の取得中..."
         flutter pub get
-        
+
         # 依存関係の解析
         if command -v jq &> /dev/null; then
           echo "📦 依存関係分析結果:"
@@ -46,7 +60,7 @@ jobs:
             jq '.packages[] | select(.kind == "direct") | {name: .name, version: .version}' deps.json 2>/dev/null || echo "JSON解析をスキップ"
           fi
         fi
-        
+
         # pubspec.lock の内容をチェック
         if [ -f "pubspec.lock" ]; then
           echo "🔒 ロックファイル確認: pubspec.lock が存在します"
@@ -54,29 +68,34 @@ jobs:
         else
           echo "⚠️ 警告: pubspec.lock が見つかりません（flutter pub getで生成されます）"
         fi
-        
+
         # 既知の脆弱性パッケージのチェック（例）
         if grep -q "vulnerable_package" pubspec.yaml; then
           echo "🚨 危険: 既知の脆弱性を持つパッケージが検出されました"
           exit 1
         fi
-    
+
     - name: Dart Static Analysis
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
       run: |
         echo "🔍 Dartコードの静的解析を実行中..."
         flutter analyze --no-fatal-infos || echo "静的解析で警告が検出されました"
-        
+
         # パッケージの健全性チェック
         echo "📊 パッケージの健全性を評価中..."
         dart pub deps --style=tree || echo "依存関係ツリーの表示をスキップ"
-        
+
         # セキュリティ関連の警告をチェック
         if flutter analyze 2>&1 | grep -i "security\|unsafe\|vulnerability" >/dev/null 2>&1; then
           echo "⚠️ セキュリティ関連の警告が検出されました"
         else
           echo "✅ セキュリティ関連の警告は検出されませんでした"
         fi
-    
+
     - name: Upload security scan results
       uses: actions/upload-artifact@v4
       if: always()
@@ -86,7 +105,7 @@ jobs:
           deps.json
           pubspec.lock
         retention-days: 30
-    
+
     - name: Send security notification
       if: failure() && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
       run: |
@@ -109,7 +128,7 @@ jobs:
           }' \
           ${{ vars.DISCORD_WEBHOOK_URL }}
         fi
-        
+
         if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
           curl -X POST -H 'Content-type: application/json' \
           --data '{
