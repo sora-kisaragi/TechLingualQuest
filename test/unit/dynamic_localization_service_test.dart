@@ -64,7 +64,7 @@ void main() {
       // Act & Assert - should not throw and return a Future
       final future = DynamicLocalizationService.getSupportedLanguages();
       expect(future, isA<Future<List<LanguageInfo>>>());
-      
+
       // Wait for completion - should handle any errors gracefully
       try {
         final result = await future;
@@ -79,14 +79,16 @@ void main() {
     test('should handle isLanguageSupported safely', () async {
       // Act & Assert - should not throw
       try {
-        final result = await DynamicLocalizationService.isLanguageSupported('en');
+        final result =
+            await DynamicLocalizationService.isLanguageSupported('en');
         expect(result, isA<bool>());
       } catch (e) {
         expect(e, isNotNull);
       }
 
       try {
-        final result = await DynamicLocalizationService.isLanguageSupported('invalid');
+        final result =
+            await DynamicLocalizationService.isLanguageSupported('invalid');
         expect(result, isA<bool>());
       } catch (e) {
         expect(e, isNotNull);
@@ -97,7 +99,7 @@ void main() {
       // Act & Assert - should not throw and return a Future
       final future = DynamicLocalizationService.translate('appTitle', 'en');
       expect(future, isA<Future<String>>());
-      
+
       // Wait for completion - should handle any errors gracefully
       try {
         final result = await future;
@@ -112,7 +114,7 @@ void main() {
       // Act & Assert - should not throw and return a Future
       final future = DynamicLocalizationService.getSavedLanguage();
       expect(future, isA<Future<String>>());
-      
+
       try {
         final result = await future;
         expect(result, isA<String>());
@@ -125,7 +127,7 @@ void main() {
       // Act & Assert - should not throw and return a Future
       final future = DynamicLocalizationService.saveLanguage('en');
       expect(future, isA<Future<bool>>());
-      
+
       try {
         final result = await future;
         expect(result, isA<bool>());
@@ -138,7 +140,7 @@ void main() {
       // Act & Assert - should not throw and return a Future
       final future = DynamicLocalizationService.getLanguageByCode('en');
       expect(future, isA<Future<LanguageInfo?>>());
-      
+
       try {
         final result = await future;
         expect(result, anyOf(isNull, isA<LanguageInfo>()));
@@ -151,7 +153,7 @@ void main() {
       // Act & Assert
       final future = DynamicLocalizationService.getLocaleFromCode('en');
       expect(future, isA<Future<Locale>>());
-      
+
       try {
         final result = await future;
         expect(result, isA<Locale>());
@@ -164,7 +166,7 @@ void main() {
       // Act & Assert
       final future = DynamicLocalizationService.getSupportedLocales();
       expect(future, isA<Future<List<Locale>>>());
-      
+
       try {
         final result = await future;
         expect(result, isA<List<Locale>>());
@@ -177,7 +179,7 @@ void main() {
       // Act & Assert
       final future = DynamicLocalizationService.getDefaultLanguage();
       expect(future, isA<Future<LanguageInfo>>());
-      
+
       try {
         final result = await future;
         expect(result, isA<LanguageInfo>());
@@ -247,7 +249,7 @@ void main() {
         final appTranslations = await AppTranslations.of('en');
         final future = appTranslations.get('test_key');
         expect(future, isA<Future<String>>());
-        
+
         final result = await future;
         expect(result, isA<String>());
       } catch (e) {
@@ -258,7 +260,8 @@ void main() {
     test('should handle getSync method safely', () async {
       try {
         final appTranslations = await AppTranslations.of('en');
-        final result = appTranslations.getSync('test_key', fallback: 'fallback');
+        final result =
+            appTranslations.getSync('test_key', fallback: 'fallback');
         expect(result, isA<String>());
       } catch (e) {
         expect(e, isNotNull); // Expected without assets
@@ -271,7 +274,8 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    testWidgets('should create notifier with default locale', (WidgetTester tester) async {
+    testWidgets('should create notifier with default locale',
+        (WidgetTester tester) async {
       // Arrange
       late DynamicLanguageNotifier notifier;
 
@@ -290,7 +294,8 @@ void main() {
       expect(notifier, isA<DynamicLanguageNotifier>());
     });
 
-    testWidgets('should handle language change attempts', (WidgetTester tester) async {
+    testWidgets('should handle language change attempts',
+        (WidgetTester tester) async {
       // Arrange
       late DynamicLanguageNotifier notifier;
 
@@ -319,7 +324,8 @@ void main() {
       }
     });
 
-    testWidgets('should handle getCurrentLanguage safely', (WidgetTester tester) async {
+    testWidgets('should handle getCurrentLanguage safely',
+        (WidgetTester tester) async {
       // Arrange
       late DynamicLanguageNotifier notifier;
 

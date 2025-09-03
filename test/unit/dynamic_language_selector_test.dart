@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tech_lingual_quest/shared/widgets/dynamic_language_selector.dart';
-import 'package:tech_lingual_quest/shared/services/dynamic_localization_service.dart';
 
 void main() {
   group('DynamicLanguageSelector Widget Tests', () {
     testWidgets('should display language icon', (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(),
@@ -25,10 +24,11 @@ void main() {
       expect(find.byIcon(Icons.language), findsOneWidget);
     });
 
-    testWidgets('should display language icon when loading', (WidgetTester tester) async {
+    testWidgets('should display language icon when loading',
+        (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(),
@@ -47,10 +47,11 @@ void main() {
       expect(find.byIcon(Icons.language), findsOneWidget);
     });
 
-    testWidgets('should display language icon on error', (WidgetTester tester) async {
+    testWidgets('should display language icon on error',
+        (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(),
@@ -69,7 +70,7 @@ void main() {
     testWidgets('should handle tap interaction', (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(),
@@ -95,7 +96,7 @@ void main() {
     testWidgets('should be a PopupMenuButton', (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(),
@@ -113,7 +114,7 @@ void main() {
     testWidgets('should have proper tooltip', (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(),
@@ -131,12 +132,13 @@ void main() {
       expect(popupButton.tooltip, 'Language');
     });
 
-    testWidgets('should handle widget key properly', (WidgetTester tester) async {
+    testWidgets('should handle widget key properly',
+        (WidgetTester tester) async {
       const testKey = Key('test_dynamic_language_selector');
-      
+
       // Build the widget with a key
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(key: testKey),
@@ -154,7 +156,7 @@ void main() {
     testWidgets('should be a ConsumerWidget', (WidgetTester tester) async {
       // Build the widget
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: DynamicLanguageSelector(),

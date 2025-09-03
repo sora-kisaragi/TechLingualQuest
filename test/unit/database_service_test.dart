@@ -58,9 +58,10 @@ LOG_LEVEL=error
       final tables = await db.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
       );
-      
-      final tableNames = tables.map((table) => table['name'] as String).toList();
-      
+
+      final tableNames =
+          tables.map((table) => table['name'] as String).toList();
+
       expect(tableNames, contains('users'));
       expect(tableNames, contains('vocabulary'));
       expect(tableNames, contains('user_vocabulary_progress'));
@@ -71,11 +72,12 @@ LOG_LEVEL=error
     test('should create users table with correct schema', () async {
       // Act
       final db = await DatabaseService.database;
-      
+
       // Assert - Check users table schema
       final userTableInfo = await db.rawQuery("PRAGMA table_info(users)");
-      final columnNames = userTableInfo.map((column) => column['name'] as String).toList();
-      
+      final columnNames =
+          userTableInfo.map((column) => column['name'] as String).toList();
+
       expect(columnNames, contains('id'));
       expect(columnNames, contains('username'));
       expect(columnNames, contains('email'));
@@ -88,11 +90,14 @@ LOG_LEVEL=error
     test('should create vocabulary table with correct schema', () async {
       // Act
       final db = await DatabaseService.database;
-      
+
       // Assert - Check vocabulary table schema
-      final vocabularyTableInfo = await db.rawQuery("PRAGMA table_info(vocabulary)");
-      final columnNames = vocabularyTableInfo.map((column) => column['name'] as String).toList();
-      
+      final vocabularyTableInfo =
+          await db.rawQuery("PRAGMA table_info(vocabulary)");
+      final columnNames = vocabularyTableInfo
+          .map((column) => column['name'] as String)
+          .toList();
+
       expect(columnNames, contains('id'));
       expect(columnNames, contains('word'));
       expect(columnNames, contains('definition'));
@@ -105,14 +110,17 @@ LOG_LEVEL=error
       expect(columnNames, contains('updated_at'));
     });
 
-    test('should create user_vocabulary_progress table with correct schema', () async {
+    test('should create user_vocabulary_progress table with correct schema',
+        () async {
       // Act
       final db = await DatabaseService.database;
-      
+
       // Assert - Check user_vocabulary_progress table schema
-      final tableInfo = await db.rawQuery("PRAGMA table_info(user_vocabulary_progress)");
-      final columnNames = tableInfo.map((column) => column['name'] as String).toList();
-      
+      final tableInfo =
+          await db.rawQuery("PRAGMA table_info(user_vocabulary_progress)");
+      final columnNames =
+          tableInfo.map((column) => column['name'] as String).toList();
+
       expect(columnNames, contains('id'));
       expect(columnNames, contains('user_id'));
       expect(columnNames, contains('vocabulary_id'));
@@ -128,11 +136,12 @@ LOG_LEVEL=error
     test('should create quests table with correct schema', () async {
       // Act
       final db = await DatabaseService.database;
-      
+
       // Assert - Check quests table schema
       final tableInfo = await db.rawQuery("PRAGMA table_info(quests)");
-      final columnNames = tableInfo.map((column) => column['name'] as String).toList();
-      
+      final columnNames =
+          tableInfo.map((column) => column['name'] as String).toList();
+
       expect(columnNames, contains('id'));
       expect(columnNames, contains('title'));
       expect(columnNames, contains('description'));
@@ -144,14 +153,17 @@ LOG_LEVEL=error
       expect(columnNames, contains('updated_at'));
     });
 
-    test('should create user_quest_progress table with correct schema', () async {
+    test('should create user_quest_progress table with correct schema',
+        () async {
       // Act
       final db = await DatabaseService.database;
-      
+
       // Assert - Check user_quest_progress table schema
-      final tableInfo = await db.rawQuery("PRAGMA table_info(user_quest_progress)");
-      final columnNames = tableInfo.map((column) => column['name'] as String).toList();
-      
+      final tableInfo =
+          await db.rawQuery("PRAGMA table_info(user_quest_progress)");
+      final columnNames =
+          tableInfo.map((column) => column['name'] as String).toList();
+
       expect(columnNames, contains('id'));
       expect(columnNames, contains('user_id'));
       expect(columnNames, contains('quest_id'));
@@ -164,7 +176,7 @@ LOG_LEVEL=error
     test('should handle database operations correctly', () async {
       // Act
       final db = await DatabaseService.database;
-      
+
       // Insert test data with unique name
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final userId = await db.insert('users', {
@@ -180,7 +192,8 @@ LOG_LEVEL=error
       expect(userId, greaterThan(0));
 
       // Query the data back
-      final users = await db.query('users', where: 'id = ?', whereArgs: [userId]);
+      final users =
+          await db.query('users', where: 'id = ?', whereArgs: [userId]);
       expect(users.length, 1);
       expect(users.first['username'], 'test_user_ops_$timestamp');
       expect(users.first['email'], 'test_ops_$timestamp@example.com');

@@ -8,8 +8,8 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=3.9.0 <4.0.0"
-  flutter: ">=3.35.0"
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
 
 dependencies:
   flutter:
@@ -41,7 +41,7 @@ dependencies:
 
   # Localization and preferences
   shared_preferences: ^2.3.2
-  intl: ^0.20.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -56,9 +56,6 @@ dev_dependencies:
   
   # Test dependencies for database testing on desktop
   sqflite_common_ffi: ^2.3.3
-
-  # Testing
-  sqflite_common_ffi: ^2.3.0
 
 flutter:
   uses-material-design: true

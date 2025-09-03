@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:logger/logger.dart';
 import 'package:tech_lingual_quest/shared/utils/config.dart';
 import 'package:tech_lingual_quest/shared/utils/logger.dart';
 
@@ -12,7 +11,7 @@ void main() {
     });
 
     tearDown(() {
-      // Clean dotenv after each test  
+      // Clean dotenv after each test
       dotenv.clean();
     });
 
@@ -81,12 +80,18 @@ LOG_LEVEL=debug
       final testStackTrace = StackTrace.current;
 
       // Act & Assert - Should handle error and stack trace parameters
-      expect(() => AppLogger.trace('Trace', testError, testStackTrace), returnsNormally);
-      expect(() => AppLogger.debug('Debug', testError, testStackTrace), returnsNormally);
-      expect(() => AppLogger.info('Info', testError, testStackTrace), returnsNormally);
-      expect(() => AppLogger.warning('Warning', testError, testStackTrace), returnsNormally);
-      expect(() => AppLogger.error('Error', testError, testStackTrace), returnsNormally);
-      expect(() => AppLogger.fatal('Fatal', testError, testStackTrace), returnsNormally);
+      expect(() => AppLogger.trace('Trace', testError, testStackTrace),
+          returnsNormally);
+      expect(() => AppLogger.debug('Debug', testError, testStackTrace),
+          returnsNormally);
+      expect(() => AppLogger.info('Info', testError, testStackTrace),
+          returnsNormally);
+      expect(() => AppLogger.warning('Warning', testError, testStackTrace),
+          returnsNormally);
+      expect(() => AppLogger.error('Error', testError, testStackTrace),
+          returnsNormally);
+      expect(() => AppLogger.fatal('Fatal', testError, testStackTrace),
+          returnsNormally);
     });
 
     test('should handle log levels with only error parameter', () async {

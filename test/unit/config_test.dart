@@ -14,7 +14,8 @@ void main() {
       dotenv.clean();
     });
 
-    test('should initialize with default values when no .env file exists', () async {
+    test('should initialize with default values when no .env file exists',
+        () async {
       // Act
       await AppConfig.initialize();
 
@@ -73,7 +74,7 @@ void main() {
       expect(AppConfig.isDevelopment, isA<bool>());
       expect(AppConfig.isStaging, isA<bool>());
       expect(AppConfig.isProduction, isA<bool>());
-      
+
       // Only one environment should be true at a time
       int trueCount = 0;
       if (AppConfig.isDevelopment) trueCount++;
@@ -103,7 +104,7 @@ void main() {
       // Assert - Environment should be consistent
       final env = AppConfig.environment;
       expect(env, isA<AppEnvironment>());
-      
+
       // Check consistency between environment enum and boolean helpers
       switch (env) {
         case AppEnvironment.dev:
@@ -129,7 +130,7 @@ void main() {
       await AppConfig.initialize();
       final firstDatabaseName = AppConfig.databaseName;
       final firstEnvironment = AppConfig.environment;
-      
+
       await AppConfig.initialize();
       final secondDatabaseName = AppConfig.databaseName;
       final secondEnvironment = AppConfig.environment;
@@ -162,7 +163,15 @@ void main() {
       await AppConfig.initialize();
 
       // Assert - Log level should be a known value
-      final validLogLevels = ['trace', 'debug', 'info', 'warning', 'warn', 'error', 'fatal'];
+      final validLogLevels = [
+        'trace',
+        'debug',
+        'info',
+        'warning',
+        'warn',
+        'error',
+        'fatal'
+      ];
       expect(validLogLevels, contains(AppConfig.logLevel.toLowerCase()));
     });
 
@@ -171,7 +180,7 @@ void main() {
       expect(AppEnvironment.dev, isA<AppEnvironment>());
       expect(AppEnvironment.staging, isA<AppEnvironment>());
       expect(AppEnvironment.prod, isA<AppEnvironment>());
-      
+
       // Test enum comparison
       expect(AppEnvironment.dev, isNot(equals(AppEnvironment.staging)));
       expect(AppEnvironment.staging, isNot(equals(AppEnvironment.prod)));

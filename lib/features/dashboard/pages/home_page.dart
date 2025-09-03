@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../shared/services/dynamic_localization_service.dart';
 import '../../../shared/widgets/dynamic_language_selector.dart';
 import '../../../shared/utils/navigation_helper.dart';
