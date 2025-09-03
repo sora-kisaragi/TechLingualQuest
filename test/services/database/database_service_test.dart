@@ -4,7 +4,7 @@ import 'package:tech_lingual_quest/shared/utils/config.dart';
 import '../../helpers/test_config.dart';
 
 /// DatabaseServiceの包括的なテスト
-/// 
+///
 /// データベース接続の確立、健全性チェック、リトライ機能、
 /// 接続状態の管理をテストする
 void main() {
@@ -110,41 +110,47 @@ void main() {
         );
       });
 
-      test('should detect unhealthy connection when database is null', () async {
-        // Arrange: データベースが初期化されていない状態を確保
-        await DatabaseService.close();
+      test(
+        'should detect unhealthy connection when database is null',
+        () async {
+          // Arrange: データベースが初期化されていない状態を確保
+          await DatabaseService.close();
 
-        // Act: 健全性チェックを実行
-        final isHealthy = await DatabaseService.isConnectionHealthy();
+          // Act: 健全性チェックを実行
+          final isHealthy = await DatabaseService.isConnectionHealthy();
 
-        // Assert: 接続が不健全であることを確認
-        expect(isHealthy, isFalse);
-        expect(
-          DatabaseService.connectionStatus,
-          equals(DatabaseConnectionStatus.disconnected),
-        );
-      });
+          // Assert: 接続が不健全であることを確認
+          expect(isHealthy, isFalse);
+          expect(
+            DatabaseService.connectionStatus,
+            equals(DatabaseConnectionStatus.disconnected),
+          );
+        },
+      );
     });
 
     group('Connection Reconnection', () {
-      test('should successfully reconnect after forced disconnection', () async {
-        // Arrange: 初期接続を確立
-        final originalDatabase = await DatabaseService.database;
-        expect(DatabaseService.isOpen, isTrue);
+      test(
+        'should successfully reconnect after forced disconnection',
+        () async {
+          // Arrange: 初期接続を確立
+          final originalDatabase = await DatabaseService.database;
+          expect(DatabaseService.isOpen, isTrue);
 
-        // Act: 強制的に再接続
-        final reconnectedDatabase = await DatabaseService.reconnect();
+          // Act: 強制的に再接続
+          final reconnectedDatabase = await DatabaseService.reconnect();
 
-        // Assert: 新しい接続が確立されることを確認
-        expect(reconnectedDatabase, isNotNull);
-        expect(DatabaseService.isOpen, isTrue);
-        expect(
-          DatabaseService.connectionStatus,
-          equals(DatabaseConnectionStatus.connected),
-        );
-        // 新しいインスタンスが作成されることを確認
-        expect(identical(originalDatabase, reconnectedDatabase), isFalse);
-      });
+          // Assert: 新しい接続が確立されることを確認
+          expect(reconnectedDatabase, isNotNull);
+          expect(DatabaseService.isOpen, isTrue);
+          expect(
+            DatabaseService.connectionStatus,
+            equals(DatabaseConnectionStatus.connected),
+          );
+          // 新しいインスタンスが作成されることを確認
+          expect(identical(originalDatabase, reconnectedDatabase), isFalse);
+        },
+      );
     });
 
     group('Connection Information', () {
@@ -162,7 +168,7 @@ void main() {
           connectionInfo.connectionStatus,
           equals(DatabaseConnectionStatus.connected),
         );
-        
+
         // データベース名とパスが適切に設定されていることを確認
         // テスト環境では実際の設定値を使用する
         expect(connectionInfo.databaseName, equals(AppConfig.databaseName));
@@ -195,7 +201,9 @@ void main() {
           "SELECT name FROM sqlite_master WHERE type='table'",
         );
 
-        final tableNames = tables.map((table) => table['name'] as String).toList();
+        final tableNames = tables
+            .map((table) => table['name'] as String)
+            .toList();
 
         expect(tableNames, contains('users'));
         expect(tableNames, contains('vocabulary'));
@@ -204,46 +212,58 @@ void main() {
         expect(tableNames, contains('user_quest_progress'));
       });
 
-      test('should create tables with correct schema for users table', () async {
-        // Arrange: データベース接続を確立
-        final database = await DatabaseService.database;
+      test(
+        'should create tables with correct schema for users table',
+        () async {
+          // Arrange: データベース接続を確立
+          final database = await DatabaseService.database;
 
-        // Act: usersテーブルのスキーマを確認
-        final schema = await database.rawQuery('PRAGMA table_info(users)');
+          // Act: usersテーブルのスキーマを確認
+          final schema = await database.rawQuery('PRAGMA table_info(users)');
 
-        // Assert: 正しいカラムが存在することを確認
-        final columnNames = schema.map((col) => col['name'] as String).toList();
-        
-        expect(columnNames, contains('id'));
-        expect(columnNames, contains('username'));
-        expect(columnNames, contains('email'));
-        expect(columnNames, contains('total_xp'));
-        expect(columnNames, contains('level'));
-        expect(columnNames, contains('created_at'));
-        expect(columnNames, contains('updated_at'));
-      });
+          // Assert: 正しいカラムが存在することを確認
+          final columnNames = schema
+              .map((col) => col['name'] as String)
+              .toList();
 
-      test('should create tables with correct schema for vocabulary table', () async {
-        // Arrange: データベース接続を確立
-        final database = await DatabaseService.database;
+          expect(columnNames, contains('id'));
+          expect(columnNames, contains('username'));
+          expect(columnNames, contains('email'));
+          expect(columnNames, contains('total_xp'));
+          expect(columnNames, contains('level'));
+          expect(columnNames, contains('created_at'));
+          expect(columnNames, contains('updated_at'));
+        },
+      );
 
-        // Act: vocabularyテーブルのスキーマを確認
-        final schema = await database.rawQuery('PRAGMA table_info(vocabulary)');
+      test(
+        'should create tables with correct schema for vocabulary table',
+        () async {
+          // Arrange: データベース接続を確立
+          final database = await DatabaseService.database;
 
-        // Assert: 正しいカラムが存在することを確認
-        final columnNames = schema.map((col) => col['name'] as String).toList();
-        
-        expect(columnNames, contains('id'));
-        expect(columnNames, contains('word'));
-        expect(columnNames, contains('definition'));
-        expect(columnNames, contains('example'));
-        expect(columnNames, contains('difficulty_level'));
-        expect(columnNames, contains('category'));
-        expect(columnNames, contains('learned_count'));
-        expect(columnNames, contains('last_reviewed_at'));
-        expect(columnNames, contains('created_at'));
-        expect(columnNames, contains('updated_at'));
-      });
+          // Act: vocabularyテーブルのスキーマを確認
+          final schema = await database.rawQuery(
+            'PRAGMA table_info(vocabulary)',
+          );
+
+          // Assert: 正しいカラムが存在することを確認
+          final columnNames = schema
+              .map((col) => col['name'] as String)
+              .toList();
+
+          expect(columnNames, contains('id'));
+          expect(columnNames, contains('word'));
+          expect(columnNames, contains('definition'));
+          expect(columnNames, contains('example'));
+          expect(columnNames, contains('difficulty_level'));
+          expect(columnNames, contains('category'));
+          expect(columnNames, contains('learned_count'));
+          expect(columnNames, contains('last_reviewed_at'));
+          expect(columnNames, contains('created_at'));
+          expect(columnNames, contains('updated_at'));
+        },
+      );
     });
 
     group('Connection Status Tracking', () {

@@ -21,11 +21,7 @@ class AuthPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.person,
-              size: 80,
-              color: Colors.deepPurple,
-            ),
+            Icon(Icons.person, size: 80, color: Colors.deepPurple),
             SizedBox(height: 20),
             Text(
               'Authentication',

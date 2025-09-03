@@ -12,9 +12,10 @@ class DatabaseService {
   static const int _databaseVersion = 1;
   static const int _maxRetryAttempts = 3;
   static const Duration _retryDelay = Duration(seconds: 1);
-  
+
   /// データベース接続状態
-  static DatabaseConnectionStatus _connectionStatus = DatabaseConnectionStatus.disconnected;
+  static DatabaseConnectionStatus _connectionStatus =
+      DatabaseConnectionStatus.disconnected;
 
   /// データベースインスタンスを取得（シングルトンパターン）
   static Future<Database> get database async {
@@ -29,10 +30,12 @@ class DatabaseService {
   /// リトライ機能付きデータベース初期化
   static Future<Database> _initDatabaseWithRetry() async {
     _connectionStatus = DatabaseConnectionStatus.connecting;
-    
+
     for (int attempt = 1; attempt <= _maxRetryAttempts; attempt++) {
       try {
-        AppLogger.info('Database connection attempt $attempt/$_maxRetryAttempts');
+        AppLogger.info(
+          'Database connection attempt $attempt/$_maxRetryAttempts',
+        );
         final database = await _initDatabase();
         _connectionStatus = DatabaseConnectionStatus.connected;
         AppLogger.info('Database connection established successfully');
@@ -43,7 +46,7 @@ class DatabaseService {
           e,
           stackTrace,
         );
-        
+
         if (attempt == _maxRetryAttempts) {
           _connectionStatus = DatabaseConnectionStatus.failed;
           AppLogger.error(
@@ -53,16 +56,18 @@ class DatabaseService {
           );
           rethrow;
         }
-        
+
         // 指数バックオフによる遅延
         final delay = Duration(
-          milliseconds: _retryDelay.inMilliseconds * (1 << (attempt - 1))
+          milliseconds: _retryDelay.inMilliseconds * (1 << (attempt - 1)),
         );
-        AppLogger.debug('Retrying database connection in ${delay.inMilliseconds}ms');
+        AppLogger.debug(
+          'Retrying database connection in ${delay.inMilliseconds}ms',
+        );
         await Future.delayed(delay);
       }
     }
-    
+
     throw Exception('Unable to establish database connection');
   }
 
@@ -181,9 +186,13 @@ class DatabaseService {
 
   /// データベースアップグレードを処理
   static Future<void> _onUpgrade(
-      Database db, int oldVersion, int newVersion) async {
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
     AppLogger.info(
-        'Upgrading database from version $oldVersion to $newVersion');
+      'Upgrading database from version $oldVersion to $newVersion',
+    );
     // 将来のデータベースマイグレーションはここで処理される
   }
 
@@ -199,17 +208,17 @@ class DatabaseService {
 
   /// データベースが開いているかチェック
   static bool get isOpen => _database?.isOpen ?? false;
-  
+
   /// データベース接続状態を取得
   static DatabaseConnectionStatus get connectionStatus => _connectionStatus;
-  
+
   /// データベース接続の健全性をチェック
   static Future<bool> isConnectionHealthy() async {
     if (_database == null || !_database!.isOpen) {
       _connectionStatus = DatabaseConnectionStatus.disconnected;
       return false;
     }
-    
+
     try {
       // 簡単なクエリを実行して接続をテスト
       await _database!.rawQuery('SELECT 1');
@@ -221,19 +230,19 @@ class DatabaseService {
       return false;
     }
   }
-  
+
   /// データベース接続を強制的に再確立
   static Future<Database> reconnect() async {
     AppLogger.info('Forcing database reconnection');
     await close();
     return await database;
   }
-  
+
   /// データベース接続情報を取得
   static Future<DatabaseConnectionInfo> getConnectionInfo() async {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, AppConfig.databaseName);
-    
+
     return DatabaseConnectionInfo(
       databasePath: path,
       databaseName: AppConfig.databaseName,
@@ -248,10 +257,13 @@ class DatabaseService {
 enum DatabaseConnectionStatus {
   /// 接続されていない
   disconnected,
+
   /// 接続中
   connecting,
+
   /// 接続済み
   connected,
+
   /// 接続失敗
   failed,
 }
@@ -268,16 +280,16 @@ class DatabaseConnectionInfo {
 
   /// データベースファイルパス
   final String databasePath;
-  
+
   /// データベース名
   final String databaseName;
-  
+
   /// データベースバージョン
   final int version;
-  
+
   /// データベースが開いているかどうか
   final bool isOpen;
-  
+
   /// 接続状態
   final DatabaseConnectionStatus connectionStatus;
 

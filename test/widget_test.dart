@@ -83,11 +83,13 @@ void main() {
       TestConfig.cleanup();
     });
 
-    testWidgets('App should initialize and display home page',
-        (WidgetTester tester) async {
+    testWidgets('App should initialize and display home page', (
+      WidgetTester tester,
+    ) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
 
       // Wait for initialization to complete
       await tester.pumpAndSettle();
@@ -102,11 +104,13 @@ void main() {
       expect(find.text('0'), findsOneWidget);
     });
 
-    testWidgets('Tap floating action button to earn XP',
-        (WidgetTester tester) async {
+    testWidgets('Tap floating action button to earn XP', (
+      WidgetTester tester,
+    ) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
       await tester.pumpAndSettle();
 
       // Verify initial XP is 0
@@ -122,11 +126,13 @@ void main() {
       expect(find.text('10'), findsOneWidget);
     });
 
-    testWidgets('Multiple taps should accumulate XP',
-        (WidgetTester tester) async {
+    testWidgets('Multiple taps should accumulate XP', (
+      WidgetTester tester,
+    ) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
       await tester.pumpAndSettle();
 
       // Tap the '+' icon multiple times
@@ -141,18 +147,22 @@ void main() {
       expect(find.text('30'), findsOneWidget);
     });
 
-    testWidgets('Should display feature list and navigation buttons',
-        (WidgetTester tester) async {
+    testWidgets('Should display feature list and navigation buttons', (
+      WidgetTester tester,
+    ) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
       await tester.pumpAndSettle();
 
       // Verify that feature list is displayed
       expect(find.text('Features:'), findsOneWidget);
       expect(find.text('• Daily quests and challenges'), findsOneWidget);
-      expect(find.text('• Vocabulary building with spaced repetition'),
-          findsOneWidget);
+      expect(
+        find.text('• Vocabulary building with spaced repetition'),
+        findsOneWidget,
+      );
       expect(find.text('• Technical article summaries'), findsOneWidget);
       expect(find.text('• Progress tracking and achievements'), findsOneWidget);
       expect(find.text('• AI-powered conversation practice'), findsOneWidget);
@@ -163,11 +173,13 @@ void main() {
       expect(find.text('Profile'), findsOneWidget);
     });
 
-    testWidgets('Should navigate to vocabulary page',
-        (WidgetTester tester) async {
+    testWidgets('Should navigate to vocabulary page', (
+      WidgetTester tester,
+    ) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
       await tester.pumpAndSettle();
 
       // Tap vocabulary button
@@ -177,15 +189,18 @@ void main() {
       // Verify navigation to vocabulary page
       expect(find.text('Vocabulary Learning'), findsOneWidget);
       expect(
-          find.text(
-              'Vocabulary cards and learning features will be implemented here'),
-          findsOneWidget);
+        find.text(
+          'Vocabulary cards and learning features will be implemented here',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Should navigate to quests page', (WidgetTester tester) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
       await tester.pumpAndSettle();
 
       // Ensure we're on home page by checking for navigation buttons
@@ -198,15 +213,18 @@ void main() {
       // Verify navigation to quests page
       expect(find.text('Daily Quests'), findsOneWidget);
       expect(
-          find.text(
-              'Quest system and gamification features will be implemented here'),
-          findsOneWidget);
+        find.text(
+          'Quest system and gamification features will be implemented here',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Should navigate to profile page', (WidgetTester tester) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
       await tester.pumpAndSettle();
 
       // Ensure we're on home page by checking for navigation buttons
@@ -218,15 +236,19 @@ void main() {
 
       // Verify navigation to profile page
       expect(find.text('Authentication'), findsOneWidget);
-      expect(find.text('User authentication will be implemented here'),
-          findsOneWidget);
+      expect(
+        find.text('User authentication will be implemented here'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('Should navigate back to home from other pages',
-        (WidgetTester tester) async {
+    testWidgets('Should navigate back to home from other pages', (
+      WidgetTester tester,
+    ) async {
       // Build our app and trigger a frame.
-      await tester
-          .pumpWidget(const ProviderScope(child: TestTechLingualQuestApp()));
+      await tester.pumpWidget(
+        const ProviderScope(child: TestTechLingualQuestApp()),
+      );
       await tester.pumpAndSettle();
 
       // Navigate to vocabulary page

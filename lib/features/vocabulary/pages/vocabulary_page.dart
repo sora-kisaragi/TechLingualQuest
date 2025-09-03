@@ -21,11 +21,7 @@ class VocabularyPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.book,
-              size: 80,
-              color: Colors.deepPurple,
-            ),
+            Icon(Icons.book, size: 80, color: Colors.deepPurple),
             SizedBox(height: 20),
             Text(
               'Vocabulary Learning',

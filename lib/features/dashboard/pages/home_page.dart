@@ -31,11 +31,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Icon(
-              Icons.school,
-              size: 80,
-              color: Colors.deepPurple,
-            ),
+            const Icon(Icons.school, size: 80, color: Colors.deepPurple),
             const SizedBox(height: 20),
             const Text(
               'Welcome to TechLingual Quest!',

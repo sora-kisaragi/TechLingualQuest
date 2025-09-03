@@ -21,11 +21,7 @@ class QuestsPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.flag,
-              size: 80,
-              color: Colors.deepPurple,
-            ),
+            Icon(Icons.flag, size: 80, color: Colors.deepPurple),
             SizedBox(height: 20),
             Text(
               'Daily Quests',

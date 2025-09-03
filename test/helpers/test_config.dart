@@ -17,7 +17,8 @@ class TestConfig {
     databaseFactory = databaseFactoryFfi;
 
     // テスト環境用のモック設定で直接dotenvを初期化
-    dotenv.testLoad(fileInput: '''
+    dotenv.testLoad(
+      fileInput: '''
 APP_ENV=test
 DATABASE_NAME=tech_lingual_quest_test.db
 API_BASE_URL=https://api.test.example.com
@@ -25,7 +26,8 @@ API_KEY=test_api_key
 LOG_LEVEL=error
 ENABLE_ANALYTICS=false
 ENABLE_CRASHLYTICS=false
-''');
+''',
+    );
 
     // AppConfigを初期化 - ここで環境設定が読み込まれる
     await AppConfig.initialize();
