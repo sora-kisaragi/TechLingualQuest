@@ -1,0 +1,33 @@
+# Pre-commit hooks configuration for automatic code formatting
+# This ensures code is properly formatted before commits to prevent CI/CD failures
+
+repos:
+  # Dart/Flutter formatting using custom scripts that handle path detection
+  - repo: local
+    hooks:
+      - id: dart-format
+        name: Dart Format
+        description: Automatically format Dart code using 'dart format'
+        entry: bash -c 'scripts/format_dart.sh'
+        language: system
+        files: \.dart$
+        pass_filenames: false
+
+  # General file formatting hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        exclude: \.dart$  # Let dart format handle dart files
+      - id: end-of-file-fixer
+        name: Fix End of Files
+        exclude: \.dart$  # Let dart format handle dart files
+      - id: check-yaml
+        name: Check YAML
+        args: ['--unsafe']  # Allow complex YAML like pubspec.yaml
+      - id: check-json
+        name: Check JSON
+        exclude: assets/translations/.*\.json$  # Allow flexible JSON in translations
+      - id: check-merge-conflict
+        name: Check for merge conflicts

@@ -1,7 +1,7 @@
 # Flutter Project Basic Setup - Implementation Summary
 
-**Created:** 2025-01-02  
-**Issue:** #29 [フェーズ1] Flutter プロジェクト基本セットアップ  
+**Created:** 2025-01-02
+**Issue:** #29 [フェーズ1] Flutter プロジェクト基本セットアップ
 **Status:** Complete
 
 ## ✅ Implemented Features

@@ -1,8 +1,8 @@
 # 高水準設計書 (HLD) - TechLingual Quest
 
-**作成者:** Github Copilot Agent  
-**作成日:** 2025-01-16  
-**バージョン:** 2.0  
+**作成者:** Github Copilot Agent
+**作成日:** 2025-01-16
+**バージョン:** 2.0
 **ステータス:** 完成
 
 このドキュメントは要件定義書に基づいて作成された、TechLingual Questアプリケーションのシステム全体アーキテクチャ設計書です。
@@ -50,36 +50,36 @@ graph TB
         B[Flutter Web App<br/>Browser]
         C[External Apps<br/>GPT Official App]
     end
-    
+
     subgraph "Local Storage"
         D[SQLite Database<br/>User Data, Vocabulary, Summaries]
         E[Local File Storage<br/>Assets, Media]
     end
-    
+
     subgraph "Data Sharing"
         F[QR Code Generator/Scanner]
         G[Device-to-Device Communication<br/>Bluetooth/WiFi Direct]
     end
-    
+
     subgraph "External Services"
         H[LLM Providers<br/>OpenAI/Ollama/LMStudio]
         I[External APIs<br/>Article Sources]
     end
-    
+
     A --> D
     B --> D
     A --> E
     B --> E
-    
+
     A --> F
     A --> G
     B --> F
-    
+
     A --> H
     B --> H
     A --> I
     B --> I
-    
+
     C -.-> A
     C -.-> B
 ```
@@ -93,11 +93,11 @@ graph TB
         B[Flutter Web App<br/>Browser]
         C[External Apps<br/>GPT Official App]
     end
-    
+
     subgraph "API Gateway"
         D[API Gateway<br/>Authentication & Routing]
     end
-    
+
     subgraph "Application Layer"
         E[Auth Service<br/>Firebase Auth]
         F[Quest Service]
@@ -107,23 +107,23 @@ graph TB
         J[Analytics Service]
         K[LLM Service]
     end
-    
+
     subgraph "Data Layer"
         L[Firestore Database<br/>User Data, Content]
         M[Cloud Storage<br/>Assets, Media]
         N[Analytics DB<br/>Usage Statistics]
     end
-    
+
     subgraph "External Services"
         O[LLM Providers<br/>OpenAI/Ollama/LMStudio]
         P[Push Notification<br/>FCM/APNS]
         Q[External APIs<br/>Article Sources]
     end
-    
+
     A --> D
     B --> D
     C -.-> D
-    
+
     D --> E
     D --> F
     D --> G
@@ -131,22 +131,22 @@ graph TB
     D --> I
     D --> J
     D --> K
-    
+
     F --> L
     G --> L
     H --> L
     I --> L
     J --> N
     K --> O
-    
+
     E --> L
     G --> M
     H --> M
-    
+
     F --> O
     G --> O
     H --> O
-    
+
     I --> P
     H --> Q
 ```
@@ -208,19 +208,19 @@ graph TD
         B[Widgets/Components]
         C[View Models]
     end
-    
+
     subgraph "Domain Layer"
         D[Use Cases]
         E[Entities]
         F[Repository Interfaces]
     end
-    
+
     subgraph "Data Layer"
         G[Repository Implementations]
         H[Data Sources]
         I[Models/DTOs]
     end
-    
+
     A --> C
     B --> C
     C --> D
@@ -273,24 +273,24 @@ sequenceDiagram
     participant L as Local DB (SQLite)
     participant E as External API
     participant Q as QR Code/Device Communication
-    
+
     U->>F: アクション実行
     F->>F: ローカル認証チェック
     F->>L: データ取得/更新
     L->>F: ローカルデータ返却
-    
+
     alt 外部API呼び出し（LLM等）
         F->>E: API呼び出し
         E->>F: レスポンス
         F->>L: 結果をローカル保存
     end
-    
+
     alt データ共有
         F->>Q: QRコード生成/端末間通信
         Q->>F: 共有データ受信
         F->>L: 受信データをマージ
     end
-    
+
     F->>U: UI更新
 ```
 
@@ -304,12 +304,12 @@ sequenceDiagram
     participant S as Service Layer
     participant D as Server Database
     participant E as External API
-    
+
     U->>F: アクション実行
     F->>A: API リクエスト
     A->>A: 認証チェック
     A->>S: ビジネスロジック処理
-    
+
     alt データ取得
         S->>D: クエリ実行
         D->>S: データ返却
@@ -317,7 +317,7 @@ sequenceDiagram
         S->>E: API呼び出し
         E->>S: レスポンス
     end
-    
+
     S->>D: データ更新
     S->>A: レスポンス生成
     A->>F: JSON レスポンス
@@ -437,12 +437,12 @@ sequenceDiagram
     participant A as API Gateway
     participant S as Service
     participant D as Database
-    
+
     C->>F: ログイン要求
     F->>C: JWT Token
     C->>A: API要求 (Token付き)
     A->>A: Token検証
-    
+
     alt 認証成功
         A->>S: リクエスト転送
         S->>D: データアクセス (ユーザーID付き)
@@ -497,31 +497,31 @@ graph LR
     subgraph "Load Balancing"
         A[Load Balancer]
     end
-    
+
     subgraph "Auto Scaling"
         B[API Server 1]
         C[API Server 2]
         D[API Server N]
     end
-    
+
     subgraph "Database Scaling"
         E[Primary DB]
         F[Read Replica 1]
         G[Read Replica 2]
     end
-    
+
     subgraph "Caching Layer"
         H[Redis Cluster]
     end
-    
+
     A --> B
     A --> C
     A --> D
-    
+
     B --> E
     C --> F
     D --> G
-    
+
     B --> H
     C --> H
     D --> H
@@ -547,25 +547,25 @@ graph TD
         B[Development DB]
         C[Local Testing]
     end
-    
+
     subgraph "Staging"
         D[Staging Environment]
         E[Staging DB]
         F[Integration Testing]
     end
-    
+
     subgraph "Production"
         G[Production Environment]
         H[Production DB]
         I[Monitoring & Alerts]
     end
-    
+
     A --> D
     D --> G
-    
+
     B --> E
     E --> H
-    
+
     C --> F
     F --> I
 ```
@@ -615,7 +615,7 @@ sequenceDiagram
     participant T as TechLingual Quest
     participant G as GPT Official App
     participant A as Analytics
-    
+
     U->>T: クエスト「会話練習」選択
     T->>T: ディープリンク生成
     T->>G: ディープリンクで起動
@@ -633,41 +633,41 @@ graph TB
     subgraph "Client Layer"
         A[Flutter App]
     end
-    
+
     subgraph "LLM Service Layer"
         B[LLM Abstract Interface]
         C[API Key Manager]
     end
-    
+
     subgraph "Provider Implementations"
         D[OpenAI Provider]
         E[Ollama Provider]
         F[LMStudio Provider]
         G[Local Model Provider]
     end
-    
+
     subgraph "External Services"
         H[OpenAI API]
         I[Ollama Server]
         J[LMStudio Server]
     end
-    
+
     subgraph "Local Resources"
         K[Edge LLM Models]
         L[Device Storage]
     end
-    
+
     A --> B
     A --> C
     B --> D
     B --> E
     B --> F
     B --> G
-    
+
     C --> D
     C --> E
     C --> F
-    
+
     D --> H
     E --> I
     F --> J
@@ -693,7 +693,7 @@ sequenceDiagram
     participant K as Key Manager
     participant P as Provider
     participant A as API Service
-    
+
     U->>S: API設定画面
     S->>U: プロバイダー選択UI
     U->>S: APIキー入力
@@ -726,23 +726,23 @@ graph TB
         B[User Data]
         C[Content Data]
     end
-    
+
     subgraph "Backup Systems"
         D[Daily Backup]
         E[Weekly Backup]
         F[Monthly Archive]
     end
-    
+
     subgraph "Disaster Recovery"
         G[Standby Region]
         H[Failover System]
         I[Data Replication]
     end
-    
+
     A --> D
     B --> E
     C --> F
-    
+
     D --> G
     E --> H
     F --> I
@@ -766,18 +766,18 @@ graph TB
 ```mermaid
 timeline
     title 機能拡張ロードマップ
-    
+
     section Phase 1 (MVP)
         基本機能 : 認証・クエスト・単語・要約・ダッシュボード
-    
+
     section Phase 2 (機能強化)
         AI機能強化 : 自動クイズ生成・発音評価・文法チェック
         ソーシャル機能 : ランキング・バッジ共有・学習グループ
-    
+
     section Phase 3 (エコシステム)
         API公開 : 外部アプリとの連携API
         プラグイン : ブラウザ拡張・IDE連携
-        
+
     section Phase 4 (エンタープライズ)
         企業向け : チーム管理・学習分析・カスタムコンテンツ
         多言語対応 : 中国語・韓国語・スペイン語対応
@@ -821,7 +821,7 @@ timeline
 ```mermaid
 pyramid
     title Testing Pyramid
-    
+
     "E2E Tests<br/>User Journey" : 5
     "Integration Tests<br/>API & DB" : 15
     "Unit Tests<br/>Business Logic" : 80

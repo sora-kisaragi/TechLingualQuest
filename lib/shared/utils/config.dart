@@ -15,7 +15,8 @@ class AppConfig {
     } catch (e) {
       // .envファイルが存在しない場合、デフォルト設定を使用
       // CI/CDや本番環境では環境変数から設定を読み取る
-      dotenv.testLoad(fileInput: '''
+      dotenv.testLoad(
+        fileInput: '''
 APP_ENV=dev
 DATABASE_NAME=tech_lingual_quest.db
 API_BASE_URL=https://api.example.com
@@ -23,7 +24,8 @@ API_KEY=
 LOG_LEVEL=info
 ENABLE_ANALYTICS=false
 ENABLE_CRASHLYTICS=false
-''');
+''',
+      );
     }
     _setEnvironmentFromConfig();
   }
@@ -101,8 +103,4 @@ ENABLE_CRASHLYTICS=false
 }
 
 /// アプリケーション環境
-enum AppEnvironment {
-  dev,
-  staging,
-  prod,
-}
+enum AppEnvironment { dev, staging, prod }

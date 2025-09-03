@@ -26,11 +26,10 @@ linter:
     prefer_const_constructors: true
     prefer_const_declarations: true
     prefer_const_literals_to_create_immutables: true
-    
+
 # Additional analyzer settings
 analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
-  # Exclude local tooling and embedded SDKs from analysis
-  - "tools/**"
+    - "tools/**"

@@ -10,8 +10,8 @@ related_docs: ["development-tasks.md", "issue-creation-plan.md", "issue-10-summa
 
 このドキュメントは、Issue #10「HLD LLDなどのドキュメントに基づいてタスクを設定する」に基づいて作成された、手作業でのGitHub Issues作成支援ガイドです。
 
-**作成対象**: 18個のIssue（16個の開発タスク + 2個のインフラタスク）  
-**総期間**: 12週間（84日）  
+**作成対象**: 18個のIssue（16個の開発タスク + 2個のインフラタスク）
+**総期間**: 12週間（84日）
 **プロジェクト開始日**: [実際の開始日を設定してください]
 
 ---
@@ -558,6 +558,6 @@ related_docs: ["development-tasks.md", "issue-creation-plan.md", "issue-10-summa
 
 ---
 
-**作成日**: 2025年9月2日  
-**作成者**: GitHub Copilot Agent  
+**作成日**: 2025年9月2日
+**作成者**: GitHub Copilot Agent
 **関連Issue**: #10 - issueの作成

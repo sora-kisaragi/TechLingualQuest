@@ -1,0 +1,172 @@
+{
+  "supportedLanguages": {
+    "en": {
+      "nativeName": "English",
+      "englishName": "English"
+    },
+    "ja": {
+      "nativeName": "日本語",
+      "englishName": "Japanese"
+    },
+    "ko": {
+      "nativeName": "한국어",
+      "englishName": "Korean"
+    },
+    "zh": {
+      "nativeName": "中文",
+      "englishName": "Chinese"
+    }
+  },
+  "translations": {
+    "TechLingual Quest": {
+      "en": "TechLingual Quest",
+      "ja": "TechLingual Quest",
+      "ko": "TechLingual Quest",
+      "zh": "TechLingual Quest"
+    },
+    "Welcome to TechLingual Quest!": {
+      "en": "Welcome to TechLingual Quest!",
+      "ja": "テックリンガルクエストへようこそ！",
+      "ko": "TechLingual Quest에 오신 것을 환영합니다!",
+      "zh": "欢迎来到TechLingual Quest！"
+    },
+    "Your gamified journey to master technical English": {
+      "en": "Your gamified journey to master technical English",
+      "ja": "技術英語をマスターするためのゲーミフィケーション学習の旅",
+      "ko": "기술 영어를 마스터하는 게임화된 여정",
+      "zh": "掌握技术英语的游戏化学习之旅"
+    },
+    "XP:": {
+      "en": "XP:",
+      "ja": "経験値:",
+      "ko": "경험치:",
+      "zh": "经验值："
+    },
+    "Earn XP": {
+      "en": "Earn XP",
+      "ja": "経験値を獲得",
+      "ko": "경험치 획득",
+      "zh": "获得经验值"
+    },
+    "Features:": {
+      "en": "Features:",
+      "ja": "機能:",
+      "ko": "기능:",
+      "zh": "功能："
+    },
+    "• Daily quests and challenges": {
+      "en": "• Daily quests and challenges",
+      "ja": "• 日々のクエストとチャレンジ",
+      "ko": "• 일일 퀘스트 및 도전",
+      "zh": "• 每日任务和挑战"
+    },
+    "• Vocabulary building with spaced repetition": {
+      "en": "• Vocabulary building with spaced repetition",
+      "ja": "• 間隔反復による語彙力強化",
+      "ko": "• 간격 반복을 통한 어휘 구축",
+      "zh": "• 间隔重复的词汇构建"
+    },
+    "• Technical article summaries": {
+      "en": "• Technical article summaries",
+      "ja": "• 技術記事要約",
+      "ko": "• 기술 기사 요약",
+      "zh": "• 技术文章摘要"
+    },
+    "• Progress tracking and achievements": {
+      "en": "• Progress tracking and achievements",
+      "ja": "• 進捗追跡と実績",
+      "ko": "• 진행 상황 추적 및 성과",
+      "zh": "• 进度跟踪和成就"
+    },
+    "• AI-powered conversation practice": {
+      "en": "• AI-powered conversation practice",
+      "ja": "• AI搭載会話練習",
+      "ko": "• AI 기반 대화 연습",
+      "zh": "• AI驱动的对话练习"
+    },
+    "Vocabulary": {
+      "en": "Vocabulary",
+      "ja": "語彙",
+      "ko": "어휘",
+      "zh": "词汇"
+    },
+    "Quests": {
+      "en": "Quests",
+      "ja": "クエスト",
+      "ko": "퀘스트",
+      "zh": "任务"
+    },
+    "Profile": {
+      "en": "Profile",
+      "ja": "プロフィール",
+      "ko": "프로필",
+      "zh": "个人资料"
+    },
+    "Vocabulary Learning": {
+      "en": "Vocabulary Learning",
+      "ja": "語彙学習",
+      "ko": "어휘 학습",
+      "zh": "词汇学习"
+    },
+    "Vocabulary cards and learning features will be implemented here": {
+      "en": "Vocabulary cards and learning features will be implemented here",
+      "ja": "語彙カードと学習機能がここに実装される予定です",
+      "ko": "어휘 카드 및 학습 기능이 여기에 구현될 예정입니다",
+      "zh": "词汇卡和学习功能将在这里实现"
+    },
+    "Daily Quests": {
+      "en": "Daily Quests",
+      "ja": "日々のクエスト",
+      "ko": "일일 퀘스트",
+      "zh": "每日任务"
+    },
+    "Quest system and gamification features will be implemented here": {
+      "en": "Quest system and gamification features will be implemented here",
+      "ja": "クエストシステムとゲーミフィケーション機能がここに実装される予定です",
+      "ko": "퀘스트 시스템 및 게임화 기능이 여기에 구현될 예정입니다",
+      "zh": "任务系统和游戏化功能将在这里实现"
+    },
+    "Authentication": {
+      "en": "Authentication",
+      "ja": "認証",
+      "ko": "인증",
+      "zh": "认证"
+    },
+    "User authentication will be implemented here": {
+      "en": "User authentication will be implemented here",
+      "ja": "ユーザー認証がここに実装される予定です",
+      "ko": "사용자 인증이 여기에 구현될 예정입니다",
+      "zh": "用户认证将在这里实现"
+    },
+    "Language": {
+      "en": "Language",
+      "ja": "言語",
+      "ko": "언어",
+      "zh": "语言"
+    },
+    "English": {
+      "en": "English",
+      "ja": "英語",
+      "ko": "영어",
+      "zh": "英语"
+    },
+    "Japanese": {
+      "en": "Japanese",
+      "ja": "日本語",
+      "ko": "일본어",
+      "zh": "日语"
+    },
+    "Korean": {
+      "en": "Korean",
+      "ja": "韓国語",
+      "ko": "한국어",
+      "zh": "韩语"
+    },
+    "Chinese": {
+      "en": "Chinese",
+      "ja": "中国語",
+      "ko": "중국어",
+      "zh": "中文"
+    }
+  }
+}

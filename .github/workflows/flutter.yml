@@ -13,25 +13,25 @@ permissions:
   security-events: write
 
 env:
-  FLUTTER_VERSION: '3.24.3'
+  FLUTTER_VERSION: '3.35.2'
 
 jobs:
   # 依存関係とコード品質チェック
   quality-check:
     runs-on: ubuntu-latest
     name: Code Quality & Dependency Check
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
     - name: Get dependencies
       env:
         APP_ENV: dev
@@ -39,10 +39,10 @@ jobs:
         API_BASE_URL: https://api.example.com
         LOG_LEVEL: error
       run: flutter pub get
-    
+
     - name: Verify formatting
       run: dart format --output=none --set-exit-if-changed .
-    
+
     - name: Analyze project source
       env:
         APP_ENV: dev
@@ -50,7 +50,7 @@ jobs:
         API_BASE_URL: https://api.example.com
         LOG_LEVEL: error
       run: flutter analyze --no-fatal-infos || echo "静的解析で警告が検出されました"
-    
+
     - name: Validate project structure
       run: ./validate_flutter_setup.sh
 
@@ -59,18 +59,18 @@ jobs:
     runs-on: ubuntu-latest
     name: Unit & Widget Tests
     needs: quality-check
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
     - name: Get dependencies
       env:
         APP_ENV: dev
@@ -78,7 +78,7 @@ jobs:
         API_BASE_URL: https://api.example.com
         LOG_LEVEL: error
       run: flutter pub get
-    
+
     - name: Run tests with coverage
       env:
         APP_ENV: dev
@@ -96,7 +96,7 @@ jobs:
         else
           echo "Warning: Coverage file not generated"
         fi
-    
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
@@ -113,18 +113,18 @@ jobs:
     strategy:
       matrix:
         build-type: [android, web]
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
         cache: true
-    
+
     - name: Get dependencies
       env:
         APP_ENV: prod
@@ -132,7 +132,7 @@ jobs:
         API_BASE_URL: https://api.example.com
         LOG_LEVEL: error
       run: flutter pub get
-    
+
     - name: Build Android APK
       if: matrix.build-type == 'android'
       run: |
@@ -140,9 +140,11 @@ jobs:
         export APP_ENV=prod
         export DATABASE_NAME=tech_lingual_quest.db
         export API_BASE_URL=https://api.example.com
+        # CI環境でのGradleヒープサイズを増加（ローカル開発には影響しない）
+        export GRADLE_OPTS="-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError"
         flutter build apk --release
         echo "APK_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)" >> $GITHUB_ENV
-    
+
     - name: Build Web
       if: matrix.build-type == 'web'
       run: |
@@ -152,7 +154,7 @@ jobs:
         export API_BASE_URL=https://api.example.com
         flutter build web --release
         echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
-    
+
     - name: Upload Android APK artifact
       if: matrix.build-type == 'android'
       uses: actions/upload-artifact@v4
@@ -160,7 +162,7 @@ jobs:
         name: android-apk
         path: build/app/outputs/flutter-apk/*.apk
         retention-days: 7
-    
+
     - name: Upload Web build artifact
       if: matrix.build-type == 'web'
       uses: actions/upload-artifact@v4
@@ -175,7 +177,7 @@ jobs:
     name: Send Notifications
     needs: [quality-check, test, build]
     if: always()
-    
+
     steps:
     - name: Evaluate workflow results
       id: evaluate
@@ -189,13 +191,13 @@ jobs:
           echo "message=❌ CI/CD パイプラインでエラーが発生しました" >> $GITHUB_OUTPUT
           echo "color=15158332" >> $GITHUB_OUTPUT
         fi
-        
+
         echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
         echo "commit=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
         echo "actor=${{ github.actor }}" >> $GITHUB_OUTPUT
         echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
         echo "run_id=${{ github.run_id }}" >> $GITHUB_OUTPUT
-    
+
     - name: Send Discord notification
       if: vars.DISCORD_WEBHOOK_URL
       run: |
@@ -219,7 +221,7 @@ jobs:
           }]
         }' \
         ${{ vars.DISCORD_WEBHOOK_URL }}
-    
+
     - name: Send Slack notification
       if: vars.SLACK_WEBHOOK_URL
       run: |

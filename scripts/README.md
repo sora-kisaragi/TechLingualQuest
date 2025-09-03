@@ -1,8 +1,52 @@
-# スクリプト
+# スクリプトディレクトリ
 
-このディレクトリには、TechLingual Quest プロジェクトのビルドスクリプト、デプロイメントスクリプト、ユーティリティスクリプトが含まれています。
+このディレクトリには、開発とCI/CDプロセスを支援するスクリプトが含まれています。
 
-## 構造
+## 利用可能なスクリプト
+
+### `setup_precommit_hooks.sh`
+**自動コードフォーマッティング設定スクリプト**
+
+- pre-commitフレームワークをインストール
+- Git pre-commitフックを設定
+- Dartコードの自動フォーマットを有効化
+- CI/CDでのフォーマットエラーを防止
+
+```bash
+./scripts/setup_precommit_hooks.sh
+```
+
+### `format_dart.sh`
+**スマートDartフォーマッター**
+
+- 様々なFlutter/Dartインストール方法に対応
+- pre-commitフックから自動実行される
+- 手動実行も可能
+
+```bash
+./scripts/format_dart.sh
+```
+
+### `setup_ci_cd.sh`
+**CI/CD環境設定スクリプト**
+
+- CI/CD環境の初期セットアップ
+- 依存関係の確認とインストール
+
+```bash
+./scripts/setup_ci_cd.sh
+```
+
+## 新しい開発者向けセットアップ
+
+1. リポジトリをクローン後、まず自動フォーマッティングを設定：
+   ```bash
+   ./scripts/setup_precommit_hooks.sh
+   ```
+
+2. これで、コミット時に自動的にDartコードがフォーマットされ、CI/CDエラーを防げます。
+
+## 既存プロジェクト構造（計画中）
 
 ```
 scripts/
@@ -30,12 +74,17 @@ scripts/
 - 一貫したネーミング規則を使用
 - 異なる環境でスクリプトをテスト
 
-## 使用方法
+## トラブルシューティング
 
-```bash
-# スクリプトを実行可能にする
-chmod +x scripts/build/build_android.sh
+- スクリプトが実行できない場合、実行権限を確認：
+  ```bash
+  chmod +x scripts/*.sh
+  ```
 
-# スクリプトを実行
-./scripts/build/build_android.sh
-```
+- Flutter/Dartが見つからない場合は、PATHを確認：
+  ```bash
+  which flutter
+  which dart
+  ```
+
+詳細なドキュメントは `docs/DEVELOPMENT.md` を参照してください。

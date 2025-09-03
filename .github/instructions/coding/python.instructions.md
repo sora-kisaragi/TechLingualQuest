@@ -16,13 +16,13 @@ Follow the [PEP 8](https://peps.python.org/pep-0008/) style guide and framework-
   - **FastAPI:** routers/, Pydantic models, main.py for app setup
 
 ## Class, Function, and Variable Naming
-- Class names: PascalCase (e.g., `UserModel`)  
-  クラス名は PascalCase を使用（例: `UserModel`）  
-  类名使用 PascalCase（例: `UserModel`）  
+- Class names: PascalCase (e.g., `UserModel`)
+  クラス名は PascalCase を使用（例: `UserModel`）
+  类名使用 PascalCase（例: `UserModel`）
   클래스명은 PascalCase 사용 (예: `UserModel`)
-- Function and method names: snake_case  
-  関数・メソッド名は snake_case  
-  函数与方法名使用 snake_case  
+- Function and method names: snake_case
+  関数・メソッド名は snake_case
+  函数与方法名使用 snake_case
   함수 및 메서드 이름은 snake_case
 - Variables: snake_case
 - Constants: UPPER_SNAKE_CASE
@@ -47,5 +47,5 @@ Follow the [PEP 8](https://peps.python.org/pep-0008/) style guide and framework-
 - Encourage human review for business logic, database migrations, and security practices.
 
 ## Comments
-- Main language: English  
+- Main language: English
 - Supplement: 日本語 / 中文 / 한국어
