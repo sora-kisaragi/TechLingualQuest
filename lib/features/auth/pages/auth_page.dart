@@ -67,7 +67,6 @@ class AuthPage extends ConsumerWidget {
                 );
               },
             ),
-            ),
           ],
         ),
       ),
