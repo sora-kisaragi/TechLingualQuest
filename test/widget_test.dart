@@ -7,37 +7,38 @@ import 'package:tech_lingual_quest/features/dashboard/pages/home_page.dart';
 import 'package:tech_lingual_quest/features/auth/pages/auth_page.dart';
 import 'package:tech_lingual_quest/features/vocabulary/pages/vocabulary_page.dart';
 import 'package:tech_lingual_quest/features/quests/pages/quests_page.dart';
+import 'package:tech_lingual_quest/app/routes.dart';
 import 'helpers/test_config.dart';
 
 /// テスト用のGoRouterを作成
 GoRouter createTestRouter() {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: AppRoutes.home,
     routes: <RouteBase>[
       GoRoute(
-        path: '/',
-        name: 'home',
+        path: AppRoutes.home,
+        name: AppRoutes.homeName,
         builder: (BuildContext context, GoRouterState state) {
           return const HomePage();
         },
       ),
       GoRoute(
-        path: '/auth',
-        name: 'auth',
+        path: AppRoutes.auth,
+        name: AppRoutes.authName,
         builder: (BuildContext context, GoRouterState state) {
           return const AuthPage();
         },
       ),
       GoRoute(
-        path: '/vocabulary',
-        name: 'vocabulary',
+        path: AppRoutes.vocabulary,
+        name: AppRoutes.vocabularyName,
         builder: (BuildContext context, GoRouterState state) {
           return const VocabularyPage();
         },
       ),
       GoRoute(
-        path: '/quests',
-        name: 'quests',
+        path: AppRoutes.quests,
+        name: AppRoutes.questsName,
         builder: (BuildContext context, GoRouterState state) {
           return const QuestsPage();
         },
