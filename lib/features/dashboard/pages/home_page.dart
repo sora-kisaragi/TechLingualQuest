@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/services/dynamic_localization_service.dart';
 import '../../../shared/widgets/dynamic_language_selector.dart';
+import '../../../shared/utils/navigation_helper.dart';
 
 /// メインのクエストインターフェースを表示するホームページウィジェット
 ///
@@ -187,7 +188,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           future: translations.vocabulary,
           builder: (context, snapshot) {
             return ElevatedButton.icon(
-              onPressed: () => context.go('/vocabulary'),
+              onPressed: () => NavigationHelper.goVocabulary(context),
               icon: const Icon(Icons.book),
               label: Text(snapshot.data ?? 'Vocabulary'),
             );
@@ -197,7 +198,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           future: translations.quests,
           builder: (context, snapshot) {
             return ElevatedButton.icon(
-              onPressed: () => context.go('/quests'),
+              onPressed: () => NavigationHelper.goQuests(context),
               icon: const Icon(Icons.flag),
               label: Text(snapshot.data ?? 'Quests'),
             );
@@ -207,7 +208,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           future: translations.profile,
           builder: (context, snapshot) {
             return ElevatedButton.icon(
-              onPressed: () => context.go('/auth'),
+              onPressed: () => NavigationHelper.goAuth(context),
               icon: const Icon(Icons.person),
               label: Text(snapshot.data ?? 'Profile'),
             );

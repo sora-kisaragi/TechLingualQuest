@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/services/dynamic_localization_service.dart';
+import '../../../shared/utils/navigation_helper.dart';
 
 /// ゲーミフィケーション機能のためのクエストページ
 ///
@@ -37,7 +38,7 @@ class QuestsPage extends ConsumerWidget {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
+          onPressed: () => NavigationHelper.goBack(context),
         ),
       ),
       body: Center(

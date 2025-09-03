@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/services/dynamic_localization_service.dart';
+import '../../../shared/utils/navigation_helper.dart';
 
 /// ユーザーログインと登録のための認証ページ
 ///
@@ -34,7 +35,7 @@ class AuthPage extends ConsumerWidget {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
+          onPressed: () => NavigationHelper.goBack(context),
         ),
       ),
       body: Center(

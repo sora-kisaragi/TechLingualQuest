@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:tech_lingual_quest/shared/utils/config.dart';
 import 'package:tech_lingual_quest/shared/utils/logger.dart';
 
@@ -10,6 +11,10 @@ class TestConfig {
   /// テスト用のアプリ設定を初期化
   static Future<void> initializeForTest() async {
     TestWidgetsFlutterBinding.ensureInitialized();
+
+    // デスクトップ/CI環境でのSQLiteサポートを初期化
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
 
     // テスト環境用のモック設定で直接dotenvを初期化
     dotenv.testLoad(
@@ -24,7 +29,7 @@ ENABLE_CRASHLYTICS=false
 ''',
     );
 
-    // AppConfigを初期化
+    // AppConfigを初期化 - ここで環境設定が読み込まれる
     await AppConfig.initialize();
 
     // テスト用のロガーを初期化

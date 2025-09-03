@@ -53,6 +53,9 @@ dev_dependencies:
   # Code generation
   build_runner: ^2.4.7
   json_serializable: ^6.9.0
+  
+  # Test dependencies for database testing on desktop
+  sqflite_common_ffi: ^2.3.3
 
   # Testing
   sqflite_common_ffi: ^2.3.0
