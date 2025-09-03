@@ -93,9 +93,7 @@ class AppRouter {
               final id = state.pathParameters['id']!;
               AppLogger.debug('Navigating to vocabulary detail: $id');
               return Placeholder(
-                child: Center(
-                  child: Text('Vocabulary Detail: $id'),
-                ),
+                child: Center(child: Text('Vocabulary Detail: $id')),
               ); // 将来的にVocabularyDetailPageを実装
             },
           ),
@@ -126,9 +124,7 @@ class AppRouter {
               final id = state.pathParameters['id']!;
               AppLogger.debug('Navigating to quest detail: $id');
               return Placeholder(
-                child: Center(
-                  child: Text('Quest Detail: $id'),
-                ),
+                child: Center(child: Text('Quest Detail: $id')),
               ); // 将来的にQuestDetailPageを実装
             },
           ),
@@ -153,16 +149,14 @@ class AppRouter {
         },
       ),
     ],
-    errorBuilder: (context, state) => _ErrorPage(
-      error: state.error.toString(),
-      path: state.uri.toString(),
-    ),
+    errorBuilder: (context, state) =>
+        _ErrorPage(error: state.error.toString(), path: state.uri.toString()),
     redirect: _routeGuard,
     initialLocation: AppRoutes.home,
   );
 
   /// ルート認証ガード
-  /// 
+  ///
   /// 認証が必要なルートへの不正なアクセスを防ぐ
   static String? _routeGuard(BuildContext context, GoRouterState state) {
     final path = state.uri.toString();
@@ -170,10 +164,10 @@ class AppRouter {
 
     // 認証状態を確認
     final isAuthenticated = _ref?.read(isAuthenticatedProvider) ?? false;
-    
+
     // 現在のルート名を取得
     final routeName = _getRouteNameFromPath(path);
-    
+
     // ルートメタデータから認証要件を確認
     final metadata = AppRouteMetadata.getMetadata(routeName);
     final requiresAuth = metadata?.requiresAuth ?? false;
@@ -208,7 +202,7 @@ class AppRouter {
     if (path.startsWith('/quests')) return AppRoutes.questsName;
     if (path.startsWith('/settings')) return AppRoutes.settingsName;
     if (path.startsWith('/about')) return AppRoutes.aboutName;
-    
+
     return AppRoutes.homeName; // デフォルト
   }
 
@@ -218,10 +212,7 @@ class AppRouter {
 
 /// ナビゲーションエラーを処理するエラーページ
 class _ErrorPage extends StatelessWidget {
-  const _ErrorPage({
-    required this.error,
-    this.path,
-  });
+  const _ErrorPage({required this.error, this.path});
 
   final String error;
   final String? path;
@@ -229,7 +220,7 @@ class _ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppLogger.error('Navigation error: $error for path: $path');
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Navigation Error'),
@@ -251,27 +242,17 @@ class _ErrorPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
               const Text(
                 'Page not found',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               if (path != null) ...[
                 Text(
                   'Path: $path',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const SizedBox(height: 8),
               ],
@@ -306,10 +287,7 @@ class _ErrorPage extends StatelessWidget {
               const SizedBox(height: 16),
               const Text(
                 'If this error persists, please contact support.',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
             ],

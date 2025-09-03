@@ -4,7 +4,7 @@ import '../../app/routes.dart';
 import '../utils/logger.dart';
 
 /// ナビゲーションヘルパークラス
-/// 
+///
 /// アプリケーション全体でナビゲーションを簡潔に行うためのユーティリティ
 class NavigationHelper {
   // プライベートコンストラクタ（インスタンス化を防ぐ）
@@ -96,7 +96,9 @@ class NavigationHelper {
     Map<String, dynamic> queryParameters = const {},
     Object? extra,
   }) {
-    AppLogger.debug('Navigating to named route: $name with params: $pathParameters');
+    AppLogger.debug(
+      'Navigating to named route: $name with params: $pathParameters',
+    );
     context.goNamed(
       name,
       pathParameters: pathParameters,
@@ -136,7 +138,8 @@ class NavigationHelper {
   /// 現在のルート情報を取得
   static String getCurrentRoute(BuildContext context) {
     final GoRouter router = GoRouter.of(context);
-    final RouteMatch lastMatch = router.routerDelegate.currentConfiguration.last;
+    final RouteMatch lastMatch =
+        router.routerDelegate.currentConfiguration.last;
     final String location = lastMatch.matchedLocation;
     AppLogger.debug('Current route: $location');
     return location;
@@ -170,7 +173,7 @@ class NavigationHelper {
     Map<String, String> queryParameters,
   ) {
     if (queryParameters.isEmpty) return path;
-    
+
     final uri = Uri.parse(path);
     final newUri = uri.replace(queryParameters: queryParameters);
     return newUri.toString();
@@ -188,22 +191,22 @@ class NavigationHelper {
     Map<String, String> pathParameters,
   ) {
     String result = template;
-    
+
     pathParameters.forEach((key, value) {
       result = result.replaceAll(':$key', value);
     });
-    
+
     return result;
   }
 
   /// ディープリンクのサポート
   static void handleDeepLink(BuildContext context, String url) {
     AppLogger.info('Handling deep link: $url');
-    
+
     try {
       final uri = Uri.parse(url);
       final path = uri.path;
-      
+
       // クエリパラメータがある場合は保持
       if (uri.hasQuery) {
         final fullPath = '$path?${uri.query}';

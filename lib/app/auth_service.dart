@@ -13,11 +13,7 @@ class AuthState {
   final AuthUser? user;
   final bool isLoading;
 
-  AuthState copyWith({
-    bool? isAuthenticated,
-    AuthUser? user,
-    bool? isLoading,
-  }) {
+  AuthState copyWith({bool? isAuthenticated, AuthUser? user, bool? isLoading}) {
     return AuthState(
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       user: user ?? this.user,
@@ -28,11 +24,7 @@ class AuthState {
 
 /// 認証ユーザー情報クラス
 class AuthUser {
-  const AuthUser({
-    required this.id,
-    required this.email,
-    this.name,
-  });
+  const AuthUser({required this.id, required this.email, this.name});
 
   final String id;
   final String email;
@@ -49,12 +41,12 @@ class AuthService extends StateNotifier<AuthState> {
   /// ログイン処理（モック実装）
   Future<bool> login(String email, String password) async {
     AppLogger.info('Login attempt for email: $email');
-    
+
     state = state.copyWith(isLoading: true);
-    
+
     // モック認証処理（2秒待機）
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // 簡単な認証ロジック（デモ用）
     if (email.isNotEmpty && password.length >= 6) {
       final user = AuthUser(
@@ -62,13 +54,9 @@ class AuthService extends StateNotifier<AuthState> {
         email: email,
         name: email.split('@').first,
       );
-      
-      state = AuthState(
-        isAuthenticated: true,
-        user: user,
-        isLoading: false,
-      );
-      
+
+      state = AuthState(isAuthenticated: true, user: user, isLoading: false);
+
       AppLogger.info('Login successful for user: ${user.id}');
       return true;
     } else {
@@ -87,12 +75,12 @@ class AuthService extends StateNotifier<AuthState> {
   /// ユーザー登録処理（モック実装）
   Future<bool> register(String email, String password, String name) async {
     AppLogger.info('Registration attempt for email: $email');
-    
+
     state = state.copyWith(isLoading: true);
-    
+
     // モック登録処理（2秒待機）
     await Future.delayed(const Duration(seconds: 2));
-    
+
     // 簡単な登録ロジック（デモ用）
     if (email.isNotEmpty && password.length >= 6 && name.isNotEmpty) {
       final user = AuthUser(
@@ -100,13 +88,9 @@ class AuthService extends StateNotifier<AuthState> {
         email: email,
         name: name,
       );
-      
-      state = AuthState(
-        isAuthenticated: true,
-        user: user,
-        isLoading: false,
-      );
-      
+
+      state = AuthState(isAuthenticated: true, user: user, isLoading: false);
+
       AppLogger.info('Registration successful for user: ${user.id}');
       return true;
     } else {
@@ -128,19 +112,21 @@ class AuthService extends StateNotifier<AuthState> {
   /// 初期化時に保存された認証状態を復元（モック実装）
   Future<void> initializeAuth() async {
     AppLogger.info('Initializing authentication state');
-    
+
     // 実際の実装では、SharedPreferencesやSecureStorageから
     // 保存されたトークンを読み込んで認証状態を復元する
-    
+
     // 現在はモック実装のため、何もしない
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     AppLogger.info('Authentication initialization complete');
   }
 }
 
 /// 認証サービスプロバイダー
-final authServiceProvider = StateNotifierProvider<AuthService, AuthState>((ref) {
+final authServiceProvider = StateNotifierProvider<AuthService, AuthState>((
+  ref,
+) {
   return AuthService();
 });
 
