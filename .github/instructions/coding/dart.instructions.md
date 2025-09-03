@@ -30,3 +30,11 @@ applyTo: "**/*.dart"
 ## Formatter & Lint
 - Use `flutter format` / `dart format`
 - Enable recommended lints (e.g., `flutter_lints`)
+
+## Code Quality and Pre-commit Requirements
+- **Always format before commit**: Run `dart format .` before every commit
+- **Pre-commit hooks**: Install and use pre-commit hooks with `pre-commit install`
+- **Syntax validation**: Ensure code compiles without syntax errors before formatting
+- **CI/CD compliance**: All code must pass `dart format --set-exit-if-changed .` check
+- **Automated formatting**: Pre-commit hooks will automatically format Dart files
+- **Best practice**: Format code immediately after making changes to maintain consistency
