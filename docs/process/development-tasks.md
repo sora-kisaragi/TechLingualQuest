@@ -6,409 +6,403 @@ related_issues: ["#10"]
 related_docs: ["issue-creation-plan.md", "issue-10-summary.md", "../requirements/requirements.md", "../design/HLD.md"]
 ---
 
-# Development Tasks and Issues
+# 開発タスク一覧（Issues）
 
-This document outlines detailed development tasks based on the project roadmap and feature requirements. Each task includes estimated deadlines and detailed acceptance criteria.
+本書は、プロジェクトのロードマップと機能要件に基づく詳細タスクをまとめたものです。各タスクには目安の期限と受け入れ基準を含みます。
 
-Created in response to Issue #10: HLD LLDなどのドキュメントに基づいてタスクを設定する
+Issue #10 に対する成果物です: HLD/LLD 等のドキュメントに基づきタスクを定義。
 
-## Related Documents
-- Issue Creation Plan (issue-creation-plan.md) - GitHub Issues implementation templates
-- Issue #10 Summary (issue-10-summary.md) - Bilingual implementation summary
-- System Requirements (../requirements/requirements.md) - Detailed system requirements
-- High-Level Design (../design/HLD.md) - System architecture overview
+## 関連ドキュメント
+- Issue Creation Plan（issue-creation-plan.md）- GitHub Issues テンプレート
+- Issue #10 Summary（issue-10-summary.md）- 実装サマリ（バイリンガル）
+- System Requirements（../requirements/requirements.md）- 詳細要件
+- 高水準設計（../design/HLD.md）- 全体アーキテクチャ
 
 ---
 
-## Phase 1: Project Foundation (Weeks 1-2)
+## フェーズ1: プロジェクト基盤（1〜2週）
 
-### Issue: Basic Flutter Project Setup
-Priority: High
-Estimated Effort: 3-5 days
-Deadline: Week 1
-Labels: setup, flutter, foundation
-Dependencies: Issue #8 (Flutter environment setup)
+### 課題: Flutter 基本セットアップ
+優先度: 高
+工数目安: 3〜5日
+期限: 1週目
+ラベル: setup, flutter, foundation
+依存: Issue #8（Flutter 環境構築）
 
-Description:
-Set up the basic Flutter project structure with database connectivity.
+説明:
+データベース接続を含む基本的な Flutter 構成を準備する。
 
-Acceptance Criteria:
-- [ ] Flutter project created with proper directory structure
-- [ ] Database connection established (Firebase/Supabase)
-- [ ] Basic app runs on Android/iOS simulators
-- [ ] CI/CD pipeline can build the project successfully
-- [ ] Basic routing structure implemented
-- [ ] Environment configuration setup (dev/staging/prod)
+受け入れ基準:
+- [ ] 適切なディレクトリ構成でプロジェクトを作成
+- [ ] DB 接続を確立（Firebase/Supabase）
+- [ ] Android/iOS シミュレータで起動
+- [ ] CI/CD でビルド可能
+- [ ] 基本ルーティングを実装
+- [ ] dev/staging/prod の環境切替を構成
 
-Technical Requirements:
+技術要件:
 - Flutter SDK 3.x
-- State management solution chosen and implemented (Provider/Riverpod/Bloc)
-- Database SDK integrated (Firebase or Supabase)
-- Basic error handling and logging
+- 状態管理（Provider/Riverpod/Bloc）を選定・実装
+- DB SDK（Firebase または Supabase）を統合
+- 基本的なログとエラーハンドリング
 
 ---
 
-## Phase 2: Authentication & User Management (Week 3)
+## フェーズ2: 認証とユーザー管理（3週目）
 
-### Issue: User Authentication System
-Priority: High
-Estimated Effort: 5-7 days
-Deadline: Week 3
-Labels: auth, user-management, security
+### 課題: 認証システム
+優先度: 高
+工数目安: 5〜7日
+期限: 3週目
+ラベル: auth, user-management, security
 
-Description:
-Implement complete user authentication and profile management system.
+説明:
+ユーザー認証とプロファイル管理を実装する。
 
-Acceptance Criteria:
-- [ ] User registration with email/password
-- [ ] User login/logout functionality
-- [ ] Password reset functionality
-- [ ] User profile creation and editing
-- [ ] Profile picture upload
-- [ ] User preferences storage
-- [ ] Authentication state management
-- [ ] Protected routes implementation
+受け入れ基準:
+- [ ] メール/パスワード登録
+- [ ] ログイン/ログアウト
+- [ ] パスワードリセット
+- [ ] プロファイル作成/編集
+- [ ] アイコン画像アップロード
+- [ ] ユーザー設定の保存
+- [ ] 認証状態管理
+- [ ] 保護ルートの実装
 
-Technical Requirements:
-- Firebase Auth or Supabase Auth integration
-- Form validation
-- Secure token storage
-- Biometric authentication support (optional)
+技術要件:
+- Firebase Auth または Supabase Auth
+- フォームバリデーション
+- セキュアなトークン保管
+- 生体認証（任意）
 
-### Issue: User Profile & Progress Tracking
-Priority: Medium
-Estimated Effort: 3-4 days
-Deadline: Week 3
-Labels: user-profile, progress-tracking
+### 課題: プロファイル・進捗管理
+優先度: 中
+工数目安: 3〜4日
+期限: 3週目
+ラベル: user-profile, progress-tracking
 
-Description:
-Create user profile system with progress tracking capabilities.
+説明:
+ユーザープロファイルと学習進捗の可視化を実装する。
 
-Acceptance Criteria:
-- [ ] User profile display screen
-- [ ] Progress statistics display (XP, level, badges)
-- [ ] User settings and preferences
-- [ ] Learning history tracking
-- [ ] Achievement display
-- [ ] Profile sharing capabilities
-
----
-
-## Phase 3: Vocabulary Management System (Weeks 4-5)
-
-### Issue: Vocabulary Database Schema
-Priority: High
-Estimated Effort: 2-3 days
-Deadline: Week 4
-Labels: database, vocabulary, schema
-
-Description:
-Design and implement vocabulary database schema with efficient querying.
-
-Acceptance Criteria:
-- [ ] Vocabulary word entity design
-- [ ] Example sentences storage
-- [ ] Difficulty levels and categories
-- [ ] User progress per word tracking
-- [ ] Search and filtering capabilities
-- [ ] Import/export functionality design
-
-### Issue: Vocabulary Card UI System
-Priority: High
-Estimated Effort: 5-7 days
-Deadline: Week 5
-Labels: ui, vocabulary, cards
-
-Description:
-Implement card-style vocabulary management interface.
-
-Acceptance Criteria:
-- [ ] Vocabulary card display component
-- [ ] Card flip animations
-- [ ] Add/edit/delete word functionality
-- [ ] Search and filter interface
-- [ ] Category management
-- [ ] Batch operations (import/export)
-- [ ] Responsive design for mobile/tablet
-
-### Issue: Vocabulary Quiz System
-Priority: Medium
-Estimated Effort: 4-6 days
-Deadline: Week 5
-Labels: quiz, vocabulary, spaced-repetition
-
-Description:
-Implement vocabulary quiz system with spaced repetition algorithm.
-
-Acceptance Criteria:
-- [ ] Multiple quiz types (multiple choice, fill-in-blank, matching)
-- [ ] Spaced repetition algorithm implementation
-- [ ] Quiz progress tracking
-- [ ] Performance analytics
-- [ ] Adaptive difficulty adjustment
-- [ ] Quiz history and results
+受け入れ基準:
+- [ ] プロファイル画面
+- [ ] 進捗統計（XP/レベル/バッジ）
+- [ ] ユーザー設定
+- [ ] 学習履歴の記録
+- [ ] 実績の表示
+- [ ] プロファイル共有
 
 ---
 
-## Phase 4: Quest & Gamification System (Weeks 6-7)
+## フェーズ3: 単語学習管理（4〜5週目）
 
-### Issue: XP and Leveling System
-Priority: Medium
-Estimated Effort: 4-5 days
-Deadline: Week 6
-Labels: gamification, xp, levels
+### 課題: 単語 DB スキーマ
+優先度: 高
+工数目安: 2〜3日
+期限: 4週目
+ラベル: database, vocabulary, schema
 
-Description:
-Implement experience points and leveling system for user engagement.
+説明:
+効率的なクエリを考慮したスキーマを設計・実装する。
 
-Acceptance Criteria:
-- [ ] XP calculation logic for different activities
-- [ ] Level progression system
-- [ ] XP display and progress bars
-- [ ] Level-up animations and notifications
-- [ ] XP multipliers and bonuses
-- [ ] Activity-based XP rewards
+受け入れ基準:
+- [ ] 単語エンティティ設計
+- [ ] 例文の保存
+- [ ] 難易度・カテゴリ
+- [ ] 単語ごとの進捗トラッキング
+- [ ] 検索・フィルタ機能
+- [ ] インポート/エクスポートの方針
 
-### Issue: Achievement & Badge System
-Priority: Medium
-Estimated Effort: 3-4 days
-Deadline: Week 6
-Labels: achievements, badges, gamification
+### 課題: 単語カード UI
+優先度: 高
+工数目安: 5〜7日
+期限: 5週目
+ラベル: ui, vocabulary, cards
 
-Description:
-Create achievement and badge system to motivate users.
+説明:
+カード型の学習インターフェースを実装する。
 
-Acceptance Criteria:
-- [ ] Achievement definition system
-- [ ] Badge design and display
-- [ ] Achievement unlock logic
-- [ ] Notification system for achievements
-- [ ] Achievement sharing capabilities
-- [ ] Progress tracking for multi-step achievements
+受け入れ基準:
+- [ ] カード表示コンポーネント
+- [ ] フリップアニメーション
+- [ ] 追加/編集/削除
+- [ ] 検索とフィルタ UI
+- [ ] カテゴリ管理
+- [ ] 一括操作（インポート/エクスポート）
+- [ ] モバイル/タブレットのレスポンシブ
 
-### Issue: Daily/Weekly Quest System
-Priority: High
-Estimated Effort: 5-7 days
-Deadline: Week 7
-Labels: quests, daily-tasks, scheduling
+### 課題: 単語クイズシステム
+優先度: 中
+工数目安: 4〜6日
+期限: 5週目
+ラベル: quiz, vocabulary, spaced-repetition
 
-Description:
-Implement daily and weekly quest system with various task types.
+説明:
+間隔反復アルゴリズムを用いたクイズを実装する。
 
-Acceptance Criteria:
-- [ ] Quest generation algorithm
-- [ ] Quest types: Read, Write, Listen, Speak
-- [ ] Daily quest reset mechanism
-- [ ] Weekly challenge system
-- [ ] Quest progress tracking
-- [ ] Reward system integration
-- [ ] Quest difficulty scaling
-
----
-
-## Phase 5: Article Summary System (Week 8)
-
-### Issue: Article Summary Storage
-Priority: Medium
-Estimated Effort: 3-4 days
-Deadline: Week 8
-Labels: articles, summaries, storage
-
-Description:
-Implement system for storing and managing technical article summaries.
-
-Acceptance Criteria:
-- [ ] Article metadata storage (title, URL, date, tags)
-- [ ] Summary text storage with formatting
-- [ ] Article categorization system
-- [ ] Search and filtering capabilities
-- [ ] Cross-platform accessibility (app/web)
-- [ ] Export functionality
-
-### Issue: Article Summary UI & Management
-Priority: Medium
-Estimated Effort: 4-5 days
-Deadline: Week 8
-Labels: ui, articles, management
-
-Description:
-Create user interface for managing and displaying article summaries.
-
-Acceptance Criteria:
-- [ ] Article list view with search/filter
-- [ ] Article summary display screen
-- [ ] Add/edit article summary functionality
-- [ ] Tagging and categorization UI
-- [ ] Sharing capabilities
-- [ ] Offline reading support
+受け入れ基準:
+- [ ] 複数クイズ形式（択一/穴埋め/マッチング）
+- [ ] 間隔反復アルゴリズム
+- [ ] クイズ進捗の記録
+- [ ] 成績分析
+- [ ] 適応的難易度
+- [ ] 履歴と結果一覧
 
 ---
 
-## Phase 6: Progress Dashboard (Week 9)
+## フェーズ4: クエスト/ゲーミフィケーション（6〜7週目）
 
-### Issue: Progress Visualization Dashboard
-Priority: Medium
-Estimated Effort: 5-7 days
-Deadline: Week 9
-Labels: dashboard, analytics, visualization
+### 課題: XP/レベルシステム
+優先度: 中
+工数目安: 4〜5日
+期限: 6週目
+ラベル: gamification, xp, levels
 
-Description:
-Create comprehensive progress dashboard with charts and statistics.
+説明:
+エンゲージメント向上のため経験値とレベルを実装する。
 
-Acceptance Criteria:
-- [ ] XP progress visualization
-- [ ] Words learned statistics and charts
-- [ ] Articles summarized tracking
-- [ ] Time-based progress graphs
-- [ ] Achievement progress display
-- [ ] Goal setting and tracking
-- [ ] Export progress reports
+受け入れ基準:
+- [ ] 活動別 XP 計算
+- [ ] レベル進行
+- [ ] XP 表示・プログレスバー
+- [ ] レベルアップ演出/通知
+- [ ] XP ボーナス
+- [ ] 活動別報酬
 
-### Issue: Analytics & Insights
-Priority: Low
-Estimated Effort: 3-4 days
-Deadline: Week 9
-Labels: analytics, insights, performance
+### 課題: 実績/バッジ
+優先度: 中
+工数目安: 3〜4日
+期限: 6週目
+ラベル: achievements, badges, gamification
 
-Description:
-Implement analytics system to provide learning insights.
+説明:
+ユーザーの動機付けとなる実績/バッジを実装する。
 
-Acceptance Criteria:
-- [ ] Learning pattern analysis
-- [ ] Performance trend identification
-- [ ] Personalized recommendations
-- [ ] Weakness identification
-- [ ] Learning speed analytics
-- [ ] Comparative progress metrics
+受け入れ基準:
+- [ ] 実績定義
+- [ ] バッジ設計/表示
+- [ ] 実績解除ロジック
+- [ ] 通知
+- [ ] 共有
+- [ ] 段階的実績の進捗表示
 
----
+### 課題: 日次/週次クエスト
+優先度: 高
+工数目安: 5〜7日
+期限: 7週目
+ラベル: quests, daily-tasks, scheduling
 
-## Phase 7: External Integration (Week 10)
+説明:
+多様なタスク種別を持つ日次/週次クエストを実装する。
 
-### Issue: OpenAI API Integration
-Priority: Medium
-Estimated Effort: 4-5 days
-Deadline: Week 10
-Labels: ai, openai, integration
-
-Description:
-Integrate OpenAI API for automated features.
-
-Acceptance Criteria:
-- [ ] Article auto-summarization
-- [ ] Quiz question generation
-- [ ] Grammar correction suggestions
-- [ ] Vocabulary example generation
-- [ ] API error handling and fallbacks
-- [ ] Rate limiting implementation
-
-### Issue: GPT App Integration
-Priority: Low
-Estimated Effort: 2-3 days
-Deadline: Week 10
-Labels: integration, external-app, sharing
-
-Description:
-Implement integration with official GPT app for conversation practice.
-
-Acceptance Criteria:
-- [ ] Deep linking to GPT app
-- [ ] Context sharing functionality
-- [ ] Vocabulary sharing for conversation practice
-- [ ] Progress tracking from external practice
-- [ ] Cross-platform compatibility
+受け入れ基準:
+- [ ] クエスト生成アルゴリズム
+- [ ] 種別: 読む/書く/聞く/話す
+- [ ] 日次リセット仕組み
+- [ ] 週次チャレンジ
+- [ ] 進捗トラッキング
+- [ ] 報酬連携
+- [ ] 難易度スケーリング
 
 ---
 
-## Phase 8: UI/UX Polish & Optimization (Weeks 11-12)
+## フェーズ5: 記事要約（8週目）
 
-### Issue: UI/UX Refinement & Animations
-Priority: Medium
-Estimated Effort: 7-10 days
-Deadline: Week 12
-Labels: ui-polish, animations, ux
+### 課題: 要約データ保存
+優先度: 中
+工数目安: 3〜4日
+期限: 8週目
+ラベル: articles, summaries, storage
 
-Description:
-Polish the user interface and add gamified animations.
+説明:
+技術記事の要約を保存・管理する仕組みを実装する。
 
-Acceptance Criteria:
-- [ ] Smooth animations throughout the app
-- [ ] Consistent design system implementation
-- [ ] Accessibility improvements
-- [ ] Performance optimization
-- [ ] Loading states and error handling
-- [ ] Responsive design for different screen sizes
+受け入れ基準:
+- [ ] メタデータ（タイトル/URL/日付/タグ）
+- [ ] 書式付き要約テキスト
+- [ ] カテゴリ分け
+- [ ] 検索・フィルタ
+- [ ] クロスプラットフォーム参照（アプリ/ウェブ）
+- [ ] エクスポート
 
-### Issue: Performance Optimization
-Priority: Medium
-Estimated Effort: 3-5 days
-Deadline: Week 12
-Labels: performance, optimization
+### 課題: 要約 UI/管理
+優先度: 中
+工数目安: 4〜5日
+期限: 8週目
+ラベル: ui, articles, management
 
-Description:
-Optimize app performance for smooth user experience.
+説明:
+要約の一覧・詳細・編集 UI を実装する。
 
-Acceptance Criteria:
-- [ ] App startup time optimization
-- [ ] Memory usage optimization
-- [ ] Database query optimization
-- [ ] Image loading optimization
-- [ ] Offline functionality
-- [ ] Background sync implementation
-
----
-
-## Additional Infrastructure Tasks
-
-### Issue: Testing Implementation
-Priority: High
-Estimated Effort: Ongoing
-Deadline: Continuous
-Labels: testing, quality-assurance
-
-Description:
-Implement comprehensive testing strategy.
-
-Acceptance Criteria:
-- [ ] Unit tests for business logic
-- [ ] Widget tests for UI components
-- [ ] Integration tests for key workflows
-- [ ] Test coverage > 80%
-- [ ] Automated testing in CI/CD
-- [ ] Performance testing
-
-### Issue: Documentation & Deployment
-Priority: Medium
-Estimated Effort: 3-5 days
-Deadline: Week 12
-Labels: documentation, deployment
-
-Description:
-Complete project documentation and deployment setup.
-
-Acceptance Criteria:
-- [ ] API documentation
-- [ ] User guide and help system
-- [ ] Developer documentation
-- [ ] App store deployment setup
-- [ ] Production environment configuration
-- [ ] Monitoring and logging setup
+受け入れ基準:
+- [ ] 一覧（検索/フィルタ）
+- [ ] 詳細表示
+- [ ] 追加/編集
+- [ ] タグ/カテゴリ UI
+- [ ] 共有
+- [ ] オフライン閲覧
 
 ---
 
-## Summary
+## フェーズ6: 進捗ダッシュボード（9週目）
 
-Total Estimated Timeline: 12 weeks
-Total Issues: 16 major development issues
-Key Milestones:
-- Week 3: Authentication complete
-- Week 5: Vocabulary system complete
-- Week 7: Gamification system complete
-- Week 10: Core features complete
-- Week 12: Production-ready release
+### 課題: ビジュアライゼーション
+優先度: 中
+工数目安: 5〜7日
+期限: 9週目
+ラベル: dashboard, analytics, visualization
 
-Risk Mitigation:
-- Buffer time included in estimates
-- Dependencies clearly marked
-- Parallel development where possible
-- Regular milestone reviews planned
+説明:
+統計/グラフを備えたダッシュボードを実装する。
+
+受け入れ基準:
+- [ ] XP 推移の可視化
+- [ ] 習得単語の統計・グラフ
+- [ ] 要約数のトラッキング
+- [ ] 時系列グラフ
+- [ ] 実績進捗
+- [ ] 目標設定と追跡
+- [ ] レポートのエクスポート
+
+### 課題: 分析とインサイト
+優先度: 低
+工数目安: 3〜4日
+期限: 9週目
+ラベル: analytics, insights, performance
+
+説明:
+学習インサイトを提供する分析機能を実装する。
+
+受け入れ基準:
+- [ ] 学習パターン分析
+- [ ] 成績トレンドの把握
+- [ ] パーソナライズ提案
+- [ ] 弱点の特定
+- [ ] 学習速度の分析
+- [ ] 比較指標の表示
+
+---
+
+## フェーズ7: 外部連携（10週目）
+
+### 課題: OpenAI 連携
+優先度: 中
+工数目安: 4〜5日
+期限: 10週目
+ラベル: ai, openai, integration
+
+説明:
+自動要約やクイズ生成など、OpenAI API を用いた機能を実装する。
+
+受け入れ基準:
+- [ ] 記事の自動要約
+- [ ] クイズ問題の自動生成
+- [ ] 文法チェック提案
+- [ ] 単語例文の生成
+- [ ] API エラーとフォールバック
+- [ ] レート制限
+
+### 課題: GPT 公式アプリ連携
+優先度: 低
+工数目安: 2〜3日
+期限: 10週目
+ラベル: integration, external-app, sharing
+
+説明:
+会話練習のため GPT 公式アプリと連携する。
+
+受け入れ基準:
+- [ ] Deep Link 連携
+- [ ] 文脈共有
+- [ ] 会話練習向け単語共有
+- [ ] 外部練習からの進捗反映
+- [ ] クロスプラットフォーム対応
+
+---
+
+## フェーズ8: UI/UX 仕上げと最適化（11〜12週目）
+
+### 課題: UI/UX 改善とアニメーション
+優先度: 中
+工数目安: 7〜10日
+期限: 12週目
+ラベル: ui-polish, animations, ux
+
+説明:
+UI の磨き込みとゲーミフィケーション演出を追加する。
+
+受け入れ基準:
+- [ ] スムーズなアニメーション
+- [ ] 一貫したデザインシステム
+- [ ] アクセシビリティ改善
+- [ ] パフォーマンス最適化
+- [ ] ローディング/エラー表示
+- [ ] 画面サイズ対応
+
+### 課題: パフォーマンス最適化
+優先度: 中
+工数目安: 3〜5日
+期限: 12週目
+ラベル: performance, optimization
+
+説明:
+快適な操作感のためパフォーマンスを最適化する。
+
+受け入れ基準:
+- [ ] 起動時間短縮
+- [ ] メモリ使用量の削減
+- [ ] DB クエリ最適化
+- [ ] 画像読み込み最適化
+- [ ] オフライン機能
+- [ ] バックグラウンド同期
+
+---
+
+## 追加インフラタスク
+
+### 課題: テスト実装
+優先度: 高
+工数目安: 継続
+期限: 随時
+ラベル: testing, quality-assurance
+
+説明:
+包括的なテスト戦略を整備する。
+
+受け入れ基準:
+- [ ] ビジネスロジックの単体テスト
+- [ ] UI コンポーネントのウィジェットテスト
+- [ ] 主要フローの結合テスト
+- [ ] カバレッジ 80% 以上
+- [ ] CI/CD での自動テスト
+- [ ] パフォーマンステスト
+
+### 課題: ドキュメントとデプロイ
+優先度: 中
+工数目安: 3〜5日
+期限: 12週目
+ラベル: documentation, deployment
+
+説明:
+ドキュメント整備とデプロイ準備を完了する。
+
+受け入れ基準:
+- [ ] API ドキュメント
+- [ ] ユーザーガイド/ヘルプ
+- [ ] 開発者ドキュメント
+- [ ] ストア申請準備
+- [ ] 本番環境設定
+- [ ] 監視・ログ設定
+
+---
+
+## サマリ
+
+総工期の目安: 12 週間
+主要 Issue 数: 16
+主なマイルストン:
+- 3 週目: 認証完了
+- 5 週目: 単語学習完了
+- 7 週目: ゲーミフィケーション完了
+- 10 週目: コア機能完了
+- 12 週目: 本番リリース準備完了
