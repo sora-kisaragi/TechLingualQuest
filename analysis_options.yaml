@@ -33,3 +33,4 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "tools/**"
+    - "example/**"

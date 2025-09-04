@@ -201,9 +201,8 @@ void main() {
           "SELECT name FROM sqlite_master WHERE type='table'",
         );
 
-        final tableNames = tables
-            .map((table) => table['name'] as String)
-            .toList();
+        final tableNames =
+            tables.map((table) => table['name'] as String).toList();
 
         expect(tableNames, contains('users'));
         expect(tableNames, contains('vocabulary'));
@@ -222,9 +221,8 @@ void main() {
           final schema = await database.rawQuery('PRAGMA table_info(users)');
 
           // Assert: 正しいカラムが存在することを確認
-          final columnNames = schema
-              .map((col) => col['name'] as String)
-              .toList();
+          final columnNames =
+              schema.map((col) => col['name'] as String).toList();
 
           expect(columnNames, contains('id'));
           expect(columnNames, contains('username'));
@@ -248,9 +246,8 @@ void main() {
           );
 
           // Assert: 正しいカラムが存在することを確認
-          final columnNames = schema
-              .map((col) => col['name'] as String)
-              .toList();
+          final columnNames =
+              schema.map((col) => col['name'] as String).toList();
 
           expect(columnNames, contains('id'));
           expect(columnNames, contains('word'));
