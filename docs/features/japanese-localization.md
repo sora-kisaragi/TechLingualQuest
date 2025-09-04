@@ -1,129 +1,129 @@
-# Japanese UI Localization Implementation
+---
+author: "GitHub Copilot"
+date: "2025-09-04"
+version: "1.0"
+---
 
-## Overview
+# 日本語 UI ローカライズ実装
 
-This document describes the implementation of Japanese localization for the TechLingualQuest UI to help beginners who find all-English interfaces difficult.
+## 概要
 
-## Implementation Details
+本書は、TechLingual Quest の UI を日本語化する実装内容をまとめたものです。英語のみの UI に抵抗がある初学者でも使いやすくすることを目的とします。
 
-### 1. Localization Infrastructure
+## 実装詳細
 
-- **Added dependencies**: `flutter_localizations`, `shared_preferences`, and `intl` to `pubspec.yaml`
-- **Created l10n configuration**: `l10n.yaml` file for Flutter's localization generation
-- **Language service**: Created `LanguageService` class for managing language preferences
-- **State management**: Using Riverpod for reactive language switching
+### 1. ローカライズ基盤
 
-### 2. Supported Languages
+- 依存関係の追加: `flutter_localizations`, `shared_preferences`, `intl`（`pubspec.yaml`）
+- l10n 設定: Flutter の自動生成に対応する `l10n.yaml`
+- 言語サービス: 言語選好を管理する `LanguageService`
+- 状態管理: Riverpod によるリアクティブな言語切替
 
-- **English (en)**: Default language
-- **Japanese (ja)**: Primary target for this implementation
+### 2. 対応言語
 
-### 3. Files Structure
+- 英語（en）: 既定
+- 日本語（ja）: 本実装の主対象
+
+### 3. ファイル構成
 
 ```
 lib/
 ├── l10n/
-│   ├── app_en.arb          # English translations
-│   └── app_ja.arb          # Japanese translations
+│   ├── app_en.arb          # 英語の翻訳
+│   └── app_ja.arb          # 日本語の翻訳
 ├── generated/l10n/
-│   ├── app_localizations.dart      # Generated localization delegate
-│   ├── app_localizations_en.dart   # English implementation
-│   └── app_localizations_ja.dart   # Japanese implementation
+│   ├── app_localizations.dart      # 自動生成されたローカライズ delegate
+│   ├── app_localizations_en.dart   # 英語実装
+│   └── app_localizations_ja.dart   # 日本語実装
 ├── shared/
 │   ├── services/
-│   │   └── language_service.dart   # Language preference management
+│   │   └── language_service.dart   # 言語設定の永続化
 │   └── widgets/
-│       └── language_selector.dart  # Language selection UI component
+│       └── language_selector.dart  # 言語選択 UI コンポーネント
 ```
 
-### 4. Key Features
+### 4. 主な機能
 
-- **Language switching**: Users can switch between English and Japanese using the language selector in the app bar
-- **Persistent preferences**: Language choice is saved using SharedPreferences
-- **Reactive UI**: All UI text updates immediately when language is changed
-- **Comprehensive coverage**: All user-facing text strings are localized
+- 言語切替: AppBar のセレクタから英語/日本語を切替
+- 永続化: SharedPreferences に選好を保存
+- リアクティブ更新: 言語変更時に UI 文言を即時更新
+- 網羅性: ユーザー向け文言を全てローカライズ
 
-### 5. Localized Strings
+### 5. ローカライズ対象
 
-The following UI elements have been localized:
+ホーム画面:
+- アプリ名: "TechLingual Quest" / "テックリンガルクエスト"
+- ウェルカム文: 例「TechLingual Quest へようこそ！」
+- 機能一覧の説明、ナビゲーション（Vocabulary/Quests/Profile）
 
-**Home Page:**
-- App title: "TechLingual Quest" / "テックリンガルクエスト"
-- Welcome message: "Welcome to TechLingual Quest!" / "テックリンガルクエストへようこそ！"
-- Features list: All feature descriptions translated
-- Navigation buttons: Vocabulary, Quests, Profile
+各機能ページ:
+- Vocabulary/Quests/Auth などのタイトル・説明
 
-**Feature Pages:**
-- Vocabulary page: Title and description
-- Quests page: Title and description
-- Authentication page: Title and description
+UI コンポーネント:
+- 言語セレクタ（表示名・ツールチップ）
+- XP ラベルとツールチップ
+- 各種ボタンとラベル
 
-**UI Components:**
-- Language selector: Language options and tooltips
-- XP label and tooltip
-- All button texts and labels
+### 6. 技術実装
 
-### 6. Technical Implementation
-
-#### Language Service
+LanguageService（抜粋）:
 ```dart
 class LanguageService {
-  // Manages language persistence and locale conversion
-  static Future<String> getSavedLanguage()
-  static Future<void> saveLanguage(String languageCode)
-  static Locale getLocaleFromCode(String languageCode)
-  static List<Locale> getSupportedLocales()
+  // 言語設定の永続化とロケール変換の管理
+  static Future<String> getSavedLanguage();
+  static Future<void> saveLanguage(String languageCode);
+  static Locale getLocaleFromCode(String languageCode);
+  static List<Locale> getSupportedLocales();
 }
 ```
 
-#### Language State Management
+状態管理（抜粋）:
 ```dart
 final languageProvider = StateNotifierProvider<LanguageNotifier, Locale>((ref) {
   return LanguageNotifier();
 });
 ```
 
-#### App Configuration
-The main app widget is configured with:
-- `locale`: Current selected locale from language provider
-- `localizationsDelegates`: Flutter's localization delegates
-- `supportedLocales`: English and Japanese locales
+アプリ設定:
+- `locale`: 言語プロバイダから取得
+- `localizationsDelegates`: Flutter 提供の delegate を設定
+- `supportedLocales`: 英語/日本語
 
-### 7. Usage Instructions
+### 7. 使い方
 
-1. **Language Selection**: Users can tap the language icon (🌐) in the app bar to see available languages
-2. **Language Switch**: Selecting a language immediately updates all UI text
-3. **Persistence**: The selected language is remembered between app sessions
+1. AppBar の地球アイコン（🌐）から言語メニューを開く
+2. 言語を選択すると、UI が即時に切り替わる
+3. 選択は次回起動時も維持される
 
-### 8. Developer Notes
+### 8. 開発者向けメモ
 
-- **ARB Files**: All translations are defined in Application Resource Bundle (.arb) files
-- **Code Generation**: Flutter's `gen-l10n` tool generates type-safe localization classes
-- **Extensibility**: Adding new languages requires:
-  1. Creating new `.arb` file (e.g., `app_ko.arb` for Korean)
-  2. Adding locale to `LanguageService.getSupportedLocales()`
-  3. Adding case to `LanguageService.getLocaleFromCode()`
-  4. Adding menu item to `LanguageSelector` widget
+- ARB: 翻訳は `.arb` ファイルで管理
+- コード生成: `gen-l10n` により型安全なクラスを生成
+- 拡張性: 新言語追加時は以下を実施
+  1. 例: 韓国語なら `app_ko.arb` を作成
+  2. `LanguageService.getSupportedLocales()` にロケールを追加
+  3. `LanguageService.getLocaleFromCode()` に分岐を追加
+  4. `LanguageSelector` にメニュー項目を追加
 
-### 9. Quality Assurance
+### 9. 品質保証
 
-- **Translation Quality**: Japanese translations use appropriate technical terminology
-- **Cultural Adaptation**: UI text is adapted for Japanese users (formal language)
-- **Consistency**: All similar UI elements use consistent terminology
-- **Testing**: Language switching works correctly across all pages
+- 用語統一: 技術用語はプロダクト内で統一
+- 文化適合: 日本語として自然で丁寧な表現
+- 一貫性: 同種 UI で同一用語を使用
+- テスト: 全画面での切替動作を確認
 
-### 10. Future Enhancements
+### 10. 今後の拡張
 
-- Add more languages (Korean, Chinese, etc.)
-- Implement dynamic text sizing for different language requirements
-- Add right-to-left (RTL) language support if needed
-- Consider region-specific locales (ja-JP, en-US, etc.)
+- 多言語（韓国語・中国語など）の追加
+- 言語に応じた動的フォントサイズ
+- 右から左（RTL）言語対応
+- 地域別ロケール（ja-JP, en-US など）の検討
 
-## Testing the Implementation
+## 動作確認手順
 
-1. Run the app in English (default)
-2. Tap the language selector in the app bar
-3. Select "日本語" (Japanese)
-4. Verify all text changes to Japanese
-5. Navigate to different pages to confirm consistent localization
-6. Restart the app to verify language preference persistence
+1. 既定の英語で起動
+2. AppBar の言語セレクタを開く
+3. 「日本語」を選択
+4. 全文言が日本語化されることを確認
+5. 画面遷移して一貫性を確認
+6. 再起動して選好が保持されることを確認
