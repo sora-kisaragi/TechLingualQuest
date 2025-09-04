@@ -4,36 +4,38 @@
 
 # Dartコマンドを検出する関数
 find_dart_command() {
-    # 1. システムPATHでdartを検索
+    # 1. システムPATHでdartを検索（exe/batも考慮: Git Bash on Windows）
     if command -v dart >/dev/null 2>&1; then
         echo "dart"
         return 0
     fi
-
-    # 2. Flutterのbinディレクトリ内のdartを検索
-    if command -v flutter >/dev/null 2>&1; then
-        flutter_path=$(which flutter)
-        flutter_dir=$(dirname "${flutter_path}")
-        if [ -f "${flutter_dir}/dart" ]; then
-            echo "${flutter_dir}/dart"
-            return 0
-        fi
-
-        # Flutterインストールディレクトリの上の階層も確認
-        flutter_parent_dir=$(dirname "${flutter_dir}")
-        if [ -f "${flutter_parent_dir}/bin/dart" ]; then
-            echo "${flutter_parent_dir}/bin/dart"
-            return 0
-        fi
+    if command -v dart.exe >/dev/null 2>&1; then
+        echo "dart.exe"
+        return 0
+    fi
+    if command -v dart.bat >/dev/null 2>&1; then
+        echo "dart.bat"
+        return 0
     fi
 
-    # 3. 一般的なインストール場所を検索
+    # 2. Flutter経由（flutter dart）
+    if command -v flutter >/dev/null 2>&1; then
+        # Flutterは dart を内包しているので、サブコマンドを優先
+        echo "flutter dart"
+        return 0
+    fi
+
+    # 3. 一般的なインストール場所を検索（UNIX + Windows User-profile）
     common_paths=(
         "/usr/local/flutter/bin/dart"
         "/opt/flutter/bin/dart"
         "$HOME/flutter/bin/dart"
         "$HOME/.flutter/bin/dart"
         "/snap/flutter/current/bin/dart"
+        # Windows Git Bash の典型パス（存在すれば使用）
+        "$HOME/scoop/apps/flutter/current/bin/dart.exe"
+        "$HOME/AppData/Local/Programs/flutter/bin/dart.exe"
+        "$HOME/AppData/Local/flutter/bin/dart.exe"
     )
 
     for path in "${common_paths[@]}"; do
@@ -77,7 +79,7 @@ echo "   使用コマンド: ${DART_CMD}"
 # プロジェクトのルートディレクトリに移動
 cd "$(dirname "$0")/.."
 
-# フォーマットを実行
+# フォーマットを実行（flutter dart の場合はそのまま展開される）
 if ${DART_CMD} format . >/dev/null 2>&1; then
     echo "✅ Dartコードのフォーマットが完了しました"
     exit 0

@@ -11,29 +11,64 @@ echo ""
 # プロジェクトルートに移動
 cd "$(dirname "$0")/.."
 
-# Python3とpipの確認
-if ! command -v python3 >/dev/null 2>&1; then
-    echo "❌ Python3が必要です。インストールしてください。"
+# Python / Pip の確認（Windows/Git Bash互換）
+PY_BIN=""
+if command -v python3 >/dev/null 2>&1; then
+    PY_BIN="python3"
+elif command -v python >/dev/null 2>&1; then
+    PY_BIN="python"
+elif command -v py >/dev/null 2>&1; then
+    PY_BIN="py"
+else
+    echo "❌ Pythonが必要です。インストールしてください。"
     exit 1
 fi
 
-if ! command -v pip3 >/dev/null 2>&1; then
-    echo "❌ pip3が必要です。インストールしてください。"
-    exit 1
+PIP_BIN=""
+if command -v pip3 >/dev/null 2>&1; then
+    PIP_BIN="pip3"
+elif command -v pip >/dev/null 2>&1; then
+    PIP_BIN="pip"
+else
+    # 最後の手段: python -m pip
+    if "$PY_BIN" -m pip --version >/dev/null 2>&1; then
+        PIP_BIN="$PY_BIN -m pip"
+    else
+        echo "❌ pip が見つかりません。Pythonのpipをインストールしてください。"
+        exit 1
+    fi
 fi
 
-echo "✅ Python3とpip3が見つかりました"
+echo "✅ Python: $PY_BIN / Pip: $PIP_BIN を使用します"
 
 # pre-commitのインストール確認
 if ! command -v pre-commit >/dev/null 2>&1; then
     echo "📦 pre-commitをインストール中..."
-    pip3 install pre-commit --user
+    eval "$PIP_BIN install --user pre-commit"
 
     # PATHに~/.local/binを追加（必要に応じて）
     if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-        echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> ~/.bashrc
-        export PATH="$HOME/.local/bin:$PATH"
-        echo "   ~/.bashrcにPATHを追加しました"
+        # Python user-base の Scripts/bin をPATHに追加（Windows/Unix 両対応）
+        USER_BASE=$($PY_BIN -m site --user-base 2>/dev/null || echo "")
+        if [ -n "$USER_BASE" ]; then
+            if [ "$OS" = "Windows_NT" ]; then
+                BIN_DIR="$USER_BASE/Scripts"
+            else
+                BIN_DIR="$USER_BASE/bin"
+            fi
+            export PATH="$BIN_DIR:$HOME/.local/bin:$PATH"
+            # bash 環境でのみ .bashrc に追記
+            if [ -n "$BASH_VERSION" ]; then
+                {
+                    echo "# Added by setup_precommit_hooks.sh"
+                    echo "export PATH=\"$BIN_DIR:\$HOME/.local/bin:\$PATH\""
+                } >> ~/.bashrc
+                echo "   PATH を $BIN_DIR と ~/.local/bin に拡張（~/.bashrc へ追記）"
+            fi
+        else
+            # フォールバック
+            export PATH="$HOME/.local/bin:$PATH"
+        fi
     fi
 else
     echo "✅ pre-commitは既にインストール済みです"
@@ -41,7 +76,7 @@ fi
 
 # pre-commitフックをインストール
 echo "🔨 pre-commitフックをインストール中..."
-if pre-commit install; then
+if pre-commit install 2>/dev/null || "$PY_BIN" -m pre_commit install; then
     echo "✅ pre-commitフックのインストールが完了しました"
 else
     echo "❌ pre-commitフックのインストールに失敗しました"
@@ -49,7 +84,7 @@ else
 fi
 
 # オプション: コミット時のメッセージフックも有効化
-pre-commit install --hook-type commit-msg 2>/dev/null || true
+pre-commit install --hook-type commit-msg 2>/dev/null || "$PY_BIN" -m pre_commit install --hook-type commit-msg 2>/dev/null || true
 
 echo ""
 echo "🎉 セットアップが完了しました！"
