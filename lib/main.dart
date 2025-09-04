@@ -42,10 +42,8 @@ class TechLingualQuestApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(dynamicLanguageProvider);
-
     // ルーターにRiverpod refを初期化
     AppRouter.initialize(ref);
-
     return MaterialApp.router(
       title: 'TechLingual Quest',
       locale: currentLocale,
