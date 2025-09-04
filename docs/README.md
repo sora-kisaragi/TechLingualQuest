@@ -6,35 +6,30 @@
 
 ```
 docs/
-├── design/                   # 設計ドキュメント（既存）
-│   ├── HLD.md               # 高水準設計書（既存）
-│   ├── LLD.md               # 低水準設計書（既存）
-│   ├── wireframes/          # UIワイヤーフレーム（将来）
-│   ├── mockups/             # ビジュアルモックアップ（将来）
-│   └── style_guide.md       # UI/UXスタイルガイド（将来）
-├── requirements/             # 要件ドキュメント（既存）
-│   └── requirements.md      # システム要件（既存）
-├── optional/                 # オプションドキュメント（既存）
-│   └── db_design.md         # データベース設計（既存）
-├── api/                     # APIドキュメント（Flutter固有）
-│   ├── endpoints/           # APIエンドポイント仕様
-│   ├── schemas/             # データスキーマ
-│   └── authentication.md   # 認証ドキュメント
-├── pre-commit-setup.md      # pre-commit セットアップと運用ガイド
-└── architecture/            # 追加アーキテクチャドキュメント（将来）
-    ├── flutter_architecture.md  # Flutter固有アーキテクチャ
-    ├── state_management.md      # 状態管理パターン
-    └── data_flow.md             # Flutterデータフロー図
+├── design/                    # 設計（HLD/LLD、ワイヤーフレーム）
+│   ├── HLD.md
+│   ├── LLD.md
+│   └── wireframes/
+├── requirements/              # 要件
+│   └── requirements.md
+├── engineering/               # エンジニアリング運用
+│   ├── ci-cd-setup.md        # CI/CD セットアップ
+│   ├── pre-commit-setup.md   # pre-commit ガイド
+│   └── DEVELOPMENT.md        # 開発環境セットアップ
+├── process/                   # 開発プロセス（Issue/タスクの派生）
+│   ├── development-notes.md  # 開発ノート
+│   ├── development-tasks.md  # タスク一覧
+│   ├── github-issues-creation-guide.md # Issues作成ガイド
+│   ├── issue-10-summary.md   # Issue #10 サマリ
+│   └── issue-creation-plan.md# Issue作成計画
+├── ui/                        # UI関連ドキュメント
+│   └── ui-localization-preview.md
+├── optional/                  # 任意の補足
+│   └── db_design.md
+└── api/                       # API系（プレースホルダ）
+    └── .gitkeep
+
 ```
-
-## 既存ドキュメントとの統合
-
-このFlutterプロジェクトは既存のドキュメント構造と統合されています：
-
-- **design/**: システム設計ドキュメント（HLD.md、LLD.md）を含む - 既存内容は保持されます
-- **requirements/**: プロジェクト要件仕様を含む - 既存内容は保持されます
-- **optional/**: データベース設計などの補足ドキュメントを含む - 既存内容は保持されます
-- **api/**: Flutter固有のAPIドキュメント用新ディレクトリ
 
 ## ガイドライン
 
