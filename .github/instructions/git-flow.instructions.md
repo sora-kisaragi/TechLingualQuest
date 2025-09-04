@@ -7,18 +7,21 @@ applyTo: "**"
 This document defines a concise Git Flow for this repository. The body is in English for prompt efficiency, while the policy mandates writing user-facing Git text in Japanese.
 
 ## 1. Branch Guidance
+
 - Branch types: main, develop, feature, hotfix, release.
 - Naming: use ASCII (romaji) and kebab-case for compatibility.
   - Examples: `docs/ja-localization-YYYYMMDD`, `feat/auth-ui-kaizen`, `fix/ci-windows-path`.
 - Japanese branch names are allowed but must render correctly on GitHub/CI.
 
 ## 2. Commit Guidance
+
 - Follow Conventional Commits.
 - Write commit titles/bodies in Japanese (concise, with reason/scope/migration notes).
   - Example: `docs: 日本語ローカライズの不足分を追加`.
 - Reference issues when relevant (e.g., `Refs #123`).
 
 ## 3. PR Guidance
+
 - PR titles/descriptions/review comments must be in Japanese.
 - Include a short checklist in the PR description:
   - What/Why (変更概要・理由)
@@ -28,29 +31,46 @@ This document defines a concise Git Flow for this repository. The body is in Eng
   - Release notes (if needed)
 - Ensure lint and unit tests pass before merge.
 
+### 3.1 Creating PRs via GitHub CLI (gh)
+
+- Prefer using `gh` to open PRs from local branches.
+- Basic flow (replace values as needed):
+  - Set base branch to `develop` and fill Japanese title/body interactively:
+    - `gh pr create --base develop --title "<日本語タイトル>" --body "<日本語本文>"`
+  - Or open editor to compose in Japanese:
+    - `gh pr create --base develop --fill` then edit title/body in Japanese.
+- Add labels/reviewers as needed, e.g.:
+  - `gh pr edit --add-label "documentation"`
+  - `gh pr edit --add-reviewer <github-username>`
+
 ## 4. Merge Guidance
+
 - Prefer Squash into develop.
 - main requires review.
 - hotfix can be merged directly if urgent.
 - Flag potential conflicts early.
 
 ## 5. Verification
+
 - Verify locally before pushing.
 - Ensure generated code adheres to repo standards.
 
 ## 6. Code Quality and Formatting
+
 - Pre-commit: use hooks (run `pre-commit install`). Dart code is formatted via `dart format`.
 - Manual: run `dart format .` before commit.
 - Check: `dart format --set-exit-if-changed .` in CI.
 - All code must pass formatting in CI.
 
 ## 7. Language Policy (Japanese-first for Git Text)
+
 - Commit messages: write in Japanese (Conventional Commits).
 - PR title/description/review: write in Japanese.
 - Branch names: ASCII/romaji kebab-case recommended; Japanese allowed if safe.
 - Auto-generated logs (CI, tools) remain in English.
 
 ### PR template snippet (in Japanese)
+
 ```
 ## 概要
 - 変更の要点（何を/なぜ）
