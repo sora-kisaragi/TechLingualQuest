@@ -20,6 +20,7 @@ docs/
 │   ├── endpoints/           # APIエンドポイント仕様
 │   ├── schemas/             # データスキーマ
 │   └── authentication.md   # 認証ドキュメント
+├── pre-commit-setup.md      # pre-commit セットアップと運用ガイド
 └── architecture/            # 追加アーキテクチャドキュメント（将来）
     ├── flutter_architecture.md  # Flutter固有アーキテクチャ
     ├── state_management.md      # 状態管理パターン
