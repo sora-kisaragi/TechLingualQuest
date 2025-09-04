@@ -75,7 +75,7 @@
 
 #### ⚙️ 設定方法
 
-詳細な設定手順は [CI/CDセットアップガイド](docs/ci-cd-setup.md) を参照してください。
+詳細な設定手順は [CI/CDセットアップガイド](docs/engineering/ci-cd-setup.md) を参照してください。
 
 ```bash
 # CI/CD環境の初期設定

@@ -212,8 +212,8 @@ class DynamicLanguageNotifier extends StateNotifier<Locale> {
 /// Provider for the dynamic language system
 final dynamicLanguageProvider =
     StateNotifierProvider<DynamicLanguageNotifier, Locale>((ref) {
-      return DynamicLanguageNotifier();
-    });
+  return DynamicLanguageNotifier();
+});
 
 /// Translation helper class that provides easy access to translations
 class AppTranslations {
@@ -293,9 +293,9 @@ class AppTranslations {
   String get appTitleSync =>
       getSync('TechLingual Quest', fallback: 'TechLingual Quest');
   String get welcomeMessageSync => getSync(
-    'Welcome to TechLingual Quest!',
-    fallback: 'Welcome to TechLingual Quest!',
-  );
+        'Welcome to TechLingual Quest!',
+        fallback: 'Welcome to TechLingual Quest!',
+      );
   String get vocabularySync => getSync('Vocabulary', fallback: 'Vocabulary');
   String get questsSync => getSync('Quests', fallback: 'Quests');
   String get profileSync => getSync('Profile', fallback: 'Profile');

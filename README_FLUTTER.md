@@ -90,9 +90,9 @@ TechLingualQuest/
 
 ### コードスタイル
 - Dart スタイルガイドに従う
-- `flutter format` を使用してコードをフォーマット
+- `dart format` を使用してコードをフォーマット
 - `flutter analyze` を実行して問題をチェック
-- すべてのコメントは英語で記述し、必要に応じて日本語で補足説明
+- すべてのコメントは適切に記述すること
 
 ### ウィジェットガイドライン
 - 可能な限り StatelessWidget を使用

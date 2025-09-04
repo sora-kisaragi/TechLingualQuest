@@ -76,15 +76,13 @@ scripts/
 
 ## トラブルシューティング
 
-- スクリプトが実行できない場合、実行権限を確認：
   ```bash
   chmod +x scripts/*.sh
   ```
 
-- Flutter/Dartが見つからない場合は、PATHを確認：
   ```bash
   which flutter
   which dart
   ```
 
-詳細なドキュメントは `docs/DEVELOPMENT.md` を参照してください。
+詳細なドキュメントは `docs/engineering/DEVELOPMENT.md` を参照してください。
