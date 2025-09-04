@@ -43,6 +43,36 @@ This document defines a concise Git Flow for this repository. The body is in Eng
   - `gh pr edit --add-label "documentation"`
   - `gh pr edit --add-reviewer <github-username>`
 
+### 3.2 Newlines on Git Bash (commit/PR messages)
+
+Git Bash does not interpret "\n" inside regular quotes. Use one of the following to ensure proper newlines in Japanese texts:
+
+- Prefer files (most robust):
+
+  - PR body: write to a file and pass it.
+    - `gh pr create --base develop --title "<日本語タイトル>" --body-file pr_body_ja.md`
+    - Update existing PR: `gh pr edit --body-file pr_body_ja.md`
+  - Commit message: write to a file and use `-F`.
+    - `git commit -F commit_message_ja.txt`
+
+- Use ANSI-C quoting $'...': `\n` is interpreted in Git Bash only inside $'...'.
+
+  - PR body inline:
+    - `gh pr create --base develop --title 'docs: 日本語化と方針更新' --body $'## 概要\n- 変更点\n\n## 影響範囲\n- ドキュメントのみ'`
+  - Commit body inline (title + body):
+    - `git commit -m "docs: 日本語化の修正" -m $'## 概要\n- ...\n\n## 理由\n- ...'`
+
+- Use an editor interactively:
+  - Set editor (example VS Code) and let `gh` open it.
+    - `export GH_EDITOR="code -w"`
+    - `gh pr create --base develop --fill` (edit Japanese title/body in the editor)
+  - For `git commit`, simply run `git commit` to open the editor and write Japanese with newlines.
+
+Notes:
+
+- Multiple `-m` flags in `git commit` create separate paragraphs (blank line between each `-m`).
+- Avoid relying on plain "\n" inside normal quotes on Git Bash; use $'...' or files instead.
+
 ## 4. Merge Guidance
 
 - Prefer Squash into develop.
