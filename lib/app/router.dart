@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../features/dashboard/pages/home_page.dart';
 import '../features/auth/pages/auth_page.dart';
+import '../features/auth/pages/login_page.dart';
+import '../features/auth/pages/register_page.dart';
 import '../features/vocabulary/pages/vocabulary_page.dart';
 import '../features/quests/pages/quests_page.dart';
 import '../shared/utils/logger.dart';
@@ -47,7 +49,7 @@ class AppRouter {
             path: 'login',
             name: AppRoutes.loginName,
             builder: (BuildContext context, GoRouterState state) {
-              return const Placeholder(); // 将来的にLoginPageを実装
+              return const LoginPage();
             },
           ),
           // 登録サブルート
@@ -55,7 +57,7 @@ class AppRouter {
             path: 'register',
             name: AppRoutes.registerName,
             builder: (BuildContext context, GoRouterState state) {
-              return const Placeholder(); // 将来的にRegisterPageを実装
+              return const RegisterPage();
             },
           ),
           // プロフィールサブルート（認証が必要）
