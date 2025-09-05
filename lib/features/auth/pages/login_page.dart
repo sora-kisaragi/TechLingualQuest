@@ -33,31 +33,31 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   /// メールアドレスのバリデーション
-  String? _validateEmail(String? value) {
+  String? _validateEmail(String? value, AppTranslations translations) {
     if (value == null || value.isEmpty) {
-      return 'メールアドレスは必須です';
+      return translations.getSync('emailRequired');
     }
     final emailRegex =
         RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
     if (!emailRegex.hasMatch(value)) {
-      return '有効なメールアドレスを入力してください';
+      return translations.getSync('enterValidEmail');
     }
     return null;
   }
 
   /// パスワードのバリデーション
-  String? _validatePassword(String? value) {
+  String? _validatePassword(String? value, AppTranslations translations) {
     if (value == null || value.isEmpty) {
-      return 'パスワードは必須です';
+      return translations.getSync('passwordRequired');
     }
     if (value.length < 6) {
-      return 'パスワードは6文字以上で入力してください';
+      return translations.getSync('passwordLoginMinLength');
     }
     return null;
   }
 
   /// ログイン処理を実行
-  Future<void> _login() async {
+  Future<void> _login(AppTranslations translations) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -83,13 +83,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         }
       } else {
         setState(() {
-          _errorMessage = 'メールアドレスまたはパスワードが正しくありません。';
+          _errorMessage = translations.getSync('loginFailed');
         });
       }
     } catch (e, stackTrace) {
       AppLogger.error('Login error', e, stackTrace);
       setState(() {
-        _errorMessage = 'ログイン中にエラーが発生しました。';
+        _errorMessage = translations.getSync('loginError');
       });
     }
   }
@@ -100,7 +100,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authState = ref.watch(authServiceProvider);
 
     return translationsAsync.when(
-      data: (translations) => _buildLoginContent(context, authState),
+      data: (translations) => _buildLoginContent(context, authState, translations),
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
@@ -110,10 +110,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  Widget _buildLoginContent(BuildContext context, AuthState authState) {
+  Widget _buildLoginContent(BuildContext context, AuthState authState, AppTranslations translations) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ログイン'),
+        title: Text(translations.getSync('login')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -129,7 +129,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               // ヘッダー
               const SizedBox(height: 40),
               Text(
-                'おかえりなさい',
+                translations.getSync('welcomeBack'),
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -137,7 +137,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                'アカウントにサインインして学習を続けましょう',
+                translations.getSync('signInToContinue'),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey[600],
                     ),
@@ -148,14 +148,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               // メールアドレス入力フィールド
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'メールアドレス',
-                  hintText: 'your@email.com',
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: translations.getSync('emailAddress'),
+                  hintText: translations.getSync('emailPlaceholder'),
+                  prefixIcon: const Icon(Icons.email),
+                  border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
-                validator: _validateEmail,
+                validator: (value) => _validateEmail(value, translations),
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 16),
@@ -164,8 +164,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
-                  labelText: 'パスワード',
-                  hintText: 'パスワードを入力',
+                  labelText: translations.getSync('password'),
+                  hintText: translations.getSync('enterPassword'),
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -182,9 +182,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   border: const OutlineInputBorder(),
                 ),
                 obscureText: !_isPasswordVisible,
-                validator: _validatePassword,
+                validator: (value) => _validatePassword(value, translations),
                 textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) => _login(),
+                onFieldSubmitted: (_) => _login(translations),
               ),
               const SizedBox(height: 16),
 
@@ -199,18 +199,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       });
                     },
                   ),
-                  const Text('ログイン状態を記憶'),
+                  Text(translations.getSync('rememberLogin')),
                   const Spacer(),
                   TextButton(
                     onPressed: () {
                       // 将来的にパスワードリセット機能を実装
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('パスワードリセット機能は準備中です'),
+                        SnackBar(
+                          content: Text(translations.getSync('passwordResetNotReady')),
                         ),
                       );
                     },
-                    child: const Text('パスワードを忘れた？'),
+                    child: Text(translations.getSync('forgotPassword')),
                   ),
                 ],
               ),
@@ -242,7 +242,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
               // ログインボタン
               ElevatedButton(
-                onPressed: authState.isLoading ? null : _login,
+                onPressed: authState.isLoading ? null : () => _login(translations),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -255,9 +255,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text(
-                        'ログイン',
-                        style: TextStyle(fontSize: 16),
+                    : Text(
+                        translations.getSync('login'),
+                        style: const TextStyle(fontSize: 16),
                       ),
               ),
               const SizedBox(height: 32),
@@ -269,7 +269,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      'または',
+                      translations.getSync('or'),
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ),
@@ -282,8 +282,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               OutlinedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Googleログイン機能は準備中です'),
+                    SnackBar(
+                      content: Text(translations.getSync('googleLoginNotReady')),
                     ),
                   );
                 },
@@ -294,7 +294,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   errorBuilder: (context, error, stackTrace) =>
                       const Icon(Icons.login, size: 20),
                 ),
-                label: const Text('Googleでログイン'),
+                label: Text(translations.getSync('signInWithGoogle')),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(color: Colors.grey[300]!),
@@ -309,10 +309,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('アカウントをお持ちでない方は'),
+                  Text(translations.getSync('noAccount')),
                   TextButton(
                     onPressed: () => context.go('/auth/register'),
-                    child: const Text('新規登録'),
+                    child: Text(translations.getSync('signUp')),
                   ),
                 ],
               ),

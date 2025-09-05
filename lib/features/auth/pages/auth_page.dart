@@ -83,9 +83,9 @@ class AuthPage extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'ログイン',
-                    style: TextStyle(fontSize: 16),
+                  child: Text(
+                    translations.getSync('login'),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
@@ -102,9 +102,9 @@ class AuthPage extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    '新規登録',
-                    style: TextStyle(fontSize: 16),
+                  child: Text(
+                    translations.getSync('signUp'),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
