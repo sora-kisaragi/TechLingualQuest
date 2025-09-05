@@ -100,7 +100,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authState = ref.watch(authServiceProvider);
 
     return translationsAsync.when(
-      data: (translations) => _buildLoginContent(context, authState, translations),
+      data: (translations) =>
+          _buildLoginContent(context, authState, translations),
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
@@ -110,7 +111,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  Widget _buildLoginContent(BuildContext context, AuthState authState, AppTranslations translations) {
+  Widget _buildLoginContent(
+      BuildContext context, AuthState authState, AppTranslations translations) {
     return Scaffold(
       appBar: AppBar(
         title: Text(translations.getSync('login')),
@@ -206,7 +208,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       // 将来的にパスワードリセット機能を実装
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(translations.getSync('passwordResetNotReady')),
+                          content: Text(
+                              translations.getSync('passwordResetNotReady')),
                         ),
                       );
                     },
@@ -242,7 +245,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
               // ログインボタン
               ElevatedButton(
-                onPressed: authState.isLoading ? null : () => _login(translations),
+                onPressed:
+                    authState.isLoading ? null : () => _login(translations),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -283,7 +287,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(translations.getSync('googleLoginNotReady')),
+                      content:
+                          Text(translations.getSync('googleLoginNotReady')),
                     ),
                   );
                 },

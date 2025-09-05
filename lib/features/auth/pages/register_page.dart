@@ -68,7 +68,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   /// パスワード確認のバリデーション
-  String? _validateConfirmPassword(String? value, AppTranslations translations) {
+  String? _validateConfirmPassword(
+      String? value, AppTranslations translations) {
     if (value == null || value.isEmpty) {
       return translations.getSync('confirmPasswordRequired');
     }
@@ -141,7 +142,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final authState = ref.watch(authServiceProvider);
 
     return translationsAsync.when(
-      data: (translations) => _buildRegisterContent(context, authState, translations),
+      data: (translations) =>
+          _buildRegisterContent(context, authState, translations),
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
@@ -151,7 +153,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     );
   }
 
-  Widget _buildRegisterContent(BuildContext context, AuthState authState, AppTranslations translations) {
+  Widget _buildRegisterContent(
+      BuildContext context, AuthState authState, AppTranslations translations) {
     return Scaffold(
       appBar: AppBar(
         title: Text(translations.getSync('createAccount')),
@@ -264,7 +267,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   border: const OutlineInputBorder(),
                 ),
                 obscureText: !_isConfirmPasswordVisible,
-                validator: (value) => _validateConfirmPassword(value, translations),
+                validator: (value) =>
+                    _validateConfirmPassword(value, translations),
                 textInputAction: TextInputAction.done,
               ),
               const SizedBox(height: 24),
@@ -324,7 +328,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
               // 登録ボタン
               ElevatedButton(
-                onPressed: authState.isLoading ? null : () => _register(translations),
+                onPressed:
+                    authState.isLoading ? null : () => _register(translations),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
