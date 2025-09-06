@@ -45,7 +45,7 @@ void main() {
   group('RouteMetadata Tests', () {
     test('should create route metadata with required parameters', () {
       const metadata = RouteMetadata(title: 'Test Title');
-      
+
       expect(metadata.title, equals('Test Title'));
       expect(metadata.description, isNull);
       expect(metadata.requiresAuth, isFalse);
@@ -61,7 +61,7 @@ void main() {
         showInNavigation: false,
         icon: 'test_icon',
       );
-      
+
       expect(metadata.title, equals('Test Title'));
       expect(metadata.description, equals('Test Description'));
       expect(metadata.requiresAuth, isTrue);
@@ -73,7 +73,7 @@ void main() {
   group('AppRouteMetadata Tests', () {
     test('should get metadata for existing route', () {
       final metadata = AppRouteMetadata.getMetadata(AppRoutes.homeName);
-      
+
       expect(metadata, isNotNull);
       expect(metadata!.title, equals('Home'));
       expect(metadata.description, equals('TechLingual Quest main dashboard'));
@@ -84,26 +84,26 @@ void main() {
 
     test('should return null for non-existing route', () {
       final metadata = AppRouteMetadata.getMetadata('non-existing-route');
-      
+
       expect(metadata, isNull);
     });
 
     test('should get navigation routes correctly', () {
       final navigationRoutes = AppRouteMetadata.getNavigationRoutes();
-      
+
       expect(navigationRoutes, isNotEmpty);
-      
+
       // Check that all returned routes have showInNavigation = true
       for (final entry in navigationRoutes) {
         expect(entry.value.showInNavigation, isTrue);
       }
-      
+
       // Check that some known navigation routes are included
       final routeNames = navigationRoutes.map((e) => e.key).toList();
       expect(routeNames, contains(AppRoutes.homeName));
       expect(routeNames, contains(AppRoutes.vocabularyName));
       expect(routeNames, contains(AppRoutes.questsName));
-      
+
       // Check that non-navigation routes are excluded
       expect(routeNames, isNot(contains(AppRoutes.loginName)));
       expect(routeNames, isNot(contains(AppRoutes.registerName)));
@@ -111,16 +111,16 @@ void main() {
 
     test('should get auth required routes correctly', () {
       final authRequiredRoutes = AppRouteMetadata.getAuthRequiredRoutes();
-      
+
       expect(authRequiredRoutes, isNotEmpty);
-      
+
       // Check that known auth-required routes are included
       expect(authRequiredRoutes, contains(AppRoutes.profileName));
       expect(authRequiredRoutes, contains(AppRoutes.profileEditName));
       expect(authRequiredRoutes, contains(AppRoutes.dashboardName));
       expect(authRequiredRoutes, contains(AppRoutes.vocabularyAddName));
       expect(authRequiredRoutes, contains(AppRoutes.questActiveName));
-      
+
       // Check that non-auth routes are excluded
       expect(authRequiredRoutes, isNot(contains(AppRoutes.homeName)));
       expect(authRequiredRoutes, isNot(contains(AppRoutes.loginName)));
@@ -128,14 +128,14 @@ void main() {
 
     test('should have consistent metadata for all routes', () {
       final metadata = AppRouteMetadata.metadata;
-      
+
       expect(metadata, isNotEmpty);
-      
+
       // Check that all metadata entries have required fields
       for (final entry in metadata.entries) {
         expect(entry.value.title, isNotNull);
         expect(entry.value.title, isNotEmpty);
-        
+
         // Check that auth-required routes have meaningful descriptions
         if (entry.value.requiresAuth) {
           expect(entry.value.description, isNotNull);
@@ -145,9 +145,11 @@ void main() {
     });
 
     test('should have correct auth requirements for profile routes', () {
-      final profileMetadata = AppRouteMetadata.getMetadata(AppRoutes.profileName);
-      final profileEditMetadata = AppRouteMetadata.getMetadata(AppRoutes.profileEditName);
-      
+      final profileMetadata =
+          AppRouteMetadata.getMetadata(AppRoutes.profileName);
+      final profileEditMetadata =
+          AppRouteMetadata.getMetadata(AppRoutes.profileEditName);
+
       expect(profileMetadata!.requiresAuth, isTrue);
       expect(profileEditMetadata!.requiresAuth, isTrue);
       expect(profileMetadata.showInNavigation, isFalse);
@@ -156,13 +158,15 @@ void main() {
 
     test('should have correct settings for authentication routes', () {
       final loginMetadata = AppRouteMetadata.getMetadata(AppRoutes.loginName);
-      final registerMetadata = AppRouteMetadata.getMetadata(AppRoutes.registerName);
-      final passwordResetMetadata = AppRouteMetadata.getMetadata(AppRoutes.passwordResetName);
-      
+      final registerMetadata =
+          AppRouteMetadata.getMetadata(AppRoutes.registerName);
+      final passwordResetMetadata =
+          AppRouteMetadata.getMetadata(AppRoutes.passwordResetName);
+
       expect(loginMetadata!.requiresAuth, isFalse);
       expect(registerMetadata!.requiresAuth, isFalse);
       expect(passwordResetMetadata!.requiresAuth, isFalse);
-      
+
       expect(loginMetadata.showInNavigation, isFalse);
       expect(registerMetadata.showInNavigation, isFalse);
       expect(passwordResetMetadata.showInNavigation, isFalse);

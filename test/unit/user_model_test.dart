@@ -6,10 +6,10 @@ void main() {
     test('should have correct values for UserLevel enum', () {
       expect(UserLevel.beginner.key, equals('beginner'));
       expect(UserLevel.beginner.description, equals('A1-A2'));
-      
+
       expect(UserLevel.intermediate.key, equals('intermediate'));
       expect(UserLevel.intermediate.description, equals('B1-B2'));
-      
+
       expect(UserLevel.advanced.key, equals('advanced'));
       expect(UserLevel.advanced.description, equals('C1-C2'));
     });
@@ -42,7 +42,7 @@ void main() {
 
     test('should create identical copy when no parameters provided', () {
       final copiedUser = originalUser.copyWith();
-      
+
       expect(copiedUser.id, equals(originalUser.id));
       expect(copiedUser.email, equals(originalUser.email));
       expect(copiedUser.name, equals(originalUser.name));
@@ -57,7 +57,7 @@ void main() {
         name: 'Updated Name',
         level: UserLevel.advanced,
       );
-      
+
       expect(copiedUser.id, equals(originalUser.id));
       expect(copiedUser.email, equals(originalUser.email));
       expect(copiedUser.name, equals('Updated Name'));
@@ -71,7 +71,7 @@ void main() {
       // Note: The current copyWith implementation uses ?? operator
       // which means it cannot set values to null, only use null as "don't change"
       final copiedUser = originalUser.copyWith();
-      
+
       // Since we can't set to null, verify that existing values are preserved
       expect(copiedUser.id, equals(originalUser.id));
       expect(copiedUser.email, equals(originalUser.email));
@@ -85,7 +85,7 @@ void main() {
     test('should update interests list correctly', () {
       final newInterests = ['React', 'TypeScript', 'Node.js'];
       final copiedUser = originalUser.copyWith(interests: newInterests);
-      
+
       expect(copiedUser.interests, equals(newInterests));
       expect(copiedUser.interests, isNot(same(originalUser.interests)));
     });
@@ -100,11 +100,12 @@ void main() {
         interests: ['Python', 'Django'],
         bio: 'New bio text',
       );
-      
+
       expect(copiedUser.id, equals('new-id'));
       expect(copiedUser.email, equals('new@example.com'));
       expect(copiedUser.name, equals('New User'));
-      expect(copiedUser.profileImageUrl, equals('https://example.com/new-image.jpg'));
+      expect(copiedUser.profileImageUrl,
+          equals('https://example.com/new-image.jpg'));
       expect(copiedUser.level, equals(UserLevel.beginner));
       expect(copiedUser.interests, equals(['Python', 'Django']));
       expect(copiedUser.bio, equals('New bio text'));
@@ -112,14 +113,14 @@ void main() {
 
     test('should preserve immutability of original user', () {
       final copiedUser = originalUser.copyWith(name: 'Modified Name');
-      
+
       expect(originalUser.name, equals('Test User'));
       expect(copiedUser.name, equals('Modified Name'));
     });
 
     test('should handle empty interests list', () {
       final copiedUser = originalUser.copyWith(interests: []);
-      
+
       expect(copiedUser.interests, equals([]));
       expect(copiedUser.interests, isNot(same(originalUser.interests)));
     });
@@ -130,7 +131,7 @@ void main() {
         profileImageUrl: '',
         bio: '',
       );
-      
+
       expect(copiedUser.name, equals(''));
       expect(copiedUser.profileImageUrl, equals(''));
       expect(copiedUser.bio, equals(''));
@@ -143,7 +144,7 @@ void main() {
         id: 'test-id',
         email: 'test@example.com',
       );
-      
+
       expect(user.id, equals('test-id'));
       expect(user.email, equals('test@example.com'));
       expect(user.name, isNull);
@@ -163,7 +164,7 @@ void main() {
         interests: ['Flutter', 'Dart'],
         bio: 'Test bio',
       );
-      
+
       expect(user.id, equals('test-id'));
       expect(user.email, equals('test@example.com'));
       expect(user.name, equals('Test User'));
@@ -180,7 +181,7 @@ void main() {
         name: 'Test User with äöü',
         bio: 'Bio with special chars: 🚀 & symbols',
       );
-      
+
       expect(user.name, equals('Test User with äöü'));
       expect(user.email, equals('test+user@example.com'));
       expect(user.bio, equals('Bio with special chars: 🚀 & symbols'));
@@ -193,7 +194,7 @@ void main() {
         email: 'test@example.com',
         bio: longBio,
       );
-      
+
       expect(user.bio, equals(longBio));
       expect(user.bio?.length, equals(500));
     });
@@ -205,7 +206,7 @@ void main() {
         email: 'test@example.com',
         interests: manyInterests,
       );
-      
+
       expect(user.interests, hasLength(20));
       expect(user.interests?.first, equals('Interest 0'));
       expect(user.interests?.last, equals('Interest 19'));

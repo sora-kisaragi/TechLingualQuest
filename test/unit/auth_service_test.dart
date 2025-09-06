@@ -285,5 +285,39 @@ void main() {
       final authState = container.read(authServiceProvider);
       expect(authState.user!.interests, isEmpty);
     });
+
+    test('Profile update with new image URL should update profileImageUrl',
+        () async {
+      const newImageUrl = 'https://example.com/new-profile-image.jpg';
+
+      final updateResult = await authService.updateProfile(
+        profileImageUrl: newImageUrl,
+      );
+
+      expect(updateResult, true);
+
+      final authState = container.read(authServiceProvider);
+      expect(authState.user!.profileImageUrl, newImageUrl);
+    });
+
+    test('Profile update with null image URL should clear profileImageUrl',
+        () async {
+      // まず画像URLを設定
+      // First set an image URL
+      await authService.updateProfile(
+        profileImageUrl: 'https://example.com/temp-image.jpg',
+      );
+
+      // 次にclearProfileImageフラグでクリア
+      // Then clear with clearProfileImage flag
+      final updateResult = await authService.updateProfile(
+        clearProfileImage: true,
+      );
+
+      expect(updateResult, true);
+
+      final authState = container.read(authServiceProvider);
+      expect(authState.user!.profileImageUrl, isNull);
+    });
   });
 }

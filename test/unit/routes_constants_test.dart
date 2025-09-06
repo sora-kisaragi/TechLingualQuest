@@ -44,7 +44,7 @@ void main() {
       final authDepth = '/auth'.split('/').length - 1;
       final profileDepth = AppRoutes.profile.split('/').length - 1;
       final profileEditDepth = AppRoutes.profileEdit.split('/').length - 1;
-      
+
       expect(profileDepth, equals(authDepth + 1));
       expect(profileEditDepth, equals(profileDepth + 1));
     });
@@ -69,7 +69,7 @@ void main() {
         AppRoutes.vocabulary,
         AppRoutes.quests,
       };
-      
+
       // All routes should be unique
       expect(routes, hasLength(9));
     });
@@ -86,7 +86,7 @@ void main() {
         AppRoutes.vocabularyName,
         AppRoutes.questsName,
       };
-      
+
       // All route names should be unique
       expect(routeNames, hasLength(9));
     });
@@ -105,7 +105,8 @@ void main() {
 
     test('should use lowercase paths', () {
       expect(AppRoutes.profile, equals(AppRoutes.profile.toLowerCase()));
-      expect(AppRoutes.profileEdit, equals(AppRoutes.profileEdit.toLowerCase()));
+      expect(
+          AppRoutes.profileEdit, equals(AppRoutes.profileEdit.toLowerCase()));
     });
 
     test('should use hyphens for multi-word paths', () {
@@ -124,7 +125,7 @@ void main() {
         AppRoutes.register,
         AppRoutes.passwordReset,
       ];
-      
+
       for (final route in routes) {
         // Should be valid URL path (no spaces, special chars except /, -, _)
         expect(route, matches(r'^/[a-zA-Z0-9/_-]*$'));
@@ -134,8 +135,10 @@ void main() {
 
   group('Route Name Validation Tests', () {
     test('should use lowercase names', () {
-      expect(AppRoutes.profileName, equals(AppRoutes.profileName.toLowerCase()));
-      expect(AppRoutes.profileEditName, equals(AppRoutes.profileEditName.toLowerCase()));
+      expect(
+          AppRoutes.profileName, equals(AppRoutes.profileName.toLowerCase()));
+      expect(AppRoutes.profileEditName,
+          equals(AppRoutes.profileEditName.toLowerCase()));
     });
 
     test('should use hyphens for multi-word names', () {
@@ -157,7 +160,7 @@ void main() {
         AppRoutes.registerName,
         AppRoutes.passwordResetName,
       ];
-      
+
       for (final name in routeNames) {
         // Should be valid identifier-like string (letters, numbers, hyphens)
         expect(name, matches(r'^[a-zA-Z0-9-]+$'));

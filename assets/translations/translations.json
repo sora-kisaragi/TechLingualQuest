@@ -593,6 +593,48 @@
       "ja": "例：Web開発",
       "ko": "예: 웹 개발",
       "zh": "例如：网页开发"
+    },
+    "selectImage": {
+      "en": "Select Image",
+      "ja": "画像を選択",
+      "ko": "이미지 선택",
+      "zh": "选择图片"
+    },
+    "takePhoto": {
+      "en": "Take Photo",
+      "ja": "写真を撮る",
+      "ko": "사진 촬영",
+      "zh": "拍照"
+    },
+    "chooseFromGallery": {
+      "en": "Choose from Gallery",
+      "ja": "ギャラリーから選択",
+      "ko": "갤러리에서 선택",
+      "zh": "从相册选择"
+    },
+    "imageUploadSuccess": {
+      "en": "Profile image updated successfully",
+      "ja": "プロフィール画像が正常に更新されました",
+      "ko": "프로필 이미지가 성공적으로 업데이트되었습니다",
+      "zh": "头像更新成功"
+    },
+    "imageUploadError": {
+      "en": "Failed to update profile image. Please try again.",
+      "ja": "プロフィール画像の更新に失敗しました。もう一度お試しください。",
+      "ko": "프로필 이미지 업데이트에 실패했습니다. 다시 시도해주세요.",
+      "zh": "头像更新失败。请重试。"
+    },
+    "imageSelectionCancelled": {
+      "en": "Image selection cancelled",
+      "ja": "画像選択がキャンセルされました",
+      "ko": "이미지 선택이 취소되었습니다",
+      "zh": "图片选择已取消"
+    },
+    "uploading": {
+      "en": "Uploading...",
+      "ja": "アップロード中...",
+      "ko": "업로드 중...",
+      "zh": "上传中..."
     }
   }
 }
