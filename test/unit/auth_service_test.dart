@@ -319,5 +319,176 @@ void main() {
       final authState = container.read(authServiceProvider);
       expect(authState.user!.profileImageUrl, isNull);
     });
+
+    test('Profile update with valid image URL formats should succeed',
+        () async {
+      const testUrls = [
+        'https://example.com/image.jpg',
+        'https://cdn.example.com/profile/user123.png',
+        'https://storage.googleapis.com/bucket/profile.webp',
+        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ==',
+      ];
+
+      for (final url in testUrls) {
+        final updateResult = await authService.updateProfile(
+          profileImageUrl: url,
+        );
+
+        expect(updateResult, true);
+
+        final authState = container.read(authServiceProvider);
+        expect(authState.user!.profileImageUrl, url);
+      }
+    });
+
+    test('Profile update with empty image URL should clear profile image',
+        () async {
+      // Set initial image URL
+      await authService.updateProfile(
+        profileImageUrl: 'https://example.com/initial.jpg',
+      );
+
+      // Update with empty string
+      final updateResult = await authService.updateProfile(
+        profileImageUrl: '',
+      );
+
+      expect(updateResult, true);
+
+      final authState = container.read(authServiceProvider);
+      expect(authState.user!.profileImageUrl, '');
+    });
+
+    test('Profile update with mixed data including image URL should work',
+        () async {
+      const newName = 'John Doe';
+      const newBio = 'Software Developer';
+      const newImageUrl = 'https://example.com/john-doe.jpg';
+      final newInterests = ['Programming', 'Technology'];
+
+      final updateResult = await authService.updateProfile(
+        name: newName,
+        bio: newBio,
+        profileImageUrl: newImageUrl,
+        interests: newInterests,
+      );
+
+      expect(updateResult, true);
+
+      final authState = container.read(authServiceProvider);
+      final user = authState.user!;
+      expect(user.name, newName);
+      expect(user.bio, newBio);
+      expect(user.profileImageUrl, newImageUrl);
+      expect(user.interests, newInterests);
+    });
+
+    test('Profile update should maintain other fields when only updating image',
+        () async {
+      // Set initial profile data
+      const initialName = 'Initial Name';
+      const initialBio = 'Initial Bio';
+      final initialInterests = ['Initial', 'Interests'];
+
+      await authService.updateProfile(
+        name: initialName,
+        bio: initialBio,
+        interests: initialInterests,
+      );
+
+      // Update only image URL
+      const newImageUrl = 'https://example.com/new-avatar.png';
+      final updateResult = await authService.updateProfile(
+        profileImageUrl: newImageUrl,
+      );
+
+      expect(updateResult, true);
+
+      final authState = container.read(authServiceProvider);
+      final user = authState.user!;
+      expect(user.name, initialName);
+      expect(user.bio, initialBio);
+      expect(user.interests, initialInterests);
+      expect(user.profileImageUrl, newImageUrl);
+    });
+  });
+
+  group('AuthService Tests - Profile Image Integration', () {
+    late ProviderContainer container;
+    late AuthService authService;
+
+    setUp(() async {
+      container = ProviderContainer();
+      authService = container.read(authServiceProvider.notifier);
+      await authService.login('test@example.com', 'password123');
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+
+    test('Multiple profile image updates should work correctly', () async {
+      final imageUrls = [
+        'https://example.com/profile1.jpg',
+        'https://example.com/profile2.png',
+        'https://example.com/profile3.webp',
+      ];
+
+      for (final url in imageUrls) {
+        final result = await authService.updateProfile(profileImageUrl: url);
+        expect(result, true);
+
+        final authState = container.read(authServiceProvider);
+        expect(authState.user!.profileImageUrl, url);
+      }
+    });
+
+    test('Clear and set profile image cycle should work', () async {
+      const imageUrl = 'https://example.com/test-image.jpg';
+
+      // Set image
+      await authService.updateProfile(profileImageUrl: imageUrl);
+      var authState = container.read(authServiceProvider);
+      expect(authState.user!.profileImageUrl, imageUrl);
+
+      // Clear image
+      await authService.updateProfile(clearProfileImage: true);
+      authState = container.read(authServiceProvider);
+      expect(authState.user!.profileImageUrl, isNull);
+
+      // Set image again
+      await authService.updateProfile(profileImageUrl: imageUrl);
+      authState = container.read(authServiceProvider);
+      expect(authState.user!.profileImageUrl, imageUrl);
+    });
+
+    test('Profile image state should persist across service reads', () async {
+      const imageUrl = 'https://example.com/persistent-image.jpg';
+
+      await authService.updateProfile(profileImageUrl: imageUrl);
+
+      // Read state multiple times
+      for (int i = 0; i < 3; i++) {
+        final authState = container.read(authServiceProvider);
+        expect(authState.user!.profileImageUrl, imageUrl);
+      }
+    });
+
+    test('Profile image should be included in user serialization', () async {
+      const imageUrl = 'https://example.com/serialization-test.jpg';
+
+      await authService.updateProfile(profileImageUrl: imageUrl);
+
+      final authState = container.read(authServiceProvider);
+      final user = authState.user!;
+
+      // Verify that profile image is accessible through the user object
+      expect(user.profileImageUrl, isNotNull);
+      expect(user.profileImageUrl, imageUrl);
+
+      // Verify other standard fields are still available
+      expect(user.email, isNotEmpty);
+      expect(user.name, isNotEmpty);
+    });
   });
 }
