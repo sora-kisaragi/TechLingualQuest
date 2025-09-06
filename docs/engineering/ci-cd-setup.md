@@ -22,14 +22,12 @@ related_docs: ["DEVELOPMENT.md", "pre-commit-setup.md", "../../scripts/setup_ci_
 
 ### メインワークフロー
 - `.github/workflows/flutter.yml` - **Flutter CI/CD**
-  - main ブランチ: pull_request でのみトリガー
-  - develop ブランチ: push でのみトリガー
+  - main・develop ブランチ: pull_request でのみトリガー
   - 並列実行: テストとビルドが並列実行
   - ビルドマトリクス: Android APK、App Bundle、Web を並列ビルド
 
 - `.github/workflows/security-scan.yml` - **セキュリティスキャン**
-  - main ブランチ: pull_request でのみトリガー
-  - develop ブランチ: push でのみトリガー
+  - main・develop ブランチ: pull_request でのみトリガー
   - スケジュール実行: 毎日午前2時（UTC）
 
 - `.github/workflows/release.yml` - **リリースビルド**
@@ -49,10 +47,10 @@ related_docs: ["DEVELOPMENT.md", "pre-commit-setup.md", "../../scripts/setup_ci_
 | ブランチ | Flutter CI/CD | セキュリティ | フォーマット | Windows |
 |---------|--------------|------------|------------|---------|
 | main | PR のみ | PR のみ | PR のみ | PR のみ |
-| develop | push のみ | push のみ | push のみ | push のみ |
+| develop | PR のみ | PR のみ | PR のみ | PR のみ |
 | その他 | 実行されない | 実行されない | 実行されない | 実行されない |
 
-この構成により、push と pull_request の重複実行を避け、処理時間を大幅に短縮しています。
+この構成により、プルリクエスト時のみ実行されることで、push と pull_request の重複実行を完全に回避し、処理時間を大幅に短縮しています。
 
 ## 初期セットアップ（ローカル）
 

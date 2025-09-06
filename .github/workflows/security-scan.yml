@@ -1,10 +1,8 @@
 name: Security Scan
 
 on:
-  push:
-    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
   schedule:
     # 毎日午前2時（UTC）にセキュリティスキャンを実行
     - cron: '0 2 * * *'

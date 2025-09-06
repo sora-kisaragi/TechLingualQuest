@@ -1,10 +1,8 @@
 name: Format Fix
 
 on:
-  push:
-    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
   workflow_dispatch:
 
 permissions:
@@ -88,17 +86,19 @@ jobs:
         fi
 
     - name: Commit formatting fixes
-      if: steps.fix_report.outputs.changes_made == 'true' && github.event_name == 'push'
+      if: steps.fix_report.outputs.changes_made == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "style: 自動フォーマット修正
 
-- 修正ファイル数: ${{ steps.fix_report.outputs.total_changes }}
-- フォーマット基準: dart format 準拠
-- 自動修正実行者: GitHub Actions"
-        git push
+        修正ファイル数: ${{ steps.fix_report.outputs.total_changes }}
+        フォーマット基準: dart format 準拠
+        自動修正実行者: GitHub Actions"
+        
+        # プルリクエストの場合はコミットのみ（プッシュしない）
+        echo "✅ フォーマット修正をコミットしました（プルリクエスト用）"
 
     - name: Send fix notification
       if: steps.fix_report.outputs.changes_made == 'true' && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
