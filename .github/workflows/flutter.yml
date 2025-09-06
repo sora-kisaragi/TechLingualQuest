@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.35.3'
+  FLUTTER_VERSION: '3.24.5'
 
 jobs:
   # 依存関係とコード品質チェック
@@ -177,18 +177,20 @@ jobs:
         echo "📂 Webアセットの存在確認..."
         if [ ! -f "web/favicon.png" ]; then
           echo "⚠️ favicon.png が見つかりません"
+          exit 1
         fi
         if [ ! -d "web/icons" ]; then
           echo "⚠️ web/icons ディレクトリが見つかりません"
+          exit 1
         fi
         
         # Webビルドを実行（エラー詳細を表示）
         echo "🚀 Webビルドを開始..."
-        flutter build web --release --web-renderer canvaskit --verbose || {
-          echo "❌ canvaskitレンダラーでのビルドに失敗しました。htmlレンダラーで再試行します..."
+        flutter build web --release --verbose || {
+          echo "❌ Webビルドに失敗しました。クリーンビルドで再試行します..."
           flutter clean
           flutter pub get
-          flutter build web --release --web-renderer html --verbose
+          flutter build web --release --verbose
         }
         
         # ビルド結果の確認
