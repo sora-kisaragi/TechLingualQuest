@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.24.5'
+  FLUTTER_VERSION: '3.35.3'
 
 jobs:
   build-windows:
@@ -113,6 +113,70 @@ jobs:
         name: windows-build
         path: ${{ steps.compress.outputs.archive_name }}
         retention-days: 7
+
+    - name: Send Slack notification with build results
+      if: vars.SLACK_WEBHOOK_URL
+      run: |
+        $status = "success"
+        $emoji = ":white_check_mark:"
+        $color = "#28a745"
+        
+        # Slackメッセージを送信
+        $payload = @{
+          text = "$emoji Windows ビルド完了"
+          blocks = @(
+            @{
+              type = "header"
+              text = @{
+                type = "plain_text"
+                text = "$emoji TechLingualQuest Windows ビルド完了"
+              }
+            },
+            @{
+              type = "section"
+              text = @{
+                type = "mrkdwn"
+                text = "Windowsアプリケーションのビルドが正常に完了しました。`n`nパッケージサイズ: *${{ steps.package.outputs.package_size_mb }} MB*`n圧縮後サイズ: *${{ steps.compress.outputs.archive_size_mb }} MB*"
+              }
+            },
+            @{
+              type = "section"
+              fields = @(
+                @{type = "mrkdwn"; text = "*ブランチ:*`n${{ github.ref_name }}"},
+                @{type = "mrkdwn"; text = "*コミット:*`n$(echo ${{ github.sha }} | cut -c1-7)"},
+                @{type = "mrkdwn"; text = "*実行者:*`n${{ github.actor }}"},
+                @{type = "mrkdwn"; text = "*成果物:*`n${{ steps.compress.outputs.archive_name }}"}
+              )
+            }
+          )
+        } | ConvertTo-Json -Depth 10
+        
+        Invoke-RestMethod -Uri "${{ vars.SLACK_WEBHOOK_URL }}" -Method Post -Body $payload -ContentType "application/json"
+
+    - name: Send Discord notification with build results
+      if: vars.DISCORD_WEBHOOK_URL
+      run: |
+        $payload = @{
+          embeds = @(
+            @{
+              title = ":gear: Windows ビルド完了"
+              description = "TechLingualQuest Windowsアプリケーションのビルドが正常に完了しました"
+              color = 3066993
+              fields = @(
+                @{name = "パッケージサイズ"; value = "${{ steps.package.outputs.package_size_mb }} MB"; inline = $true},
+                @{name = "圧縮後サイズ"; value = "${{ steps.compress.outputs.archive_size_mb }} MB"; inline = $true},
+                @{name = "ブランチ"; value = "${{ github.ref_name }}"; inline = $true},
+                @{name = "コミット"; value = "$(echo ${{ github.sha }} | cut -c1-7)"; inline = $true},
+                @{name = "実行者"; value = "${{ github.actor }}"; inline = $true},
+                @{name = "成果物"; value = "${{ steps.compress.outputs.archive_name }}"; inline = $false}
+              )
+              footer = @{text = "GitHub Actions Windows Build"}
+              timestamp = "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')"
+            }
+          )
+        } | ConvertTo-Json -Depth 10
+        
+        Invoke-RestMethod -Uri "${{ vars.DISCORD_WEBHOOK_URL }}" -Method Post -Body $payload -ContentType "application/json"
 
     - name: Record build results for unified notification
       run: |

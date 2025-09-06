@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.24.5'
+  FLUTTER_VERSION: '3.35.3'
 
 jobs:
   security-scan:
@@ -107,6 +107,60 @@ jobs:
           deps.json
           pubspec.lock
         retention-days: 30
+
+    - name: Send security notification
+      if: failure() && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+      run: |
+        if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🚨 セキュリティスキャン警告",
+              "description": "TechLingual Questプロジェクトでセキュリティ上の問題が検出されました",
+              "color": 16711680,
+              "fields": [
+                {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
+                {"name": "コミット", "value": "$(echo ${{ github.sha }} | cut -c1-7)", "inline": true},
+                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
+              ],
+              "footer": {"text": "緊急対応が必要です"},
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+            }]
+          }' \
+          ${{ vars.DISCORD_WEBHOOK_URL }}
+        fi
+        
+        if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "text": "🚨 セキュリティスキャン警告",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "🚨 TechLingual Quest セキュリティ警告"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "セキュリティ上の問題が検出されました。緊急対応が必要です。"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {"type": "mrkdwn", "text": "*ブランチ:*\n${{ github.ref_name }}"},
+                  {"type": "mrkdwn", "text": "*コミット:*\n$(echo ${{ github.sha }} | cut -c1-7)"},
+                  {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"}
+                ]
+              }
+            ]
+          }' \
+          ${{ vars.SLACK_WEBHOOK_URL }}
+        fi
 
     - name: Record security scan results
       if: always()
