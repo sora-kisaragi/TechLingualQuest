@@ -161,6 +161,32 @@ LOG_LEVEL=error|debug
 - 成果物保持期間の最適化
 - 通知設定の動作確認
 
+### Flutter バージョン管理
+
+#### 最新版確認コマンド
+```bash
+# 公式リリースページから最新安定版を取得
+curl -s https://api.flutter.dev/releases/releases_linux.json | jq -r '.releases[0].version'
+
+# または公式アーカイブページを確認
+# https://docs.flutter.dev/install/archive
+```
+
+#### 現在のプロジェクト設定確認
+```bash
+# ワークフローファイルから現在のFlutterバージョンを確認
+grep -r "FLUTTER_VERSION" .github/workflows/
+
+# セットアップスクリプトから確認
+grep -r "flutter-version\|FLUTTER_VERSION" validate_flutter_setup.sh
+```
+
+#### バージョン更新時の注意事項
+- **ダウングレード禁止**: バージョンは上げることのみ許可
+- **安定版のみ**: ベータ版やdev版は使用禁止
+- **動作確認**: 更新前に最新バージョンでのビルドテスト実施
+- **統一性**: 全ワークフローファイルで同一バージョンを使用
+
 ### アップデート手順
 1. Flutter バージョン確認 (`FLUTTER_VERSION` 環境変数)
 2. ワークフロー設定の動作テスト

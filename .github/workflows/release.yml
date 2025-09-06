@@ -38,7 +38,7 @@ permissions:
   actions: read
 
 env:
-  FLUTTER_VERSION: '3.24.5'
+  FLUTTER_VERSION: '3.35.3'
 
 jobs:
   # リリース前の最終チェック
@@ -236,7 +236,7 @@ jobs:
         export APP_ENV=prod
         export DATABASE_NAME=tech_lingual_quest.db
         export API_BASE_URL=https://api.example.com
-        flutter build web --release --web-renderer canvaskit
+        flutter build web --release --verbose
         echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
 
     - name: Upload Web Release
