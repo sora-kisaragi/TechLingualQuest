@@ -118,6 +118,9 @@ jobs:
     - name: Send Slack notification with build results
       if: vars.SLACK_WEBHOOK_URL
       run: |
+        # コミットSHAの短縮版を作成
+        $shortSha = "${{ github.sha }}".Substring(0, 7)
+        
         $status = "success"
         $emoji = ":white_check_mark:"
         $color = "#28a745"
@@ -145,7 +148,7 @@ jobs:
               type = "section"
               fields = @(
                 @{type = "mrkdwn"; text = "*ブランチ:*`n${{ github.ref_name }}"},
-                @{type = "mrkdwn"; text = "*コミット:*`n$(echo ${{ github.sha }} | cut -c1-7)"},
+                @{type = "mrkdwn"; text = "*コミット:*`n$shortSha"},
                 @{type = "mrkdwn"; text = "*実行者:*`n${{ github.actor }}"},
                 @{type = "mrkdwn"; text = "*保管場所:*`nGitHub Actions Artifacts"}
               )
@@ -172,6 +175,9 @@ jobs:
     - name: Send Discord notification with build results
       if: vars.DISCORD_WEBHOOK_URL
       run: |
+        # コミットSHAの短縮版を作成
+        $shortSha = "${{ github.sha }}".Substring(0, 7)
+        
         $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}"
         
         $payload = @{
@@ -184,7 +190,7 @@ jobs:
                 @{name = "パッケージサイズ"; value = "${{ steps.package.outputs.package_size_mb }} MB"; inline = $true},
                 @{name = "圧縮後サイズ"; value = "${{ steps.compress.outputs.archive_size_mb }} MB"; inline = $true},
                 @{name = "ブランチ"; value = "${{ github.ref_name }}"; inline = $true},
-                @{name = "コミット"; value = "$(echo ${{ github.sha }} | cut -c1-7)"; inline = $true},
+                @{name = "コミット"; value = "$shortSha"; inline = $true},
                 @{name = "実行者"; value = "${{ github.actor }}"; inline = $true},
                 @{name = "成果物"; value = "${{ steps.compress.outputs.archive_name }}"; inline = $false},
                 @{name = "保管場所"; value = "GitHub Actions Artifacts (7日間保持)"; inline = $false}
