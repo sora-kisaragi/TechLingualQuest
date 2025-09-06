@@ -54,7 +54,8 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
       _errorMessage = null;
     });
 
-    AppLogger.info('Attempting password reset for email: ${_emailController.text.trim()}');
+    AppLogger.info(
+        'Attempting password reset for email: ${_emailController.text.trim()}');
 
     try {
       final authService = ref.read(authServiceProvider.notifier);
@@ -120,7 +121,7 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 32),
-              
+
               // アイコンとタイトル
               const Icon(
                 Icons.lock_reset,
@@ -128,7 +129,7 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
                 color: Colors.blue,
               ),
               const SizedBox(height: 24),
-              
+
               if (!_emailSent) ...[
                 // パスワードリセット説明
                 Text(
@@ -139,7 +140,7 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 Text(
                   translations.getSync('passwordResetDescription'),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -191,7 +192,8 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
 
                 // 送信ボタン
                 ElevatedButton(
-                  onPressed: _isLoading ? null : () => _sendResetEmail(translations),
+                  onPressed:
+                      _isLoading ? null : () => _sendResetEmail(translations),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -219,7 +221,7 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 Text(
                   translations.getSync('resetEmailSentDescription'),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -228,7 +230,7 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // 注意事項
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -252,9 +254,9 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
                 ),
                 const SizedBox(height: 32),
               ],
-              
+
               const Spacer(),
-              
+
               // ログインに戻る
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

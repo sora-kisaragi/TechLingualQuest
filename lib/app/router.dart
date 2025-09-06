@@ -7,6 +7,7 @@ import '../features/auth/pages/login_page.dart';
 import '../features/auth/pages/register_page.dart';
 import '../features/auth/pages/password_reset_page.dart';
 import '../features/auth/pages/profile_page.dart';
+import '../features/auth/pages/profile_edit_page.dart';
 import '../features/vocabulary/pages/vocabulary_page.dart';
 import '../features/quests/pages/quests_page.dart';
 import '../shared/utils/logger.dart';
@@ -77,6 +78,16 @@ class AppRouter {
             builder: (BuildContext context, GoRouterState state) {
               return const ProfilePage();
             },
+            routes: [
+              // プロフィール編集サブルート（認証が必要）
+              GoRoute(
+                path: 'edit',
+                name: AppRoutes.profileEditName,
+                builder: (BuildContext context, GoRouterState state) {
+                  return const ProfileEditPage();
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -198,6 +209,7 @@ class AppRouter {
   static String _getRouteNameFromPath(String path) {
     // 基本的なパスマッチング（より複雑なルートの場合は改善が必要）
     if (path == AppRoutes.home) return AppRoutes.homeName;
+    if (path.startsWith('/auth/profile/edit')) return AppRoutes.profileEditName;
     if (path.startsWith('/auth/profile')) return AppRoutes.profileName;
     if (path.startsWith('/auth/login')) return AppRoutes.loginName;
     if (path.startsWith('/auth/register')) return AppRoutes.registerName;

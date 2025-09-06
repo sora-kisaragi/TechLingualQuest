@@ -30,7 +30,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
 
     return translationsAsync.when(
-      data: (translations) => _buildHomeContent(context, translations, isAuthenticated),
+      data: (translations) =>
+          _buildHomeContent(context, translations, isAuthenticated),
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
@@ -39,7 +40,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildHomeContent(BuildContext context, AppTranslations translations, bool isAuthenticated) {
+  Widget _buildHomeContent(BuildContext context, AppTranslations translations,
+      bool isAuthenticated) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -62,7 +64,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Successfully logged out'), // TODO: Add to translations
+                      content: Text(
+                          'Successfully logged out'), // TODO: Add to translations
                       duration: Duration(seconds: 2),
                     ),
                   );

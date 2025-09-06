@@ -22,13 +22,57 @@ class AuthState {
   }
 }
 
+/// ユーザーレベル列挙型
+enum UserLevel {
+  beginner('beginner', 'A1-A2'),
+  intermediate('intermediate', 'B1-B2'),
+  advanced('advanced', 'C1-C2');
+
+  const UserLevel(this.key, this.description);
+  final String key;
+  final String description;
+}
+
 /// 認証ユーザー情報クラス
 class AuthUser {
-  const AuthUser({required this.id, required this.email, this.name});
+  const AuthUser({
+    required this.id,
+    required this.email,
+    this.name,
+    this.profileImageUrl,
+    this.level,
+    this.interests,
+    this.bio,
+  });
 
   final String id;
   final String email;
   final String? name;
+  final String? profileImageUrl;
+  final UserLevel? level;
+  final List<String>? interests;
+  final String? bio;
+
+  /// コピーコンストラクタ - プロフィール更新時に使用
+  AuthUser copyWith({
+    String? id,
+    String? email,
+    String? name,
+    String? profileImageUrl,
+    UserLevel? level,
+    List<String>? interests,
+    String? bio,
+  }) {
+    return AuthUser(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      level: level ?? this.level,
+      interests: interests ?? this.interests,
+      bio: bio ?? this.bio,
+    );
+  }
 }
 
 /// 認証サービスクラス
@@ -70,8 +114,9 @@ class AuthService extends StateNotifier<AuthState> {
   Future<void> logout() async {
     AppLogger.info('User logout');
     // Clear authentication state completely
-    state = const AuthState(isAuthenticated: false, user: null, isLoading: false);
-    
+    state =
+        const AuthState(isAuthenticated: false, user: null, isLoading: false);
+
     // In the future, this will also clear stored tokens and session data
     // from SharedPreferences or SecureStorage
   }
@@ -121,6 +166,54 @@ class AuthService extends StateNotifier<AuthState> {
     } else {
       state = state.copyWith(isLoading: false);
       AppLogger.warning('Password reset failed for email: $email');
+      return false;
+    }
+  }
+
+  /// プロフィール更新処理（モック実装）
+  Future<bool> updateProfile({
+    String? name,
+    String? profileImageUrl,
+    UserLevel? level,
+    List<String>? interests,
+    String? bio,
+  }) async {
+    if (state.user == null) {
+      AppLogger.warning('Cannot update profile: user not authenticated');
+      return false;
+    }
+
+    AppLogger.info('Updating profile for user: ${state.user!.id}');
+
+    state = state.copyWith(isLoading: true);
+
+    // モックプロフィール更新処理（1秒待機）
+    await Future.delayed(const Duration(seconds: 1));
+
+    try {
+      // 現在のユーザー情報を更新 - Only update fields that are explicitly provided
+      final currentUser = state.user!;
+      final updatedUser = AuthUser(
+        id: currentUser.id,
+        email: currentUser.email,
+        name: name ?? currentUser.name,
+        profileImageUrl: profileImageUrl ?? currentUser.profileImageUrl,
+        level: level ?? currentUser.level,
+        interests: interests ?? currentUser.interests,
+        bio: bio ?? currentUser.bio,
+      );
+
+      state = state.copyWith(
+        user: updatedUser,
+        isLoading: false,
+      );
+
+      AppLogger.info(
+          'Profile updated successfully for user: ${updatedUser.id}');
+      return true;
+    } catch (error) {
+      AppLogger.error('Profile update failed: $error');
+      state = state.copyWith(isLoading: false);
       return false;
     }
   }
