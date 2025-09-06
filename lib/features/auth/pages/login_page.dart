@@ -205,13 +205,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   const Spacer(),
                   TextButton(
                     onPressed: () {
-                      // 将来的にパスワードリセット機能を実装
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              translations.getSync('passwordResetNotReady')),
-                        ),
-                      );
+                      // パスワードリセットページに遷移
+                      context.go(AppRoutes.passwordReset);
                     },
                     child: Text(translations.getSync('forgotPassword')),
                   ),

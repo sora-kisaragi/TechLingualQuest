@@ -104,6 +104,27 @@ class AuthService extends StateNotifier<AuthState> {
     }
   }
 
+  /// パスワードリセット処理（モック実装）
+  Future<bool> requestPasswordReset(String email) async {
+    AppLogger.info('Password reset request for email: $email');
+
+    state = state.copyWith(isLoading: true);
+
+    // モックパスワードリセット処理（2秒待機）
+    await Future.delayed(const Duration(seconds: 2));
+
+    // 簡単なメールアドレス検証（デモ用）
+    if (email.isNotEmpty && email.contains('@')) {
+      state = state.copyWith(isLoading: false);
+      AppLogger.info('Password reset email sent successfully for: $email');
+      return true;
+    } else {
+      state = state.copyWith(isLoading: false);
+      AppLogger.warning('Password reset failed for email: $email');
+      return false;
+    }
+  }
+
   /// 認証状態を確認
   bool get isAuthenticated => state.isAuthenticated;
 

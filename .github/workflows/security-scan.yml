@@ -112,6 +112,10 @@ jobs:
       id: scan_status
       if: always()
       run: |
+        # コミットSHAの短縮版を作成
+        SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+        
         if [ "${{ job.status }}" == "success" ]; then
           echo "status=success" >> $GITHUB_OUTPUT
           echo "status_emoji=✅" >> $GITHUB_OUTPUT
@@ -140,7 +144,7 @@ jobs:
               "color": ${{ steps.scan_status.outputs.status_color }},
               "fields": [
                 {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
-                {"name": "コミット", "value": "$(echo ${{ github.sha }} | cut -c1-7)", "inline": true},
+                {"name": "コミット", "value": "${{ steps.scan_status.outputs.short_sha }}", "inline": true},
                 {"name": "実行者", "value": "${{ github.actor }}", "inline": true},
                 {"name": "スキャン結果", "value": "${{ steps.scan_status.outputs.status }}", "inline": true}
               ],
@@ -176,7 +180,7 @@ jobs:
                 "type": "section",
                 "fields": [
                   {"type": "mrkdwn", "text": "*ブランチ:*\n${{ github.ref_name }}"},
-                  {"type": "mrkdwn", "text": "*コミット:*\n$(echo ${{ github.sha }} | cut -c1-7)"},
+                  {"type": "mrkdwn", "text": "*コミット:*\n${{ steps.scan_status.outputs.short_sha }}"},
                   {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"},
                   {"type": "mrkdwn", "text": "*スキャン結果:*\n${{ steps.scan_status.outputs.status }}"}
                 ]

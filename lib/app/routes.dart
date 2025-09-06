@@ -7,6 +7,7 @@ class AppRoutes {
   static const String auth = '/auth';
   static const String login = '/auth/login';
   static const String register = '/auth/register';
+  static const String passwordReset = '/auth/password-reset';
   static const String profile = '/auth/profile';
   static const String vocabulary = '/vocabulary';
   static const String vocabularyDetail = '/vocabulary/:id';
@@ -23,6 +24,7 @@ class AppRoutes {
   static const String authName = 'auth';
   static const String loginName = 'login';
   static const String registerName = 'register';
+  static const String passwordResetName = 'password-reset';
   static const String profileName = 'profile';
   static const String vocabularyName = 'vocabulary';
   static const String vocabularyDetailName = 'vocabulary-detail';
@@ -76,6 +78,11 @@ class AppRouteMetadata {
     AppRoutes.registerName: RouteMetadata(
       title: 'Register',
       description: 'User registration page',
+      showInNavigation: false,
+    ),
+    AppRoutes.passwordResetName: RouteMetadata(
+      title: 'Password Reset',
+      description: 'Password reset page',
       showInNavigation: false,
     ),
     AppRoutes.profileName: RouteMetadata(

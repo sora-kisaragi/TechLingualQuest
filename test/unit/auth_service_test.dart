@@ -134,5 +134,41 @@ void main() {
       await authService.logout();
       expect(container.read(currentUserProvider), null);
     });
+
+    test('Successful password reset request should return true', () async {
+      const email = 'test@example.com';
+      
+      final resetResult = await authService.requestPasswordReset(email);
+      
+      expect(resetResult, true);
+      
+      // Password reset should not change authentication state
+      final authState = container.read(authServiceProvider);
+      expect(authState.isLoading, false);
+    });
+
+    test('Failed password reset (invalid email) should return false', () async {
+      const email = 'invalid-email';
+      
+      final resetResult = await authService.requestPasswordReset(email);
+      
+      expect(resetResult, false);
+      
+      // Password reset should not change authentication state
+      final authState = container.read(authServiceProvider);
+      expect(authState.isLoading, false);
+    });
+
+    test('Password reset with empty email should return false', () async {
+      const email = '';
+      
+      final resetResult = await authService.requestPasswordReset(email);
+      
+      expect(resetResult, false);
+      
+      // Password reset should not change authentication state
+      final authState = container.read(authServiceProvider);
+      expect(authState.isLoading, false);
+    });
   });
 }

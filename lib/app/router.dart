@@ -5,6 +5,7 @@ import '../features/dashboard/pages/home_page.dart';
 import '../features/auth/pages/auth_page.dart';
 import '../features/auth/pages/login_page.dart';
 import '../features/auth/pages/register_page.dart';
+import '../features/auth/pages/password_reset_page.dart';
 import '../features/auth/pages/profile_page.dart';
 import '../features/vocabulary/pages/vocabulary_page.dart';
 import '../features/quests/pages/quests_page.dart';
@@ -59,6 +60,14 @@ class AppRouter {
             name: AppRoutes.registerName,
             builder: (BuildContext context, GoRouterState state) {
               return const RegisterPage();
+            },
+          ),
+          // パスワードリセットサブルート
+          GoRoute(
+            path: 'password-reset',
+            name: AppRoutes.passwordResetName,
+            builder: (BuildContext context, GoRouterState state) {
+              return const PasswordResetPage();
             },
           ),
           // プロフィールサブルート（認証が必要）

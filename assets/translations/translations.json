@@ -419,6 +419,66 @@
       "ja": "翻訳の読み込みに失敗しました",
       "ko": "번역 로드에 실패했습니다",
       "zh": "翻译加载失败"
+    },
+    "resetPassword": {
+      "en": "Reset Password",
+      "ja": "パスワードリセット",
+      "ko": "비밀번호 재설정",
+      "zh": "重置密码"
+    },
+    "forgotPasswordTitle": {
+      "en": "Forgot Your Password?",
+      "ja": "パスワードを忘れましたか？",
+      "ko": "비밀번호를 잊으셨나요?",
+      "zh": "忘记密码了吗？"
+    },
+    "passwordResetDescription": {
+      "en": "No worries! We'll send you a reset link to your email address.",
+      "ja": "ご安心ください！リセットリンクをメールアドレスに送信します。",
+      "ko": "걱정하지 마세요! 이메일 주소로 재설정 링크를 보내드리겠습니다.",
+      "zh": "别担心！我们将向您的邮箱发送重置链接。"
+    },
+    "sendResetLink": {
+      "en": "Send Reset Link",
+      "ja": "リセットリンクを送信",
+      "ko": "재설정 링크 전송",
+      "zh": "发送重置链接"
+    },
+    "resetEmailSentTitle": {
+      "en": "Reset Email Sent!",
+      "ja": "リセットメールを送信しました！",
+      "ko": "재설정 이메일을 보냈습니다!",
+      "zh": "重置邮件已发送！"
+    },
+    "resetEmailSentDescription": {
+      "en": "We've sent you a password reset link. Please check your email and follow the instructions.",
+      "ja": "パスワードリセットリンクを送信しました。メールを確認して手順に従ってください。",
+      "ko": "비밀번호 재설정 링크를 보냈습니다. 이메일을 확인하고 안내에 따라 진행해주세요.",
+      "zh": "我们已向您发送了密码重置链接。请检查您的邮箱并按照说明操作。"
+    },
+    "checkSpamFolder": {
+      "en": "Check your spam folder if you don't receive the email within a few minutes.",
+      "ja": "数分以内にメールが届かない場合は、迷惑メールフォルダをご確認ください。",
+      "ko": "몇 분 내에 이메일을 받지 못하신다면 스팸 폴더를 확인해주세요.",
+      "zh": "如果几分钟内没有收到邮件，请检查您的垃圾邮件文件夹。"
+    },
+    "rememberPassword": {
+      "en": "Remember your password?",
+      "ja": "パスワードを思い出しましたか？",
+      "ko": "비밀번호가 기억나셨나요?",
+      "zh": "记起密码了吗？"
+    },
+    "backToSignIn": {
+      "en": "Back to Sign In",
+      "ja": "サインインに戻る",
+      "ko": "로그인으로 돌아가기",
+      "zh": "返回登录"
+    },
+    "passwordResetError": {
+      "en": "Failed to send password reset email. Please try again.",
+      "ja": "パスワードリセットメールの送信に失敗しました。もう一度お試しください。",
+      "ko": "비밀번호 재설정 이메일 전송에 실패했습니다. 다시 시도해주세요.",
+      "zh": "密码重置邮件发送失败。请重试。"
     }
   }
 }

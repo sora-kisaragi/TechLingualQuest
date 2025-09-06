@@ -250,6 +250,10 @@ jobs:
     - name: Determine workflow status
       id: status
       run: |
+        # コミットSHAの短縮版を作成
+        SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+        
         QUALITY_CHECK="${{ needs.quality-check.result }}"
         TEST_RESULT="${{ needs.test.result }}"
         BUILD_RESULT="${{ needs.build.result }}"
@@ -313,7 +317,7 @@ jobs:
               "type": "section", 
               "fields": [
                 {"type": "mrkdwn", "text": "*ブランチ:*\n${{ github.ref_name }}"},
-                {"type": "mrkdwn", "text": "*コミット:*\n$(echo ${{ github.sha }} | cut -c1-7)"},
+                {"type": "mrkdwn", "text": "*コミット:*\n${{ steps.status.outputs.short_sha }}"},
                 {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"},
                 {"type": "mrkdwn", "text": "*PR番号:*\n#${{ github.event.pull_request.number || 'N/A' }}"}
               ]
@@ -357,7 +361,7 @@ jobs:
             "color": ${{ steps.status.outputs.status_color }},
             "fields": [
               {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
-              {"name": "コミット", "value": "$(echo ${{ github.sha }} | cut -c1-7)", "inline": true},
+              {"name": "コミット", "value": "${{ steps.status.outputs.short_sha }}", "inline": true},
               {"name": "実行者", "value": "${{ github.actor }}", "inline": true},
               {"name": "品質チェック", "value": "${{ needs.quality-check.result }}", "inline": true},
               {"name": "テスト", "value": "${{ needs.test.result }}", "inline": true},
