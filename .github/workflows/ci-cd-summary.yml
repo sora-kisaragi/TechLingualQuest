@@ -7,6 +7,7 @@ on:
       - "Security Scan"
       - "Format Fix"
       - "Windows Build"
+      - "Release Build"
     types:
       - completed
   workflow_dispatch:
@@ -150,8 +151,13 @@ jobs:
         echo "estimated_duration=約5分" >> $GITHUB_OUTPUT
 
     - name: Send unified Slack notification
-      if: always() && vars.SLACK_WEBHOOK_URL
+      if: always()
       run: |
+        # SLACK_WEBHOOK_URLが設定されているかチェック
+        if [ -z "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
+          echo "⚠️ SLACK_WEBHOOK_URL が設定されていないため、Slack通知をスキップします"
+          exit 0
+        fi
         # 詳細ステータス情報の構築
         DETAIL_BLOCKS=""
         
@@ -175,6 +181,10 @@ jobs:
         
         # GitHub Actionsの詳細へのリンク
         ACTIONS_URL="https://github.com/${{ steps.get_results.outputs.repo }}/actions"
+        
+        echo "📤 Slack通知を送信中..."
+        echo "   └ 通知内容: ${{ steps.evaluate.outputs.status_message }}"
+        echo "   └ 対象URL: ${{ vars.SLACK_WEBHOOK_URL }}"
         
         # Slack通知送信
         curl -X POST -H 'Content-type: application/json' \
@@ -228,13 +238,29 @@ jobs:
             }
           ]
         }' \
-        ${{ vars.SLACK_WEBHOOK_URL }}
+        "${{ vars.SLACK_WEBHOOK_URL }}"
+        
+        SLACK_RESPONSE=$?
+        if [ $SLACK_RESPONSE -eq 0 ]; then
+          echo "✅ Slack通知の送信が完了しました"
+        else
+          echo "❌ Slack通知の送信に失敗しました (終了コード: $SLACK_RESPONSE)"
+        fi
 
     - name: Send unified Discord notification
-      if: always() && vars.DISCORD_WEBHOOK_URL  
+      if: always()
       run: |
+        # DISCORD_WEBHOOK_URLが設定されているかチェック
+        if [ -z "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
+          echo "⚠️ DISCORD_WEBHOOK_URL が設定されていないため、Discord通知をスキップします"
+          exit 0
+        fi
         # GitHub Actionsの詳細へのリンク
         ACTIONS_URL="https://github.com/${{ steps.get_results.outputs.repo }}/actions"
+        
+        echo "📤 Discord通知を送信中..."
+        echo "   └ 通知内容: ${{ steps.evaluate.outputs.status_message }}"
+        echo "   └ 対象URL: ${{ vars.DISCORD_WEBHOOK_URL }}"
         
         # 失敗詳細の構築
         FAILURE_DETAILS=""
@@ -277,7 +303,14 @@ jobs:
             "url": "'"$ACTIONS_URL"'"
           }]
         }' \
-        ${{ vars.DISCORD_WEBHOOK_URL }}
+        "${{ vars.DISCORD_WEBHOOK_URL }}"
+        
+        DISCORD_RESPONSE=$?
+        if [ $DISCORD_RESPONSE -eq 0 ]; then
+          echo "✅ Discord通知の送信が完了しました"
+        else
+          echo "❌ Discord通知の送信に失敗しました (終了コード: $DISCORD_RESPONSE)"
+        fi
 
     - name: Summary report
       run: |
@@ -289,3 +322,8 @@ jobs:
         echo "不明: ${{ steps.evaluate.outputs.unknown_count }}個"
         echo "============================================="
         echo "${{ steps.evaluate.outputs.status_message }}"
+        echo ""
+        echo "📤 通知送信結果:"
+        echo "   └ Slack: SLACK_WEBHOOK_URL設定状況を確認済み"
+        echo "   └ Discord: DISCORD_WEBHOOK_URL設定状況を確認済み"
+        echo "   └ すべての通知処理が完了しました"
