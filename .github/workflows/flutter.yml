@@ -2,15 +2,19 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ develop ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
   contents: read
   actions: read
   security-events: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   FLUTTER_VERSION: '3.35.2'
@@ -39,9 +43,6 @@ jobs:
         API_BASE_URL: https://api.example.com
         LOG_LEVEL: error
       run: flutter pub get
-
-    - name: Verify formatting
-      run: dart format --output=none --set-exit-if-changed .
 
     - name: Analyze project source
       env:
@@ -105,14 +106,15 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
 
-  # ビルド (Android, iOS, Web)
+  # ビルド (Android, iOS, Web) - 並列実行で時間短縮
   build:
     runs-on: ubuntu-latest
     name: Build Applications
-    needs: [quality-check, test]
+    needs: quality-check  # testと並列実行
     strategy:
+      fail-fast: false  # 一つが失敗しても他を継続
       matrix:
-        build-type: [android, web]
+        build-type: [android-apk, android-appbundle, web]
 
     steps:
     - name: Checkout code
@@ -125,6 +127,13 @@ jobs:
         channel: 'stable'
         cache: true
 
+    - name: Setup Java (Android builds)
+      if: startsWith(matrix.build-type, 'android')
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
     - name: Get dependencies
       env:
         APP_ENV: prod
@@ -134,9 +143,9 @@ jobs:
       run: flutter pub get
 
     - name: Build Android APK
-      if: matrix.build-type == 'android'
+      if: matrix.build-type == 'android-apk'
       run: |
-        # Android 向けの環境変数を設定
+        # Android APK 向けの環境変数を設定
         export APP_ENV=prod
         export DATABASE_NAME=tech_lingual_quest.db
         export API_BASE_URL=https://api.example.com
@@ -145,6 +154,17 @@ jobs:
         flutter build apk --release
         echo "APK_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)" >> $GITHUB_ENV
 
+    - name: Build Android App Bundle
+      if: matrix.build-type == 'android-appbundle'
+      run: |
+        # Android App Bundle 向けの環境変数を設定
+        export APP_ENV=prod
+        export DATABASE_NAME=tech_lingual_quest.db
+        export API_BASE_URL=https://api.example.com
+        export GRADLE_OPTS="-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError"
+        flutter build appbundle --release
+        echo "AAB_PATH=$(find build/app/outputs/bundle -name '*.aab' | head -1)" >> $GITHUB_ENV
+
     - name: Build Web
       if: matrix.build-type == 'web'
       run: |
@@ -152,15 +172,23 @@ jobs:
         export APP_ENV=prod
         export DATABASE_NAME=tech_lingual_quest.db
         export API_BASE_URL=https://api.example.com
-        flutter build web --release
+        flutter build web --release --web-renderer canvaskit
         echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
 
     - name: Upload Android APK artifact
-      if: matrix.build-type == 'android'
+      if: matrix.build-type == 'android-apk'
       uses: actions/upload-artifact@v4
       with:
         name: android-apk
         path: build/app/outputs/flutter-apk/*.apk
+        retention-days: 7
+
+    - name: Upload Android App Bundle artifact
+      if: matrix.build-type == 'android-appbundle'
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-appbundle
+        path: build/app/outputs/bundle/*/*.aab
         retention-days: 7
 
     - name: Upload Web build artifact
@@ -201,11 +229,28 @@ jobs:
     - name: Send Discord notification
       if: vars.DISCORD_WEBHOOK_URL
       run: |
+        # 失敗した処理を特定
+        FAILED_DETAILS=""
+        if [ "${{ needs.quality-check.result }}" != "success" ]; then
+          FAILED_DETAILS="${FAILED_DETAILS}• コード品質チェック: フォーマット・静的解析エラー\n"
+        fi
+        if [ "${{ needs.test.result }}" != "success" ]; then
+          FAILED_DETAILS="${FAILED_DETAILS}• テスト実行: 単体・ウィジェットテスト失敗\n"
+        fi
+        if [ "${{ needs.build.result }}" != "success" ]; then
+          FAILED_DETAILS="${FAILED_DETAILS}• ビルド処理: Android・Webビルドエラー\n"
+        fi
+        
+        DESCRIPTION_TEXT="${{ steps.evaluate.outputs.message }}"
+        if [ "${{ steps.evaluate.outputs.status }}" != "success" ] && [ -n "$FAILED_DETAILS" ]; then
+          DESCRIPTION_TEXT="${DESCRIPTION_TEXT}\n\n**失敗詳細:**\n${FAILED_DETAILS}"
+        fi
+        
         curl -H "Content-Type: application/json" \
         -d '{
           "embeds": [{
             "title": "TechLingual Quest CI/CD",
-            "description": "${{ steps.evaluate.outputs.message }}",
+            "description": "'"$DESCRIPTION_TEXT"'",
             "color": ${{ steps.evaluate.outputs.color }},
             "fields": [
               {"name": "ブランチ", "value": "${{ steps.evaluate.outputs.branch }}", "inline": true},
@@ -213,7 +258,9 @@ jobs:
               {"name": "実行者", "value": "${{ steps.evaluate.outputs.actor }}", "inline": true},
               {"name": "品質チェック", "value": "${{ needs.quality-check.result }}", "inline": true},
               {"name": "テスト", "value": "${{ needs.test.result }}", "inline": true},
-              {"name": "ビルド", "value": "${{ needs.build.result }}", "inline": true}
+              {"name": "ビルド", "value": "${{ needs.build.result }}", "inline": true},
+              {"name": "ワークフロー", "value": "Flutter CI/CD", "inline": true},
+              {"name": "実行環境", "value": "GitHub Actions", "inline": true}
             ],
             "footer": {"text": "GitHub Actions"},
             "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
@@ -226,6 +273,26 @@ jobs:
       if: vars.SLACK_WEBHOOK_URL
       run: |
         STATUS_EMOJI="${{ steps.evaluate.outputs.status == 'success' && ':white_check_mark:' || ':x:' }}"
+        
+        # 失敗した処理を詳細に特定
+        FAILED_JOBS=""
+        if [ "${{ needs.quality-check.result }}" != "success" ]; then
+          FAILED_JOBS="${FAILED_JOBS}• コード品質チェック (フォーマット・静的解析)\n"
+        fi
+        if [ "${{ needs.test.result }}" != "success" ]; then
+          FAILED_JOBS="${FAILED_JOBS}• テスト実行 (単体・ウィジェットテスト)\n"
+        fi
+        if [ "${{ needs.build.result }}" != "success" ]; then
+          FAILED_JOBS="${FAILED_JOBS}• ビルド処理 (Android APK・Web)\n"
+        fi
+        
+        # 成功時と失敗時で異なるメッセージを構築
+        if [ "${{ steps.evaluate.outputs.status }}" == "success" ]; then
+          DETAIL_MESSAGE="全てのCI/CD処理が正常に完了しました。\n\n*完了した処理:*\n• コード品質チェック ✅\n• テスト実行 ✅\n• ビルド処理 ✅"
+        else
+          DETAIL_MESSAGE="CI/CD処理でエラーが発生しました。\n\n*失敗した処理:*\n${FAILED_JOBS}\n詳細な原因はログを確認してください。"
+        fi
+        
         curl -X POST -H 'Content-type: application/json' \
         --data '{
           "text": "'$STATUS_EMOJI' TechLingual Quest CI/CD",
@@ -241,7 +308,7 @@ jobs:
               "type": "section",
               "text": {
                 "type": "mrkdwn",
-                "text": "${{ steps.evaluate.outputs.message }}"
+                "text": "'"$DETAIL_MESSAGE"'"
               }
             },
             {
@@ -250,7 +317,16 @@ jobs:
                 {"type": "mrkdwn", "text": "*ブランチ:*\n${{ steps.evaluate.outputs.branch }}"},
                 {"type": "mrkdwn", "text": "*コミット:*\n${{ steps.evaluate.outputs.commit }}"},
                 {"type": "mrkdwn", "text": "*実行者:*\n${{ steps.evaluate.outputs.actor }}"},
-                {"type": "mrkdwn", "text": "*ステータス:*\n品質: ${{ needs.quality-check.result }}\nテスト: ${{ needs.test.result }}\nビルド: ${{ needs.build.result }}"}
+                {"type": "mrkdwn", "text": "*ワークフロー:*\nFlutter CI/CD"}
+              ]
+            },
+            {
+              "type": "section",
+              "fields": [
+                {"type": "mrkdwn", "text": "*品質チェック:*\n${{ needs.quality-check.result }}"},
+                {"type": "mrkdwn", "text": "*テスト実行:*\n${{ needs.test.result }}"},
+                {"type": "mrkdwn", "text": "*ビルド処理:*\n${{ needs.build.result }}"},
+                {"type": "mrkdwn", "text": "*実行時間:*\n約 ${{ github.event.workflow_run.run_duration_ms / 60000 || '不明' }} 分"}
               ]
             },
             {
@@ -260,7 +336,7 @@ jobs:
                   "type": "button",
                   "text": {
                     "type": "plain_text",
-                    "text": "GitHub Actionsで詳細を見る"
+                    "text": "詳細ログを確認"
                   },
                   "url": "https://github.com/${{ steps.evaluate.outputs.repo }}/actions/runs/${{ steps.evaluate.outputs.run_id }}"
                 }

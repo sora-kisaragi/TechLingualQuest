@@ -1,0 +1,316 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.35.2'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    name: Build Windows Application
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+
+    - name: Enable Windows desktop
+      run: flutter config --enable-windows-desktop
+
+    - name: Get dependencies
+      env:
+        APP_ENV: prod
+        DATABASE_NAME: tech_lingual_quest.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
+      run: flutter pub get
+
+    - name: Build Windows (Release)
+      run: |
+        $env:APP_ENV="prod"
+        $env:DATABASE_NAME="tech_lingual_quest.db"
+        $env:API_BASE_URL="https://api.example.com"
+        flutter build windows --release
+        Write-Host "Windows build completed successfully"
+
+    - name: Prepare Windows package
+      id: package
+      run: |
+        # ビルド成果物のパスを確認
+        $buildPath = "build\windows\x64\runner\Release"
+        if (Test-Path $buildPath) {
+          Write-Host "✅ Build artifacts found at: $buildPath"
+          
+          # パッケージディレクトリを作成
+          $packageDir = "windows-package"
+          New-Item -ItemType Directory -Force -Path $packageDir
+          
+          # 必要なファイルをコピー
+          Copy-Item -Path "$buildPath\*" -Destination $packageDir -Recurse -Force
+          
+          # サイズ情報を取得
+          $totalSize = (Get-ChildItem -Path $packageDir -Recurse | Measure-Object -Property Length -Sum).Sum
+          $sizeInMB = [math]::Round($totalSize / 1MB, 2)
+          
+          Write-Host "Package size: $sizeInMB MB"
+          
+          # GitHub Actionsの出力に設定
+          echo "package_path=$packageDir" >> $env:GITHUB_OUTPUT
+          echo "package_size_mb=$sizeInMB" >> $env:GITHUB_OUTPUT
+          
+          # ファイル一覧を出力
+          Write-Host "📦 Package contents:"
+          Get-ChildItem -Path $packageDir -Recurse -File | ForEach-Object {
+            Write-Host "  - $($_.Name) ($([math]::Round($_.Length / 1KB, 1)) KB)"
+          }
+        } else {
+          Write-Host "❌ Build artifacts not found"
+          exit 1
+        }
+
+    - name: Create compressed archive
+      id: compress
+      run: |
+        $packagePath = "${{ steps.package.outputs.package_path }}"
+        $archiveName = "TechLingualQuest-Windows-${{ github.run_number }}.zip"
+        
+        # ZIPファイルを作成
+        Compress-Archive -Path "$packagePath\*" -DestinationPath $archiveName -Force
+        
+        if (Test-Path $archiveName) {
+          $archiveSize = [math]::Round((Get-Item $archiveName).Length / 1MB, 2)
+          Write-Host "✅ Archive created: $archiveName ($archiveSize MB)"
+          
+          # GitHub Actionsの出力に設定
+          echo "archive_name=$archiveName" >> $env:GITHUB_OUTPUT
+          echo "archive_size_mb=$archiveSize" >> $env:GITHUB_OUTPUT
+        } else {
+          Write-Host "❌ Failed to create archive"
+          exit 1
+        }
+
+    - name: Upload Windows build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-build
+        path: ${{ steps.compress.outputs.archive_name }}
+        retention-days: 7
+
+    - name: Send Slack notification with build results
+      if: vars.SLACK_WEBHOOK_URL
+      run: |
+        $status = "success"
+        $emoji = ":white_check_mark:"
+        $color = "#28a745"
+        
+        # Slackメッセージを送信
+        $payload = @{
+          text = "$emoji Windows ビルド完了"
+          blocks = @(
+            @{
+              type = "header"
+              text = @{
+                type = "plain_text"
+                text = "$emoji TechLingualQuest Windows ビルド完了"
+              }
+            },
+            @{
+              type = "section"
+              text = @{
+                type = "mrkdwn"
+                text = "Windowsアプリケーションのビルドが正常に完了しました。"
+              }
+            },
+            @{
+              type = "section"
+              fields = @(
+                @{
+                  type = "mrkdwn"
+                  text = "*ビルド番号:*`n${{ github.run_number }}"
+                },
+                @{
+                  type = "mrkdwn"
+                  text = "*パッケージサイズ:*`n${{ steps.package.outputs.package_size_mb }} MB"
+                },
+                @{
+                  type = "mrkdwn"
+                  text = "*圧縮後サイズ:*`n${{ steps.compress.outputs.archive_size_mb }} MB"
+                },
+                @{
+                  type = "mrkdwn"
+                  text = "*ブランチ:*`n${{ github.ref_name }}"
+                }
+              )
+            },
+            @{
+              type = "section"
+              text = @{
+                type = "mrkdwn"
+                text = "*📁 成果物:*`n• ${{ steps.compress.outputs.archive_name }}"
+              }
+            },
+            @{
+              type = "actions"
+              elements = @(
+                @{
+                  type = "button"
+                  text = @{
+                    type = "plain_text"
+                    text = "アーティファクトをダウンロード"
+                  }
+                  url = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              )
+            }
+          )
+        } | ConvertTo-Json -Depth 10
+        
+        try {
+          Invoke-RestMethod -Uri "${{ vars.SLACK_WEBHOOK_URL }}" -Method Post -ContentType "application/json" -Body $payload
+          Write-Host "✅ Slack notification sent successfully"
+        } catch {
+          Write-Host "⚠️ Failed to send Slack notification: $($_.Exception.Message)"
+        }
+
+    - name: Send Discord notification with build results
+      if: vars.DISCORD_WEBHOOK_URL
+      run: |
+        $payload = @{
+          embeds = @(
+            @{
+              title = "🖥️ Windows ビルド完了"
+              description = "TechLingualQuest Windowsアプリケーションのビルドが完了しました"
+              color = 3066993
+              fields = @(
+                @{
+                  name = "ビルド番号"
+                  value = "${{ github.run_number }}"
+                  inline = $true
+                },
+                @{
+                  name = "パッケージサイズ"
+                  value = "${{ steps.package.outputs.package_size_mb }} MB"
+                  inline = $true
+                },
+                @{
+                  name = "圧縮後サイズ"
+                  value = "${{ steps.compress.outputs.archive_size_mb }} MB"
+                  inline = $true
+                },
+                @{
+                  name = "成果物"
+                  value = "${{ steps.compress.outputs.archive_name }}"
+                  inline = $false
+                }
+              )
+              footer = @{
+                text = "GitHub Actions"
+              }
+              timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+              url = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+          )
+        } | ConvertTo-Json -Depth 10
+        
+        try {
+          Invoke-RestMethod -Uri "${{ vars.DISCORD_WEBHOOK_URL }}" -Method Post -ContentType "application/json" -Body $payload
+          Write-Host "✅ Discord notification sent successfully"
+        } catch {
+          Write-Host "⚠️ Failed to send Discord notification: $($_.Exception.Message)"
+        }
+
+  notify-failure:
+    runs-on: ubuntu-latest
+    name: Notify Build Failure
+    needs: [build-windows]
+    if: failure()
+    
+    steps:
+    - name: Send failure notification
+      if: vars.SLACK_WEBHOOK_URL || vars.DISCORD_WEBHOOK_URL
+      run: |
+        if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "text": "❌ Windows ビルド失敗",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "❌ TechLingualQuest Windows ビルド失敗"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "Windowsアプリケーションのビルドに失敗しました。詳細な原因を確認してください。"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {"type": "mrkdwn", "text": "*失敗ジョブ:*\nWindows Build"},
+                  {"type": "mrkdwn", "text": "*ブランチ:*\n${{ github.ref_name }}"},
+                  {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"},
+                  {"type": "mrkdwn", "text": "*ワークフロー:*\nWindows Build CI/CD"}
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "ログを確認"
+                    },
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                ]
+              }
+            ]
+          }' \
+          ${{ vars.SLACK_WEBHOOK_URL }}
+        fi
+
+        if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "❌ Windows ビルド失敗",
+              "description": "TechLingualQuest Windowsアプリケーションのビルドに失敗しました",
+              "color": 15158332,
+              "fields": [
+                {"name": "失敗ジョブ", "value": "Windows Build", "inline": true},
+                {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
+                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
+              ],
+              "footer": {"text": "緊急対応が必要です"},
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+              "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }]
+          }' \
+          ${{ vars.DISCORD_WEBHOOK_URL }}
+        fi
