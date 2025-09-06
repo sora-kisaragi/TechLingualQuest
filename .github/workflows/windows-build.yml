@@ -108,6 +108,7 @@ jobs:
         }
 
     - name: Upload Windows build artifact
+      id: upload_artifact
       uses: actions/upload-artifact@v4
       with:
         name: windows-build
@@ -120,7 +121,7 @@ jobs:
         $status = "success"
         $emoji = ":white_check_mark:"
         $color = "#28a745"
-        $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+        $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}"
         
         # Slackメッセージを送信
         $payload = @{
@@ -171,7 +172,7 @@ jobs:
     - name: Send Discord notification with build results
       if: vars.DISCORD_WEBHOOK_URL
       run: |
-        $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+        $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}"
         
         $payload = @{
           embeds = @(
@@ -208,8 +209,8 @@ jobs:
         echo "- GitHub Actions Artifacts に自動保存されます"
         echo "- 保持期間: 7日間"
         echo "- アクセス方法: GitHub Actions ページ → 該当のワークフロー実行 → Artifacts セクション"
-        echo "- 直接URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+        echo "- 直接URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}"
         echo ""
         echo "🔗 成果物ダウンロードリンク:"
-        echo "   https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+        echo "   https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload_artifact.outputs.artifact-id }}"
 
