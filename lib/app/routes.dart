@@ -9,6 +9,7 @@ class AppRoutes {
   static const String register = '/auth/register';
   static const String passwordReset = '/auth/password-reset';
   static const String profile = '/auth/profile';
+  static const String profileEdit = '/auth/profile/edit';
   static const String vocabulary = '/vocabulary';
   static const String vocabularyDetail = '/vocabulary/:id';
   static const String vocabularyAdd = '/vocabulary/add';
@@ -26,6 +27,7 @@ class AppRoutes {
   static const String registerName = 'register';
   static const String passwordResetName = 'password-reset';
   static const String profileName = 'profile';
+  static const String profileEditName = 'profile-edit';
   static const String vocabularyName = 'vocabulary';
   static const String vocabularyDetailName = 'vocabulary-detail';
   static const String vocabularyAddName = 'vocabulary-add';
@@ -88,6 +90,12 @@ class AppRouteMetadata {
     AppRoutes.profileName: RouteMetadata(
       title: 'Profile',
       description: 'User profile management',
+      requiresAuth: true,
+      showInNavigation: false,
+    ),
+    AppRoutes.profileEditName: RouteMetadata(
+      title: 'Edit Profile',
+      description: 'Edit user profile information',
       requiresAuth: true,
       showInNavigation: false,
     ),

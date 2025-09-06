@@ -56,6 +56,9 @@ dev_dependencies:
 
   # Test dependencies for database testing on desktop
   sqflite_common_ffi: ^2.3.3
+  
+  # Mocking library for unit tests
+  mocktail: ^1.0.0
 
 flutter:
   uses-material-design: true

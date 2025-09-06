@@ -479,6 +479,120 @@
       "ja": "パスワードリセットメールの送信に失敗しました。もう一度お試しください。",
       "ko": "비밀번호 재설정 이메일 전송에 실패했습니다. 다시 시도해주세요.",
       "zh": "密码重置邮件发送失败。请重试。"
+    },
+    "editProfile": {
+      "en": "Edit Profile",
+      "ja": "プロフィール編集",
+      "ko": "프로필 편집",
+      "zh": "编辑个人资料"
+    },
+    "displayName": {
+      "en": "Display Name",
+      "ja": "表示名",
+      "ko": "표시 이름",
+      "zh": "显示名称"
+    },
+    "changePhoto": {
+      "en": "Change Photo",
+      "ja": "写真を変更",
+      "ko": "사진 변경",
+      "zh": "更改照片"
+    },
+    "currentLevel": {
+      "en": "Current Level",
+      "ja": "現在のレベル",
+      "ko": "현재 레벨",
+      "zh": "当前等级"
+    },
+    "beginnerLevel": {
+      "en": "Beginner (A1-A2)",
+      "ja": "初級 (A1-A2)",
+      "ko": "초급 (A1-A2)",
+      "zh": "初级 (A1-A2)"
+    },
+    "intermediateLevel": {
+      "en": "Intermediate (B1-B2)",
+      "ja": "中級 (B1-B2)",
+      "ko": "중급 (B1-B2)",
+      "zh": "中级 (B1-B2)"
+    },
+    "advancedLevel": {
+      "en": "Advanced (C1-C2)",
+      "ja": "上級 (C1-C2)",
+      "ko": "고급 (C1-C2)",
+      "zh": "高级 (C1-C2)"
+    },
+    "techInterests": {
+      "en": "Tech Interests",
+      "ja": "技術的興味分野",
+      "ko": "기술 관심분야",
+      "zh": "技术兴趣"
+    },
+    "addInterest": {
+      "en": "Add Interest",
+      "ja": "興味分野を追加",
+      "ko": "관심분야 추가",
+      "zh": "添加兴趣"
+    },
+    "bio": {
+      "en": "Bio (Optional)",
+      "ja": "自己紹介（任意）",
+      "ko": "자기소개 (선택사항)",
+      "zh": "个人简介（可选）"
+    },
+    "bioPlaceholder": {
+      "en": "Tell us about yourself...",
+      "ja": "自分について教えてください...",
+      "ko": "자신에 대해 알려주세요...",
+      "zh": "告诉我们关于您的信息..."
+    },
+    "saveChanges": {
+      "en": "Save Changes",
+      "ja": "変更を保存",
+      "ko": "변경사항 저장",
+      "zh": "保存更改"
+    },
+    "cancel": {
+      "en": "Cancel",
+      "ja": "キャンセル",
+      "ko": "취소",
+      "zh": "取消"
+    },
+    "profileUpdated": {
+      "en": "Profile updated successfully",
+      "ja": "プロフィールが正常に更新されました",
+      "ko": "프로필이 성공적으로 업데이트되었습니다",
+      "zh": "个人资料更新成功"
+    },
+    "profileUpdateError": {
+      "en": "Failed to update profile. Please try again.",
+      "ja": "プロフィールの更新に失敗しました。もう一度お試しください。",
+      "ko": "프로필 업데이트에 실패했습니다. 다시 시도해주세요.",
+      "zh": "个人资料更新失败。请重试。"
+    },
+    "accountInformation": {
+      "en": "Account Information",
+      "ja": "アカウント情報",
+      "ko": "계정 정보",
+      "zh": "账户信息"
+    },
+    "userId": {
+      "en": "User ID",
+      "ja": "ユーザーID",
+      "ko": "사용자 ID",
+      "zh": "用户ID"
+    },
+    "notSet": {
+      "en": "Not set",
+      "ja": "未設定",
+      "ko": "설정되지 않음",
+      "zh": "未设置"
+    },
+    "interestPlaceholder": {
+      "en": "e.g., Web Development",
+      "ja": "例：Web開発",
+      "ko": "예: 웹 개발",
+      "zh": "例如：网页开发"
     }
   }
 }
