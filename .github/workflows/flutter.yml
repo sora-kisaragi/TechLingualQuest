@@ -173,10 +173,21 @@ jobs:
         # Web用の依存関係の確認と設定
         echo "🌐 Webビルド用設定を確認中..."
         
+        # 必要なWebアセットの確認
+        echo "📂 Webアセットの存在確認..."
+        if [ ! -f "web/favicon.png" ]; then
+          echo "⚠️ favicon.png が見つかりません"
+        fi
+        if [ ! -d "web/icons" ]; then
+          echo "⚠️ web/icons ディレクトリが見つかりません"
+        fi
+        
         # Webビルドを実行（エラー詳細を表示）
         echo "🚀 Webビルドを開始..."
         flutter build web --release --web-renderer canvaskit --verbose || {
           echo "❌ canvaskitレンダラーでのビルドに失敗しました。htmlレンダラーで再試行します..."
+          flutter clean
+          flutter pub get
           flutter build web --release --web-renderer html --verbose
         }
         
