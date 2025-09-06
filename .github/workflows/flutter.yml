@@ -239,26 +239,140 @@ jobs:
         path: build/web/
         retention-days: 7
 
-  # 結果記録（統合通知用）
-  record-results:
+  # 個別通知送信
+  send-notifications:
     runs-on: ubuntu-latest
-    name: Record Results for Summary
+    name: Send Workflow Notifications
     needs: [quality-check, test, build]
     if: always()
 
     steps:
-    - name: Record workflow results
+    - name: Determine workflow status
+      id: status
       run: |
-        echo "📊 ワークフロー実行結果を記録"
-        echo "Quality Check: ${{ needs.quality-check.result }}"
-        echo "Test: ${{ needs.test.result }}"
-        echo "Build: ${{ needs.build.result }}"
+        QUALITY_CHECK="${{ needs.quality-check.result }}"
+        TEST_RESULT="${{ needs.test.result }}"
+        BUILD_RESULT="${{ needs.build.result }}"
         
-        # 統合通知システムが結果を収集するのを支援
-        if [[ "${{ needs.quality-check.result }}" == "success" && "${{ needs.test.result }}" == "success" && "${{ needs.build.result }}" == "success" ]]; then
-          echo "✅ Flutter CI/CD: 全プロセス正常完了"
-          echo "workflow_status=success" >> $GITHUB_ENV
+        echo "📊 ワークフロー実行結果:"
+        echo "Quality Check: $QUALITY_CHECK"
+        echo "Test: $TEST_RESULT"
+        echo "Build: $BUILD_RESULT"
+        
+        # 全体ステータスの判定
+        if [[ "$QUALITY_CHECK" == "success" && "$TEST_RESULT" == "success" && "$BUILD_RESULT" == "success" ]]; then
+          OVERALL_STATUS="success"
+          STATUS_EMOJI="✅"
+          STATUS_COLOR="3066993"
+          STATUS_MESSAGE="Flutter CI/CD パイプラインが正常に完了しました"
         else
-          echo "❌ Flutter CI/CD: 一部プロセスでエラー発生"
-          echo "workflow_status=failure" >> $GITHUB_ENV
+          OVERALL_STATUS="failure"
+          STATUS_EMOJI="❌"
+          STATUS_COLOR="15158332"
+          STATUS_MESSAGE="Flutter CI/CD パイプラインでエラーが発生しました"
+        fi
+        
+        echo "overall_status=$OVERALL_STATUS" >> $GITHUB_OUTPUT
+        echo "status_emoji=$STATUS_EMOJI" >> $GITHUB_OUTPUT
+        echo "status_color=$STATUS_COLOR" >> $GITHUB_OUTPUT
+        echo "status_message=$STATUS_MESSAGE" >> $GITHUB_OUTPUT
+
+    - name: Send Slack notification
+      if: always() && vars.SLACK_WEBHOOK_URL
+      run: |
+        echo "📤 Slack通知を送信中..."
+        echo "   └ 通知内容: ${{ steps.status.outputs.status_message }}"
+        
+        # 詳細結果の構築
+        DETAIL_TEXT=""
+        DETAIL_TEXT="${DETAIL_TEXT}*各ステップの実行結果:*\n"
+        DETAIL_TEXT="${DETAIL_TEXT}• コード品質チェック: ${{ needs.quality-check.result }}\n"
+        DETAIL_TEXT="${DETAIL_TEXT}• テスト実行: ${{ needs.test.result }}\n"
+        DETAIL_TEXT="${DETAIL_TEXT}• ビルド: ${{ needs.build.result }}\n\n"
+        
+        # Slack通知送信
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{
+          "text": "${{ steps.status.outputs.status_emoji }} Flutter CI/CD 完了",
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text", 
+                "text": "${{ steps.status.outputs.status_emoji }} TechLingual Quest Flutter CI/CD"
+              }
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": "${{ steps.status.outputs.status_message }}\n\n'"$DETAIL_TEXT"'"
+              }
+            },
+            {
+              "type": "section", 
+              "fields": [
+                {"type": "mrkdwn", "text": "*ブランチ:*\n${{ github.ref_name }}"},
+                {"type": "mrkdwn", "text": "*コミット:*\n$(echo ${{ github.sha }} | cut -c1-7)"},
+                {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"},
+                {"type": "mrkdwn", "text": "*PR番号:*\n#${{ github.event.pull_request.number || 'N/A' }}"}
+              ]
+            },
+            {
+              "type": "actions",
+              "elements": [
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "📊 詳細をGitHub Actionsで確認"
+                  },
+                  "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                  "style": "primary"
+                }
+              ]
+            }
+          ]
+        }' \
+        "${{ vars.SLACK_WEBHOOK_URL }}"
+        
+        SLACK_RESPONSE=$?
+        if [ $SLACK_RESPONSE -eq 0 ]; then
+          echo "✅ Slack通知の送信が完了しました"
+        else
+          echo "❌ Slack通知の送信に失敗しました (終了コード: $SLACK_RESPONSE)"
+        fi
+
+    - name: Send Discord notification
+      if: always() && vars.DISCORD_WEBHOOK_URL
+      run: |
+        echo "📤 Discord通知を送信中..."
+        echo "   └ 通知内容: ${{ steps.status.outputs.status_message }}"
+        
+        curl -H "Content-Type: application/json" \
+        -d '{
+          "embeds": [{
+            "title": "${{ steps.status.outputs.status_emoji }} Flutter CI/CD 完了",
+            "description": "${{ steps.status.outputs.status_message }}",
+            "color": ${{ steps.status.outputs.status_color }},
+            "fields": [
+              {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
+              {"name": "コミット", "value": "$(echo ${{ github.sha }} | cut -c1-7)", "inline": true},
+              {"name": "実行者", "value": "${{ github.actor }}", "inline": true},
+              {"name": "品質チェック", "value": "${{ needs.quality-check.result }}", "inline": true},
+              {"name": "テスト", "value": "${{ needs.test.result }}", "inline": true},
+              {"name": "ビルド", "value": "${{ needs.build.result }}", "inline": true}
+            ],
+            "footer": {"text": "Flutter CI/CD Pipeline"},
+            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+            "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }]
+        }' \
+        "${{ vars.DISCORD_WEBHOOK_URL }}"
+        
+        DISCORD_RESPONSE=$?
+        if [ $DISCORD_RESPONSE -eq 0 ]; then
+          echo "✅ Discord通知の送信が完了しました"
+        else
+          echo "❌ Discord通知の送信に失敗しました (終了コード: $DISCORD_RESPONSE)"
         fi

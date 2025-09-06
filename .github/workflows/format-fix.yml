@@ -99,72 +99,103 @@ jobs:
         # プルリクエストの場合はコミットのみ（プッシュしない）
         echo "✅ フォーマット修正をコミットしました（プルリクエスト用）"
 
-    - name: Send fix notification
-      if: steps.fix_report.outputs.changes_made == 'true' && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+    - name: Determine format status
+      id: format_status  
+      if: always()
       run: |
+        if [ "${{ steps.check_format.outputs.format_needed }}" == "true" ]; then
+          if [ "${{ steps.fix_report.outputs.changes_made }}" == "true" ]; then
+            echo "status=fixed" >> $GITHUB_OUTPUT
+            echo "status_emoji=🔧" >> $GITHUB_OUTPUT
+            echo "status_color=3066993" >> $GITHUB_OUTPUT
+            echo "status_message=フォーマット問題を自動修正しました (${{ steps.fix_report.outputs.total_changes }} ファイル)" >> $GITHUB_OUTPUT
+          else
+            echo "status=no_changes" >> $GITHUB_OUTPUT
+            echo "status_emoji=⚠️" >> $GITHUB_OUTPUT
+            echo "status_color=16776960" >> $GITHUB_OUTPUT
+            echo "status_message=フォーマット問題が検出されましたが修正は不要でした" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "status=clean" >> $GITHUB_OUTPUT
+          echo "status_emoji=✅" >> $GITHUB_OUTPUT
+          echo "status_color=3066993" >> $GITHUB_OUTPUT
+          echo "status_message=コードフォーマットは適切です。修正は不要でした。" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Send fix notification
+      if: always() && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+      run: |
+        echo "📤 フォーマットチェック結果通知を送信中..."
+        echo "   └ ステータス: ${{ steps.format_status.outputs.status }}"
+        echo "   └ メッセージ: ${{ steps.format_status.outputs.status_message }}"
+        
         if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
           curl -H "Content-Type: application/json" \
           -d '{
             "embeds": [{
-              "title": "🔧 フォーマット自動修正完了",
-              "description": "コードフォーマットの問題を自動で修正しました",
-              "color": 3066993,
+              "title": "${{ steps.format_status.outputs.status_emoji }} フォーマットチェック完了",
+              "description": "${{ steps.format_status.outputs.status_message }}",
+              "color": ${{ steps.format_status.outputs.status_color }},
               "fields": [
-                {"name": "修正ファイル数", "value": "${{ steps.fix_report.outputs.total_changes }}", "inline": true},
                 {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
-                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
+                {"name": "実行者", "value": "${{ github.actor }}", "inline": true},
+                {"name": "ステータス", "value": "${{ steps.format_status.outputs.status }}", "inline": true}
               ],
-              "footer": {"text": "GitHub Actions"},
-              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+              "footer": {"text": "Format Check Pipeline"},
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+              "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }]
           }' \
           ${{ vars.DISCORD_WEBHOOK_URL }}
+          echo "✅ Discord通知送信完了"
         fi
         
         if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
           curl -X POST -H 'Content-type: application/json' \
           --data '{
-            "text": "🔧 フォーマット自動修正完了",
+            "text": "${{ steps.format_status.outputs.status_emoji }} フォーマットチェック完了",
             "blocks": [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": "🔧 TechLingual Quest フォーマット修正"
+                  "text": "${{ steps.format_status.outputs.status_emoji }} TechLingual Quest フォーマットチェック"
                 }
               },
               {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "コードフォーマットの問題を自動で修正しました\n修正ファイル数: *${{ steps.fix_report.outputs.total_changes }}*"
+                  "text": "${{ steps.format_status.outputs.status_message }}"
                 }
               },
               {
                 "type": "section",
                 "fields": [
                   {"type": "mrkdwn", "text": "*ブランチ:*\n${{ github.ref_name }}"},
-                  {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"}
+                  {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"},
+                  {"type": "mrkdwn", "text": "*ステータス:*\n${{ steps.format_status.outputs.status }}"}
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "📊 詳細をGitHub Actionsで確認"
+                    },
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                    "style": "primary"
+                  }
                 ]
               }
             ]
           }' \
           ${{ vars.SLACK_WEBHOOK_URL }}
+          echo "✅ Slack通知送信完了"
         fi
-
-    - name: Record format fix results
-      if: always()
-      run: |
-        if [ "${{ steps.check_format.outputs.format_needed }}" == "true" ]; then
-          if [ "${{ steps.fix_report.outputs.changes_made }}" == "true" ]; then
-            echo "🔧 フォーマット修正: ${{ steps.fix_report.outputs.total_changes }}ファイル修正完了"
-          else
-            echo "⚠️ フォーマット問題検出: 修正は不要"
-          fi
-        else
-          echo "✅ フォーマットチェック: 修正不要"
-        fi
-        # 統合通知システムが結果を収集
 
     - name: Format check summary
       run: |
