@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../app/auth_service.dart';
 import '../../../shared/services/dynamic_localization_service.dart';
 import '../../../shared/widgets/dynamic_language_selector.dart';
 import '../../../shared/utils/navigation_helper.dart';
@@ -26,9 +27,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final translationsAsync = ref.watch(appTranslationsProvider);
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
 
     return translationsAsync.when(
-      data: (translations) => _buildHomeContent(context, translations),
+      data: (translations) => _buildHomeContent(context, translations, isAuthenticated),
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
@@ -37,7 +39,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildHomeContent(BuildContext context, AppTranslations translations) {
+  Widget _buildHomeContent(BuildContext context, AppTranslations translations, bool isAuthenticated) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -47,7 +49,27 @@ class _HomePageState extends ConsumerState<HomePage> {
             return Text(snapshot.data ?? 'TechLingual Quest');
           },
         ),
-        actions: const [DynamicLanguageSelector()],
+        actions: [
+          const DynamicLanguageSelector(),
+          // Add logout button if authenticated
+          if (isAuthenticated)
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Logout', // TODO: Add to translations
+              onPressed: () async {
+                final authService = ref.read(authServiceProvider.notifier);
+                await authService.logout();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Successfully logged out'), // TODO: Add to translations
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+            ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -117,7 +139,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
             const SizedBox(height: 30),
-            _buildNavigationButtons(context, translations),
+            _buildNavigationButtons(context, translations, isAuthenticated),
             const SizedBox(height: 30),
             FutureBuilder<String>(
               future: translations.featuresTitle,
@@ -178,6 +200,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget _buildNavigationButtons(
     BuildContext context,
     AppTranslations translations,
+    bool isAuthenticated,
   ) {
     return Wrap(
       spacing: 10,
@@ -203,16 +226,29 @@ class _HomePageState extends ConsumerState<HomePage> {
             );
           },
         ),
-        FutureBuilder<String>(
-          future: translations.profile,
-          builder: (context, snapshot) {
-            return ElevatedButton.icon(
-              onPressed: () => NavigationHelper.goAuth(context),
-              icon: const Icon(Icons.person),
-              label: Text(snapshot.data ?? 'Profile'),
-            );
-          },
-        ),
+        // Show different profile button based on auth state
+        if (isAuthenticated)
+          FutureBuilder<String>(
+            future: translations.profile,
+            builder: (context, snapshot) {
+              return ElevatedButton.icon(
+                onPressed: () => NavigationHelper.goProfile(context),
+                icon: const Icon(Icons.person),
+                label: Text(snapshot.data ?? 'Profile'),
+              );
+            },
+          )
+        else
+          FutureBuilder<String>(
+            future: translations.profile,
+            builder: (context, snapshot) {
+              return OutlinedButton.icon(
+                onPressed: () => NavigationHelper.goAuth(context),
+                icon: const Icon(Icons.login),
+                label: Text(snapshot.data ?? 'Login'),
+              );
+            },
+          ),
       ],
     );
   }

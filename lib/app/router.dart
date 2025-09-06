@@ -5,6 +5,7 @@ import '../features/dashboard/pages/home_page.dart';
 import '../features/auth/pages/auth_page.dart';
 import '../features/auth/pages/login_page.dart';
 import '../features/auth/pages/register_page.dart';
+import '../features/auth/pages/profile_page.dart';
 import '../features/vocabulary/pages/vocabulary_page.dart';
 import '../features/quests/pages/quests_page.dart';
 import '../shared/utils/logger.dart';
@@ -65,7 +66,7 @@ class AppRouter {
             path: 'profile',
             name: AppRoutes.profileName,
             builder: (BuildContext context, GoRouterState state) {
-              return const Placeholder(); // 将来的にProfilePageを実装
+              return const ProfilePage();
             },
           ),
         ],

@@ -69,7 +69,11 @@ class AuthService extends StateNotifier<AuthState> {
   /// ログアウト処理
   Future<void> logout() async {
     AppLogger.info('User logout');
-    state = const AuthState(isAuthenticated: false);
+    // Clear authentication state completely
+    state = const AuthState(isAuthenticated: false, user: null, isLoading: false);
+    
+    // In the future, this will also clear stored tokens and session data
+    // from SharedPreferences or SecureStorage
   }
 
   /// ユーザー登録処理（モック実装）
