@@ -177,6 +177,8 @@ class AuthService extends StateNotifier<AuthState> {
     UserLevel? level,
     List<String>? interests,
     String? bio,
+    bool clearProfileImage =
+        false, // 新しいフラグ / New flag to explicitly clear image
   }) async {
     if (state.user == null) {
       AppLogger.warning('Cannot update profile: user not authenticated');
@@ -193,11 +195,19 @@ class AuthService extends StateNotifier<AuthState> {
     try {
       // 現在のユーザー情報を更新 - Only update fields that are explicitly provided
       final currentUser = state.user!;
+      String? updatedProfileImageUrl;
+
+      if (clearProfileImage) {
+        updatedProfileImageUrl = null;
+      } else {
+        updatedProfileImageUrl = profileImageUrl ?? currentUser.profileImageUrl;
+      }
+
       final updatedUser = AuthUser(
         id: currentUser.id,
         email: currentUser.email,
         name: name ?? currentUser.name,
-        profileImageUrl: profileImageUrl ?? currentUser.profileImageUrl,
+        profileImageUrl: updatedProfileImageUrl,
         level: level ?? currentUser.level,
         interests: interests ?? currentUser.interests,
         bio: bio ?? currentUser.bio,

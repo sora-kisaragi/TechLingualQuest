@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../app/auth_service.dart';
 import '../../../shared/services/dynamic_localization_service.dart';
+import '../../../shared/services/image_service.dart';
 import '../../../shared/utils/logger.dart';
 
 /// プロフィール編集ページ
@@ -24,6 +26,8 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
   UserLevel? _selectedLevel;
   List<String> _interests = [];
   bool _isLoading = false;
+  bool _isImageUploading = false;
+  String? _selectedImageUrl;
 
   @override
   void initState() {
@@ -47,6 +51,138 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       _bioController.text = currentUser.bio ?? '';
       _selectedLevel = currentUser.level;
       _interests = List.from(currentUser.interests ?? []);
+      _selectedImageUrl = currentUser.profileImageUrl;
+    }
+  }
+
+  /// プロフィール画像変更ダイアログを表示
+  /// Show profile image change dialog
+  void _showImageSelectionDialog(AppTranslations translations) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                translations.getSync('selectImage'),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 20),
+              ...ImageService.getImageSourceOptions().map((option) {
+                return ListTile(
+                  leading: Icon(option.iconData),
+                  title: Text(translations.getSync(option.titleKey)),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _selectAndUploadImage(option.source, translations);
+                  },
+                );
+              }),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(translations.getSync('cancel')),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// 画像を選択してアップロード
+  /// Select and upload image
+  Future<void> _selectAndUploadImage(
+    ImageSource source,
+    AppTranslations translations,
+  ) async {
+    try {
+      // 画像選択
+      // Select image
+      final XFile? pickedFile = await ImageService.pickImage(source: source);
+
+      if (pickedFile == null) {
+        // ユーザーがキャンセルした場合
+        // User cancelled
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(translations.getSync('imageSelectionCancelled')),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      // アップロード開始
+      // Start upload
+      setState(() {
+        _isImageUploading = true;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(translations.getSync('uploading')),
+            backgroundColor: Colors.blue,
+          ),
+        );
+      }
+
+      // 画像アップロード
+      // Upload image
+      final String? uploadedImageUrl =
+          await ImageService.uploadProfileImage(pickedFile);
+
+      if (uploadedImageUrl != null) {
+        setState(() {
+          _selectedImageUrl = uploadedImageUrl;
+          _isImageUploading = false;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(translations.getSync('imageUploadSuccess')),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        setState(() {
+          _isImageUploading = false;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(translations.getSync('imageUploadError')),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      AppLogger.error('Image selection/upload error: $error');
+
+      setState(() {
+        _isImageUploading = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(translations.getSync('imageUploadError')),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -111,39 +247,37 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                     CircleAvatar(
                       radius: 60,
                       backgroundColor: Colors.deepPurple.shade100,
-                      child: authState.user?.profileImageUrl != null
-                          ? ClipOval(
-                              child: Image.network(
-                                authState.user!.profileImageUrl!,
-                                width: 120,
-                                height: 120,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(
+                      child: _isImageUploading
+                          ? const CircularProgressIndicator()
+                          : _selectedImageUrl != null
+                              ? ClipOval(
+                                  child: Image.network(
+                                    _selectedImageUrl!,
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                      Icons.person,
+                                      size: 80,
+                                      color: Colors.deepPurple,
+                                    ),
+                                  ),
+                                )
+                              : const Icon(
                                   Icons.person,
                                   size: 80,
                                   color: Colors.deepPurple,
                                 ),
-                              ),
-                            )
-                          : const Icon(
-                              Icons.person,
-                              size: 80,
-                              color: Colors.deepPurple,
-                            ),
                     ),
                     const SizedBox(height: 10),
                     TextButton.icon(
-                      onPressed: () {
-                        // TODO: Implement photo change functionality
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Photo change feature coming soon', // TODO: Add to translations
-                            ),
-                          ),
-                        );
-                      },
+                      onPressed: _isImageUploading
+                          ? null
+                          : () {
+                              _showImageSelectionDialog(translations);
+                            },
                       icon: const Icon(Icons.camera_alt),
                       label: Text(translations.getSync('changePhoto')),
                     ),
@@ -362,6 +496,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
       final authService = ref.read(authServiceProvider.notifier);
       final success = await authService.updateProfile(
         name: _nameController.text.trim(),
+        profileImageUrl: _selectedImageUrl,
         level: _selectedLevel,
         interests: _interests.isEmpty ? null : _interests,
         bio: _bioController.text.trim().isEmpty

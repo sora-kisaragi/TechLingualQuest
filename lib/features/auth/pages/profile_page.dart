@@ -77,11 +77,26 @@ class ProfilePage extends ConsumerWidget {
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.deepPurple.shade100,
-              child: const Icon(
-                Icons.person,
-                size: 80,
-                color: Colors.deepPurple,
-              ),
+              child: currentUser.profileImageUrl != null
+                  ? ClipOval(
+                      child: Image.network(
+                        currentUser.profileImageUrl!,
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.person,
+                          size: 80,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                    )
+                  : const Icon(
+                      Icons.person,
+                      size: 80,
+                      color: Colors.deepPurple,
+                    ),
             ),
             const SizedBox(height: 20),
 

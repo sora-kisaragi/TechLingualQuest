@@ -67,7 +67,7 @@ void main() {
       expect(find.text('Go Home'), findsOneWidget);
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Home Page'), findsOneWidget);
     });
 
@@ -96,7 +96,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Auth Page'), findsOneWidget);
     });
 
@@ -125,7 +125,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Login Page'), findsOneWidget);
     });
 
@@ -154,7 +154,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Register Page'), findsOneWidget);
     });
 
@@ -183,11 +183,12 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Profile Page'), findsOneWidget);
     });
 
-    testWidgets('goVocabulary should navigate to vocabulary route', (tester) async {
+    testWidgets('goVocabulary should navigate to vocabulary route',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: GoRouter(
@@ -212,13 +213,14 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Vocabulary Page'), findsOneWidget);
     });
 
-    testWidgets('goVocabularyDetail should navigate to vocabulary detail route', (tester) async {
+    testWidgets('goVocabularyDetail should navigate to vocabulary detail route',
+        (tester) async {
       const testId = 'test-id';
-      
+
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: GoRouter(
@@ -227,14 +229,16 @@ void main() {
                 path: '/',
                 builder: (context, state) {
                   return ElevatedButton(
-                    onPressed: () => NavigationHelper.goVocabularyDetail(context, testId),
+                    onPressed: () =>
+                        NavigationHelper.goVocabularyDetail(context, testId),
                     child: const Text('Go Vocabulary Detail'),
                   );
                 },
               ),
               GoRoute(
                 path: '/vocabulary/:id',
-                builder: (context, state) => Text('Vocabulary Detail: ${state.pathParameters['id']}'),
+                builder: (context, state) =>
+                    Text('Vocabulary Detail: ${state.pathParameters['id']}'),
               ),
             ],
           ),
@@ -243,7 +247,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Vocabulary Detail: $testId'), findsOneWidget);
     });
 
@@ -272,11 +276,12 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Quests Page'), findsOneWidget);
     });
 
-    testWidgets('goVocabularyAdd should navigate to vocabulary add route', (tester) async {
+    testWidgets('goVocabularyAdd should navigate to vocabulary add route',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: GoRouter(
@@ -301,11 +306,12 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Vocabulary Add Page'), findsOneWidget);
     });
 
-    testWidgets('goActiveQuest should navigate to active quest route', (tester) async {
+    testWidgets('goActiveQuest should navigate to active quest route',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: GoRouter(
@@ -330,7 +336,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Active Quest Page'), findsOneWidget);
     });
 
@@ -359,7 +365,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Settings Page'), findsOneWidget);
     });
 
@@ -388,7 +394,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('About Page'), findsOneWidget);
     });
   });
@@ -421,7 +427,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Test Page'), findsOneWidget);
     });
 
@@ -436,7 +442,7 @@ void main() {
                 builder: (context, state) {
                   return ElevatedButton(
                     onPressed: () => NavigationHelper.goNamed(
-                      context, 
+                      context,
                       'test',
                       pathParameters: {'id': '123'},
                     ),
@@ -447,7 +453,8 @@ void main() {
               GoRoute(
                 path: '/test/:id',
                 name: 'test',
-                builder: (context, state) => Text('Test Page: ${state.pathParameters['id']}'),
+                builder: (context, state) =>
+                    Text('Test Page: ${state.pathParameters['id']}'),
               ),
             ],
           ),
@@ -456,7 +463,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Test Page: 123'), findsOneWidget);
     });
 
@@ -473,7 +480,8 @@ void main() {
                     children: [
                       const Text('Home Page'),
                       ElevatedButton(
-                        onPressed: () => NavigationHelper.pushNamed(context, 'test'),
+                        onPressed: () =>
+                            NavigationHelper.pushNamed(context, 'test'),
                         child: const Text('Push Named'),
                       ),
                     ],
@@ -502,17 +510,17 @@ void main() {
 
       // Verify home page
       expect(find.text('Home Page'), findsOneWidget);
-      
+
       // Push to test page
       await tester.tap(find.text('Push Named'));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Test Page'), findsOneWidget);
-      
+
       // Go back to home
       await tester.tap(find.text('Go Back'));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Home Page'), findsOneWidget);
     });
   });
@@ -521,55 +529,59 @@ void main() {
     test('buildUrlWithQuery should build URL with query parameters', () {
       const path = '/test';
       const queryParams = {'param1': 'value1', 'param2': 'value2'};
-      
+
       final result = NavigationHelper.buildUrlWithQuery(path, queryParams);
-      
+
       expect(result, contains('param1=value1'));
       expect(result, contains('param2=value2'));
     });
 
-    test('buildUrlWithQuery should return original path if no query parameters', () {
+    test('buildUrlWithQuery should return original path if no query parameters',
+        () {
       const path = '/test';
       const queryParams = <String, String>{};
-      
+
       final result = NavigationHelper.buildUrlWithQuery(path, queryParams);
-      
+
       expect(result, equals(path));
     });
 
     test('extractQueryParameters should extract query parameters from URL', () {
       const url = '/test?param1=value1&param2=value2';
-      
+
       final result = NavigationHelper.extractQueryParameters(url);
-      
+
       expect(result, hasLength(2));
       expect(result['param1'], equals('value1'));
       expect(result['param2'], equals('value2'));
     });
 
-    test('extractQueryParameters should return empty map for URL without query', () {
+    test('extractQueryParameters should return empty map for URL without query',
+        () {
       const url = '/test';
-      
+
       final result = NavigationHelper.extractQueryParameters(url);
-      
+
       expect(result, isEmpty);
     });
 
     test('buildUrlWithPathParams should build URL with path parameters', () {
       const template = '/quests/:id/items/:itemId';
       const pathParams = {'id': 'quest-123', 'itemId': 'item-456'};
-      
-      final result = NavigationHelper.buildUrlWithPathParams(template, pathParams);
-      
+
+      final result =
+          NavigationHelper.buildUrlWithPathParams(template, pathParams);
+
       expect(result, equals('/quests/quest-123/items/item-456'));
     });
 
     test('buildUrlWithPathParams should handle empty parameters', () {
       const template = '/quests';
       const pathParams = <String, String>{};
-      
-      final result = NavigationHelper.buildUrlWithPathParams(template, pathParams);
-      
+
+      final result =
+          NavigationHelper.buildUrlWithPathParams(template, pathParams);
+
       expect(result, equals(template));
     });
   });
@@ -577,22 +589,22 @@ void main() {
   group('NavigationHelper Route Metadata Tests', () {
     test('getRouteMetadata should return metadata for existing route', () {
       final metadata = NavigationHelper.getRouteMetadata(AppRoutes.homeName);
-      
+
       expect(metadata, isNotNull);
       expect(metadata!.title, equals('Home'));
     });
 
     test('getRouteMetadata should return null for non-existing route', () {
       final metadata = NavigationHelper.getRouteMetadata('non-existing-route');
-      
+
       expect(metadata, isNull);
     });
 
     test('getNavigationRoutes should return navigation routes', () {
       final routes = NavigationHelper.getNavigationRoutes();
-      
+
       expect(routes, isNotEmpty);
-      
+
       // Check that returned routes have showInNavigation = true
       for (final entry in routes) {
         expect(entry.value.showInNavigation, isTrue);
@@ -621,14 +633,16 @@ void main() {
                 path: '/',
                 builder: (context, state) {
                   return ElevatedButton(
-                    onPressed: () => NavigationHelper.handleDeepLink(context, '/vocabulary'),
+                    onPressed: () =>
+                        NavigationHelper.handleDeepLink(context, '/vocabulary'),
                     child: const Text('Handle Deep Link'),
                   );
                 },
               ),
               GoRoute(
                 path: '/vocabulary',
-                builder: (context, state) => const Text('Vocabulary via Deep Link'),
+                builder: (context, state) =>
+                    const Text('Vocabulary via Deep Link'),
               ),
             ],
           ),
@@ -637,11 +651,12 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Vocabulary via Deep Link'), findsOneWidget);
     });
 
-    testWidgets('handleDeepLink should navigate to URL with query parameters', (tester) async {
+    testWidgets('handleDeepLink should navigate to URL with query parameters',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: GoRouter(
@@ -650,14 +665,16 @@ void main() {
                 path: '/',
                 builder: (context, state) {
                   return ElevatedButton(
-                    onPressed: () => NavigationHelper.handleDeepLink(context, '/vocabulary?level=beginner'),
+                    onPressed: () => NavigationHelper.handleDeepLink(
+                        context, '/vocabulary?level=beginner'),
                     child: const Text('Handle Deep Link'),
                   );
                 },
               ),
               GoRoute(
                 path: '/vocabulary',
-                builder: (context, state) => Text('Vocabulary: ${state.uri.queryParameters['level'] ?? 'no level'}'),
+                builder: (context, state) => Text(
+                    'Vocabulary: ${state.uri.queryParameters['level'] ?? 'no level'}'),
               ),
             ],
           ),
@@ -666,7 +683,7 @@ void main() {
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
-      
+
       expect(find.text('Vocabulary: beginner'), findsOneWidget);
     });
   });
