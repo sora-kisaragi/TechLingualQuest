@@ -1,0 +1,176 @@
+name: Format Fix
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.35.2'
+
+jobs:
+  format-check-and-fix:
+    runs-on: ubuntu-latest
+    name: Format Check & Auto Fix
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+
+    - name: Get dependencies
+      env:
+        APP_ENV: dev
+        DATABASE_NAME: tech_lingual_quest_test.db
+        API_BASE_URL: https://api.example.com
+        LOG_LEVEL: error
+      run: flutter pub get
+
+    - name: Check formatting (Investigation)
+      id: check_format
+      run: |
+        echo "🔍 コードフォーマットの調査を開始..."
+        if dart format --output=none --set-exit-if-changed .; then
+          echo "format_needed=false" >> $GITHUB_OUTPUT
+          echo "✅ コードは既に適切にフォーマットされています"
+        else
+          echo "format_needed=true" >> $GITHUB_OUTPUT
+          echo "🔧 フォーマット修正が必要なファイルが見つかりました"
+        fi
+
+    - name: Apply formatting fixes
+      if: steps.check_format.outputs.format_needed == 'true'
+      run: |
+        echo "🔧 フォーマット修正を実行中..."
+        dart format .
+        echo "✅ フォーマット修正が完了しました"
+
+    - name: Generate fix report
+      if: steps.check_format.outputs.format_needed == 'true'
+      id: fix_report
+      run: |
+        echo "📋 修正内容のレポートを生成中..."
+        CHANGED_FILES=$(git diff --name-only | grep '\.dart$' || echo "変更ファイルなし")
+        TOTAL_CHANGES=$(git diff --numstat | wc -l)
+        
+        if [ "$TOTAL_CHANGES" -gt 0 ]; then
+          echo "changes_made=true" >> $GITHUB_OUTPUT
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "total_changes=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
+          
+          # 変更の詳細をログに出力
+          echo "📝 修正されたファイル:"
+          git diff --name-only | grep '\.dart$' | head -10 | while read file; do
+            echo "  - $file"
+          done
+        else
+          echo "changes_made=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit formatting fixes
+      if: steps.fix_report.outputs.changes_made == 'true' && github.event_name == 'push'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "style: 自動フォーマット修正
+
+- 修正ファイル数: ${{ steps.fix_report.outputs.total_changes }}
+- フォーマット基準: dart format 準拠
+- 自動修正実行者: GitHub Actions"
+        git push
+
+    - name: Send fix notification
+      if: steps.fix_report.outputs.changes_made == 'true' && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+      run: |
+        if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🔧 フォーマット自動修正完了",
+              "description": "コードフォーマットの問題を自動で修正しました",
+              "color": 3066993,
+              "fields": [
+                {"name": "修正ファイル数", "value": "${{ steps.fix_report.outputs.total_changes }}", "inline": true},
+                {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
+                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
+              ],
+              "footer": {"text": "GitHub Actions"},
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+              "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }]
+          }' \
+          ${{ vars.DISCORD_WEBHOOK_URL }}
+        fi
+
+        if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{
+            "text": "🔧 フォーマット自動修正完了",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "🔧 フォーマット自動修正完了"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "コードフォーマットの問題を自動で修正しました\n\n*修正内容:*\n• 修正ファイル数: ${{ steps.fix_report.outputs.total_changes }}\n• ブランチ: ${{ github.ref_name }}\n• 実行者: ${{ github.actor }}"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "修正内容を確認"
+                    },
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                ]
+              }
+            ]
+          }' \
+          ${{ vars.SLACK_WEBHOOK_URL }}
+        fi
+
+    - name: Format check summary
+      run: |
+        if [ "${{ steps.check_format.outputs.format_needed }}" == "true" ]; then
+          if [ "${{ steps.fix_report.outputs.changes_made }}" == "true" ]; then
+            echo "🎯 フォーマット修正プロセス完了："
+            echo "  1. 調査: フォーマット問題を検出"
+            echo "  2. 修正: ${{ steps.fix_report.outputs.total_changes }} ファイルを自動修正"
+            echo "  3. 報告: 修正内容を通知"
+          else
+            echo "⚠️ フォーマット問題が検出されましたが、修正は不要でした"
+          fi
+        else
+          echo "✅ フォーマットチェック完了: 修正不要"
+        fi

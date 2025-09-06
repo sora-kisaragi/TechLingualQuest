@@ -230,7 +230,7 @@ run_tests() {
 validate_workflows() {
     echo -e "${YELLOW}✅ ワークフロー設定の検証...${NC}"
 
-    local workflows=(".github/workflows/flutter.yml" ".github/workflows/security-scan.yml" ".github/workflows/release.yml")
+    local workflows=(".github/workflows/flutter.yml" ".github/workflows/security-scan.yml" ".github/workflows/release.yml" ".github/workflows/format-fix.yml" ".github/workflows/windows-build.yml")
 
     for workflow in "${workflows[@]}"; do
         if [ -f "$workflow" ]; then
@@ -274,7 +274,7 @@ show_status() {
 
     # ワークフロー状況
     echo -e "${BLUE}⚙️  ワークフロー:${NC}"
-    local workflows=("flutter.yml" "security-scan.yml" "release.yml")
+    local workflows=("flutter.yml" "security-scan.yml" "release.yml" "format-fix.yml" "windows-build.yml")
     for workflow in "${workflows[@]}"; do
         if [ -f ".github/workflows/$workflow" ]; then
             echo -e "${GREEN}   ✅ $workflow${NC}"

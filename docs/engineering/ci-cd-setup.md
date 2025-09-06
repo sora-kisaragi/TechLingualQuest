@@ -18,11 +18,41 @@ related_docs: ["DEVELOPMENT.md", "pre-commit-setup.md", "../../scripts/setup_ci_
 
 ## ワークフロー構成
 
-期待するファイル（存在しない場合は後述の検証で警告されます）:
+現在のワークフローは実行効率を最適化し、重複実行を避けるように構成されています：
 
-- `.github/workflows/flutter.yml`
-- `.github/workflows/security-scan.yml`
-- `.github/workflows/release.yml`
+### メインワークフロー
+- `.github/workflows/flutter.yml` - **Flutter CI/CD**
+  - main ブランチ: pull_request でのみトリガー
+  - develop ブランチ: push でのみトリガー
+  - 並列実行: テストとビルドが並列実行
+  - ビルドマトリクス: Android APK、App Bundle、Web を並列ビルド
+
+- `.github/workflows/security-scan.yml` - **セキュリティスキャン**
+  - main ブランチ: pull_request でのみトリガー
+  - develop ブランチ: push でのみトリガー
+  - スケジュール実行: 毎日午前2時（UTC）
+
+- `.github/workflows/release.yml` - **リリースビルド**
+  - タグ作成時、または手動実行時のみトリガー
+
+### 専用ワークフロー
+- `.github/workflows/format-fix.yml` - **フォーマット自動修正**
+  - 調査 → 修正 → 報告 の3段階プロセス
+  - 自動でフォーマットを修正し、Slack/Discord に結果を通知
+
+- `.github/workflows/windows-build.yml` - **Windows ビルド**
+  - Windows アプリケーションの自動ビルド
+  - 成果物の自動圧縮・Slack 配信機能
+
+### トリガー最適化
+
+| ブランチ | Flutter CI/CD | セキュリティ | フォーマット | Windows |
+|---------|--------------|------------|------------|---------|
+| main | PR のみ | PR のみ | PR のみ | PR のみ |
+| develop | push のみ | push のみ | push のみ | push のみ |
+| その他 | 実行されない | 実行されない | 実行されない | 実行されない |
+
+この構成により、push と pull_request の重複実行を避け、処理時間を大幅に短縮しています。
 
 ## 初期セットアップ（ローカル）
 
@@ -40,6 +70,25 @@ related_docs: ["DEVELOPMENT.md", "pre-commit-setup.md", "../../scripts/setup_ci_
 
 ## 通知Webhookの設定（Discord/Slack）
 
+### 改善された通知機能
+
+新しいCI/CDワークフローでは、通知メッセージが大幅に改善されています：
+
+#### 成功時の通知
+- 完了した全処理の一覧表示
+- 実行時間の表示
+- 詳細ログへの直接リンク
+
+#### 失敗時の通知
+- **具体的な失敗箇所の特定**：
+  - コード品質チェック（フォーマット・静的解析）
+  - テスト実行（単体・ウィジェットテスト）
+  - ビルド処理（Android・Web）
+- 失敗原因の詳細説明
+- 緊急対応が必要な旨の明示
+
+### Webhook URL 設定
+
 1) テスト送信でURLの動作確認
 
 ```
@@ -51,6 +100,12 @@ related_docs: ["DEVELOPMENT.md", "pre-commit-setup.md", "../../scripts/setup_ci_
 2) GitHub リポジトリ設定 → Secrets and variables → Actions → Variables に登録
 
 - `DISCORD_WEBHOOK_URL` または `SLACK_WEBHOOK_URL`
+
+### 特殊通知
+
+- **フォーマット自動修正**: 修正されたファイル数と詳細を報告
+- **Windows ビルド完了**: 成果物のサイズと圧縮結果をSlackに配信
+- **セキュリティ警告**: 重大なセキュリティ問題の即座通知
 
 ## ローカルでのCI/CDテスト
 
