@@ -120,6 +120,7 @@ jobs:
         $status = "success"
         $emoji = ":white_check_mark:"
         $color = "#28a745"
+        $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
         
         # Slackメッセージを送信
         $payload = @{
@@ -136,7 +137,7 @@ jobs:
               type = "section"
               text = @{
                 type = "mrkdwn"
-                text = "Windowsアプリケーションのビルドが正常に完了しました。`n`nパッケージサイズ: *${{ steps.package.outputs.package_size_mb }} MB*`n圧縮後サイズ: *${{ steps.compress.outputs.archive_size_mb }} MB*"
+                text = "Windowsアプリケーションのビルドが正常に完了しました。`n`nパッケージサイズ: *${{ steps.package.outputs.package_size_mb }} MB*`n圧縮後サイズ: *${{ steps.compress.outputs.archive_size_mb }} MB*`n`n成果物: *${{ steps.compress.outputs.archive_name }}*"
               }
             },
             @{
@@ -145,7 +146,21 @@ jobs:
                 @{type = "mrkdwn"; text = "*ブランチ:*`n${{ github.ref_name }}"},
                 @{type = "mrkdwn"; text = "*コミット:*`n$(echo ${{ github.sha }} | cut -c1-7)"},
                 @{type = "mrkdwn"; text = "*実行者:*`n${{ github.actor }}"},
-                @{type = "mrkdwn"; text = "*成果物:*`n${{ steps.compress.outputs.archive_name }}"}
+                @{type = "mrkdwn"; text = "*保管場所:*`nGitHub Actions Artifacts"}
+              )
+            },
+            @{
+              type = "actions"
+              elements = @(
+                @{
+                  type = "button"
+                  text = @{
+                    type = "plain_text"
+                    text = "📦 ビルド成果物をダウンロード"
+                  }
+                  url = "$artifactUrl"
+                  style = "primary"
+                }
               )
             }
           )
@@ -156,11 +171,13 @@ jobs:
     - name: Send Discord notification with build results
       if: vars.DISCORD_WEBHOOK_URL
       run: |
+        $artifactUrl = "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+        
         $payload = @{
           embeds = @(
             @{
               title = ":gear: Windows ビルド完了"
-              description = "TechLingualQuest Windowsアプリケーションのビルドが正常に完了しました"
+              description = "TechLingualQuest Windowsアプリケーションのビルドが正常に完了しました`n`n[📦 ビルド成果物をダウンロード]($artifactUrl)"
               color = 3066993
               fields = @(
                 @{name = "パッケージサイズ"; value = "${{ steps.package.outputs.package_size_mb }} MB"; inline = $true},
@@ -168,10 +185,12 @@ jobs:
                 @{name = "ブランチ"; value = "${{ github.ref_name }}"; inline = $true},
                 @{name = "コミット"; value = "$(echo ${{ github.sha }} | cut -c1-7)"; inline = $true},
                 @{name = "実行者"; value = "${{ github.actor }}"; inline = $true},
-                @{name = "成果物"; value = "${{ steps.compress.outputs.archive_name }}"; inline = $false}
+                @{name = "成果物"; value = "${{ steps.compress.outputs.archive_name }}"; inline = $false},
+                @{name = "保管場所"; value = "GitHub Actions Artifacts (7日間保持)"; inline = $false}
               )
               footer = @{text = "GitHub Actions Windows Build"}
               timestamp = "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')"
+              url = "$artifactUrl"
             }
           )
         } | ConvertTo-Json -Depth 10
@@ -184,4 +203,13 @@ jobs:
         echo "パッケージサイズ: ${{ steps.package.outputs.package_size_mb }} MB"
         echo "圧縮後サイズ: ${{ steps.compress.outputs.archive_size_mb }} MB"
         echo "成果物: ${{ steps.compress.outputs.archive_name }}"
+        echo ""
+        echo "📦 ビルド成果物の保管場所について:"
+        echo "- GitHub Actions Artifacts に自動保存されます"
+        echo "- 保持期間: 7日間"
+        echo "- アクセス方法: GitHub Actions ページ → 該当のワークフロー実行 → Artifacts セクション"
+        echo "- 直接URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+        echo ""
+        echo "🔗 成果物ダウンロードリンク:"
+        echo "   https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
 

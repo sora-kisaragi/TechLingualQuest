@@ -169,8 +169,38 @@ jobs:
         export APP_ENV=prod
         export DATABASE_NAME=tech_lingual_quest.db
         export API_BASE_URL=https://api.example.com
-        flutter build web --release --web-renderer canvaskit
-        echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
+        
+        # Web用の依存関係の確認と設定
+        echo "🌐 Webビルド用設定を確認中..."
+        
+        # Webビルドを実行（エラー詳細を表示）
+        echo "🚀 Webビルドを開始..."
+        flutter build web --release --web-renderer canvaskit --verbose || {
+          echo "❌ canvaskitレンダラーでのビルドに失敗しました。htmlレンダラーで再試行します..."
+          flutter build web --release --web-renderer html --verbose
+        }
+        
+        # ビルド結果の確認
+        if [ -d "build/web" ]; then
+          echo "✅ Webビルド成功"
+          echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
+          
+          # 重要なファイルの存在確認
+          if [ -f "build/web/index.html" ]; then
+            echo "✅ index.html が生成されました"
+          else
+            echo "⚠️ 警告: index.html が見つかりません"
+          fi
+          
+          if [ -f "build/web/main.dart.js" ] || [ -f "build/web/main.dart.js.gz" ]; then
+            echo "✅ JavaScriptファイルが生成されました"
+          else
+            echo "⚠️ 警告: main.dart.js が見つかりません"
+          fi
+        else
+          echo "❌ build/web ディレクトリが作成されませんでした"
+          exit 1
+        fi
 
     - name: Upload Android APK artifact
       if: matrix.build-type == 'android-apk' && (github.base_ref == 'main' || github.ref_name == 'main')

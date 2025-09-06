@@ -15,6 +15,11 @@ on:
         description: '手動でサマリーレポートを生成'
         required: false
         default: 'false'
+      force_notifications:
+        description: '通知を強制送信'
+        required: false
+        default: 'true'
+        type: boolean
 
 permissions:
   contents: read
@@ -145,7 +150,7 @@ jobs:
         echo "estimated_duration=約5分" >> $GITHUB_OUTPUT
 
     - name: Send unified Slack notification
-      if: vars.SLACK_WEBHOOK_URL
+      if: always() && vars.SLACK_WEBHOOK_URL
       run: |
         # 詳細ステータス情報の構築
         DETAIL_BLOCKS=""
@@ -167,6 +172,9 @@ jobs:
         else
           STATUS_DETAILS="${STATUS_DETAILS}*結果:* 全${{ steps.evaluate.outputs.success_count }}個のワークフローが正常完了 ✅"
         fi
+        
+        # GitHub Actionsの詳細へのリンク
+        ACTIONS_URL="https://github.com/${{ steps.get_results.outputs.repo }}/actions"
         
         # Slack通知送信
         curl -X POST -H 'Content-type: application/json' \
@@ -203,9 +211,18 @@ jobs:
                   "type": "button",
                   "text": {
                     "type": "plain_text",
-                    "text": "GitHub Actions で詳細確認"
+                    "text": "📊 GitHub Actions で詳細確認"
                   },
-                  "url": "https://github.com/${{ steps.get_results.outputs.repo }}/actions"
+                  "url": "'"$ACTIONS_URL"'",
+                  "style": "primary"
+                },
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "📦 ビルド成果物を確認"
+                  },
+                  "url": "'"$ACTIONS_URL"'"
                 }
               ]
             }
@@ -214,8 +231,11 @@ jobs:
         ${{ vars.SLACK_WEBHOOK_URL }}
 
     - name: Send unified Discord notification
-      if: vars.DISCORD_WEBHOOK_URL  
+      if: always() && vars.DISCORD_WEBHOOK_URL  
       run: |
+        # GitHub Actionsの詳細へのリンク
+        ACTIONS_URL="https://github.com/${{ steps.get_results.outputs.repo }}/actions"
+        
         # 失敗詳細の構築
         FAILURE_DETAILS=""
         if [ "${{ steps.get_results.outputs.flutter_status }}" == "failure" ]; then
@@ -254,7 +274,7 @@ jobs:
             ],
             "footer": {"text": "GitHub Actions 統合レポート"},
             "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
-            "url": "https://github.com/${{ steps.get_results.outputs.repo }}/actions"
+            "url": "'"$ACTIONS_URL"'"
           }]
         }' \
         ${{ vars.DISCORD_WEBHOOK_URL }}
