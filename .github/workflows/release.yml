@@ -38,7 +38,7 @@ permissions:
   actions: read
 
 env:
-  FLUTTER_VERSION: '3.35.2'
+  FLUTTER_VERSION: '3.24.5'
 
 jobs:
   # リリース前の最終チェック

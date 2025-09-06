@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.35.2'
+  FLUTTER_VERSION: '3.24.5'
 
 jobs:
   # 依存関係とコード品質チェック
@@ -104,8 +104,6 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
 
-  # ビルド (Android, Web) - 並列実行で時間短縮
-  # AndroidビルドはmainブランチのPR時のみ実行
   build:
     runs-on: ubuntu-latest
     name: Build Applications
@@ -114,15 +112,6 @@ jobs:
       fail-fast: false  # 一つが失敗しても他を継続
       matrix:
         build-type: [android-apk, android-appbundle, web]
-        include:
-          # Androidビルドはmainブランチへのプルリクエスト時のみ実行
-          - build-type: android-apk
-            condition: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
-          - build-type: android-appbundle  
-            condition: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
-          # Webビルドは全てのPRで実行
-          - build-type: web
-            condition: true
 
     steps:
     - name: Checkout code
