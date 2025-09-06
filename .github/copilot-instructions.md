@@ -48,6 +48,19 @@ Always reference these instructions first and fallback to search or exploration 
 - Understand the project's build process and requirements
 - Consider dependencies and version compatibility
 - Validate changes don't break existing functionality
+
+## 6.1. Flutter Version Management (CRITICAL)
+
+- **NEVER downgrade Flutter versions** - Only upgrades are permitted
+- Current Flutter version is specified in workflow files under `FLUTTER_VERSION` 
+- **Before making any Flutter version changes:**
+  1. Always check the latest available Flutter version using the official release page
+  2. Use the setup documentation or existing workflow files to understand version requirements
+  3. Only upgrade to verified stable releases
+- **Version verification commands:**
+  - Check latest stable: Visit https://docs.flutter.dev/release/archive or use `curl -s https://api.flutter.dev/releases.json`
+  - Always fetch current session Flutter version from workflow files or setup documentation
+  - Do NOT use `flutter --version` alone as it may show locally installed version, not project requirements
 - Be aware of deployment constraints and requirements
 - Suggest appropriate build/test commands when relevant
 

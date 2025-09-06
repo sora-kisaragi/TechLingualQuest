@@ -1,10 +1,8 @@
 name: Security Scan
 
 on:
-  push:
-    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
   schedule:
     # 毎日午前2時（UTC）にセキュリティスキャンを実行
     - cron: '0 2 * * *'
@@ -19,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: '3.35.2'
+  FLUTTER_VERSION: '3.35.3'
 
 jobs:
   security-scan:
@@ -110,49 +108,97 @@ jobs:
           pubspec.lock
         retention-days: 30
 
-    - name: Send security notification
-      if: failure() && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+    - name: Determine scan status
+      id: scan_status
+      if: always()
       run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "status_emoji=✅" >> $GITHUB_OUTPUT
+          echo "status_color=3066993" >> $GITHUB_OUTPUT
+          echo "status_message=セキュリティスキャンが正常に完了しました。問題は検出されませんでした。" >> $GITHUB_OUTPUT
+        else
+          echo "status=failure" >> $GITHUB_OUTPUT
+          echo "status_emoji=🚨" >> $GITHUB_OUTPUT
+          echo "status_color=15158332" >> $GITHUB_OUTPUT
+          echo "status_message=セキュリティスキャンで問題が検出されました。緊急対応が必要です。" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Send security notification
+      if: always() && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+      run: |
+        echo "📤 セキュリティスキャン結果通知を送信中..."
+        echo "   └ ステータス: ${{ steps.scan_status.outputs.status }}"
+        echo "   └ メッセージ: ${{ steps.scan_status.outputs.status_message }}"
+        
         if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
           curl -H "Content-Type: application/json" \
           -d '{
             "embeds": [{
-              "title": "🚨 セキュリティスキャン警告",
-              "description": "TechLingual Questプロジェクトでセキュリティ上の問題が検出されました",
-              "color": 16711680,
+              "title": "${{ steps.scan_status.outputs.status_emoji }} セキュリティスキャン完了",
+              "description": "${{ steps.scan_status.outputs.status_message }}",
+              "color": ${{ steps.scan_status.outputs.status_color }},
               "fields": [
                 {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
                 {"name": "コミット", "value": "$(echo ${{ github.sha }} | cut -c1-7)", "inline": true},
-                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
+                {"name": "実行者", "value": "${{ github.actor }}", "inline": true},
+                {"name": "スキャン結果", "value": "${{ steps.scan_status.outputs.status }}", "inline": true}
               ],
-              "footer": {"text": "緊急対応が必要です"},
+              "footer": {"text": "Security Scan Pipeline"},
               "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
               "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }]
           }' \
           ${{ vars.DISCORD_WEBHOOK_URL }}
+          echo "✅ Discord通知送信完了"
         fi
-
+        
         if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
           curl -X POST -H 'Content-type: application/json' \
           --data '{
-            "text": "🚨 セキュリティスキャン警告",
+            "text": "${{ steps.scan_status.outputs.status_emoji }} セキュリティスキャン完了",
             "blocks": [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": "🚨 セキュリティスキャン警告"
+                  "text": "${{ steps.scan_status.outputs.status_emoji }} TechLingual Quest セキュリティスキャン"
                 }
               },
               {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "TechLingual Questプロジェクトでセキュリティ上の問題が検出されました。緊急対応が必要です。"
+                  "text": "${{ steps.scan_status.outputs.status_message }}"
                 }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {"type": "mrkdwn", "text": "*ブランチ:*\n${{ github.ref_name }}"},
+                  {"type": "mrkdwn", "text": "*コミット:*\n$(echo ${{ github.sha }} | cut -c1-7)"},
+                  {"type": "mrkdwn", "text": "*実行者:*\n${{ github.actor }}"},
+                  {"type": "mrkdwn", "text": "*スキャン結果:*\n${{ steps.scan_status.outputs.status }}"}
+                ]
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "📊 詳細をGitHub Actionsで確認"
+                    },
+                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                    "style": "primary"
+                  }
+                ]
               }
             ]
           }' \
           ${{ vars.SLACK_WEBHOOK_URL }}
+          echo "✅ Slack通知送信完了"
         fi
+
+
