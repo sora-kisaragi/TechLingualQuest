@@ -167,6 +167,258 @@
       "ja": "中国語",
       "ko": "중국어",
       "zh": "中文"
+    },
+    "createAccount": {
+      "en": "Create Account",
+      "ja": "アカウント作成",
+      "ko": "계정 만들기",
+      "zh": "创建账户"
+    },
+    "welcomeToApp": {
+      "en": "Welcome to TechLingual Quest",
+      "ja": "TechLingual Questへようこそ",
+      "ko": "TechLingual Quest에 오신 것을 환영합니다",
+      "zh": "欢迎来到TechLingual Quest"
+    },
+    "createAccountToStart": {
+      "en": "Create account and start learning",
+      "ja": "アカウントを作成して学習を始めましょう",
+      "ko": "계정을 만들고 학습을 시작하세요",
+      "zh": "创建账户开始学习"
+    },
+    "name": {
+      "en": "Name",
+      "ja": "名前",
+      "ko": "이름",
+      "zh": "姓名"
+    },
+    "enterYourName": {
+      "en": "Please enter your name",
+      "ja": "あなたの名前を入力してください",
+      "ko": "이름을 입력해주세요",
+      "zh": "请输入您的姓名"
+    },
+    "emailAddress": {
+      "en": "Email Address",
+      "ja": "メールアドレス",
+      "ko": "이메일 주소",
+      "zh": "邮箱地址"
+    },
+    "emailPlaceholder": {
+      "en": "your@email.com",
+      "ja": "your@email.com",
+      "ko": "your@email.com",
+      "zh": "your@email.com"
+    },
+    "password": {
+      "en": "Password",
+      "ja": "パスワード",
+      "ko": "비밀번호",
+      "zh": "密码"
+    },
+    "passwordHint": {
+      "en": "8+ alphanumeric characters",
+      "ja": "8文字以上の英数字",
+      "ko": "8자 이상의 영숫자",
+      "zh": "8位以上字母数字"
+    },
+    "confirmPassword": {
+      "en": "Confirm Password",
+      "ja": "パスワード確認",
+      "ko": "비밀번호 확인",
+      "zh": "确认密码"
+    },
+    "reenterPassword": {
+      "en": "Enter password again",
+      "ja": "もう一度パスワードを入力",
+      "ko": "비밀번호를 다시 입력하세요",
+      "zh": "再次输入密码"
+    },
+    "agreeToTerms": {
+      "en": "I agree to the Terms of Service and Privacy Policy",
+      "ja": "利用規約とプライバシーポリシーに同意します",
+      "ko": "이용약관 및 개인정보처리방침에 동의합니다",
+      "zh": "我同意服务条款和隐私政策"
+    },
+    "createAccountButton": {
+      "en": "Create Account",
+      "ja": "アカウントを作成",
+      "ko": "계정 만들기",
+      "zh": "创建账户"
+    },
+    "alreadyHaveAccount": {
+      "en": "Already have an account?",
+      "ja": "すでにアカウントをお持ちですか？",
+      "ko": "이미 계정이 있으신가요?",
+      "zh": "已有账户？"
+    },
+    "login": {
+      "en": "Login",
+      "ja": "ログイン",
+      "ko": "로그인",
+      "zh": "登录"
+    },
+    "welcomeBack": {
+      "en": "Welcome back",
+      "ja": "おかえりなさい",
+      "ko": "다시 오신 것을 환영합니다",
+      "zh": "欢迎回来"
+    },
+    "signInToContinue": {
+      "en": "Sign in to continue learning",
+      "ja": "アカウントにサインインして学習を続けましょう",
+      "ko": "로그인하여 학습을 계속하세요",
+      "zh": "登录以继续学习"
+    },
+    "enterPassword": {
+      "en": "Enter password",
+      "ja": "パスワードを入力",
+      "ko": "비밀번호 입력",
+      "zh": "输入密码"
+    },
+    "rememberLogin": {
+      "en": "Remember login",
+      "ja": "ログイン状態を記憶",
+      "ko": "로그인 상태 기억",
+      "zh": "记住登录"
+    },
+    "forgotPassword": {
+      "en": "Forgot password?",
+      "ja": "パスワードを忘れた？",
+      "ko": "비밀번호를 잊으셨나요?",
+      "zh": "忘记密码？"
+    },
+    "or": {
+      "en": "or",
+      "ja": "または",
+      "ko": "또는",
+      "zh": "或者"
+    },
+    "signInWithGoogle": {
+      "en": "Sign in with Google",
+      "ja": "Googleでログイン",
+      "ko": "Google로 로그인",
+      "zh": "使用Google登录"
+    },
+    "noAccount": {
+      "en": "Don't have an account?",
+      "ja": "アカウントをお持ちでない方は",
+      "ko": "계정이 없으신가요?",
+      "zh": "没有账户？"
+    },
+    "signUp": {
+      "en": "Sign up",
+      "ja": "新規登録",
+      "ko": "회원가입",
+      "zh": "注册"
+    },
+    "emailRequired": {
+      "en": "Email address is required",
+      "ja": "メールアドレスは必須です",
+      "ko": "이메일 주소는 필수입니다",
+      "zh": "邮箱地址是必需的"
+    },
+    "enterValidEmail": {
+      "en": "Please enter a valid email address",
+      "ja": "有効なメールアドレスを入力してください",
+      "ko": "유효한 이메일 주소를 입력해주세요",
+      "zh": "请输入有效的邮箱地址"
+    },
+    "passwordRequired": {
+      "en": "Password is required",
+      "ja": "パスワードは必須です",
+      "ko": "비밀번호는 필수입니다",
+      "zh": "密码是必需的"
+    },
+    "passwordMinLength": {
+      "en": "Password must be at least 8 characters",
+      "ja": "パスワードは8文字以上で入力してください",
+      "ko": "비밀번호는 8자 이상이어야 합니다",
+      "zh": "密码至少8位字符"
+    },
+    "passwordLoginMinLength": {
+      "en": "Password must be at least 6 characters",
+      "ja": "パスワードは6文字以上で入力してください",
+      "ko": "비밀번호는 6자 이상이어야 합니다",
+      "zh": "密码至少6位字符"
+    },
+    "passwordMustCombine": {
+      "en": "Password must combine letters and numbers",
+      "ja": "パスワードは英字と数字を組み合わせてください",
+      "ko": "비밀번호는 문자와 숫자를 조합해야 합니다",
+      "zh": "密码必须包含字母和数字"
+    },
+    "confirmPasswordRequired": {
+      "en": "Password confirmation is required",
+      "ja": "パスワードの確認は必須です",
+      "ko": "비밀번호 확인은 필수입니다",
+      "zh": "密码确认是必需的"
+    },
+    "passwordsNotMatch": {
+      "en": "Passwords do not match",
+      "ja": "パスワードが一致しません",
+      "ko": "비밀번호가 일치하지 않습니다",
+      "zh": "密码不匹配"
+    },
+    "nameRequired": {
+      "en": "Name is required",
+      "ja": "名前は必須です",
+      "ko": "이름은 필수입니다",
+      "zh": "姓名是必需的"
+    },
+    "nameMaxLength": {
+      "en": "Name must be within 50 characters",
+      "ja": "名前は50文字以内で入力してください",
+      "ko": "이름은 50자 이내여야 합니다",
+      "zh": "姓名必须在50字符内"
+    },
+    "agreeToTermsRequired": {
+      "en": "Please agree to the Terms of Service and Privacy Policy",
+      "ja": "利用規約とプライバシーポリシーに同意してください",
+      "ko": "이용약관 및 개인정보처리방침에 동의해주세요",
+      "zh": "请同意服务条款和隐私政策"
+    },
+    "registrationFailed": {
+      "en": "Registration failed. Please try again.",
+      "ja": "登録に失敗しました。もう一度お試しください。",
+      "ko": "등록에 실패했습니다. 다시 시도해주세요.",
+      "zh": "注册失败，请重试。"
+    },
+    "registrationError": {
+      "en": "An error occurred during registration.",
+      "ja": "登録中にエラーが発生しました。",
+      "ko": "등록 중 오류가 발생했습니다.",
+      "zh": "注册过程中发生错误。"
+    },
+    "loginFailed": {
+      "en": "Email address or password is incorrect.",
+      "ja": "メールアドレスまたはパスワードが正しくありません。",
+      "ko": "이메일 주소 또는 비밀번호가 올바르지 않습니다.",
+      "zh": "邮箱地址或密码不正确。"
+    },
+    "loginError": {
+      "en": "An error occurred during login.",
+      "ja": "ログイン中にエラーが発生しました。",
+      "ko": "로그인 중 오류가 발생했습니다.",
+      "zh": "登录过程中发生错误。"
+    },
+    "passwordResetNotReady": {
+      "en": "Password reset feature is coming soon",
+      "ja": "パスワードリセット機能は準備中です",
+      "ko": "비밀번호 재설정 기능이 곧 제공될 예정입니다",
+      "zh": "密码重置功能即将推出"
+    },
+    "googleLoginNotReady": {
+      "en": "Google login feature is coming soon",
+      "ja": "Googleログイン機能は準備中です",
+      "ko": "Google 로그인 기능이 곧 제공될 예정입니다",
+      "zh": "Google登录功能即将推出"
+    },
+    "failedToLoadTranslations": {
+      "en": "Failed to load translations",
+      "ja": "翻訳の読み込みに失敗しました",
+      "ko": "번역 로드에 실패했습니다",
+      "zh": "翻译加载失败"
     }
   }
 }
