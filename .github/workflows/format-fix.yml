@@ -100,65 +100,19 @@ jobs:
         # プルリクエストの場合はコミットのみ（プッシュしない）
         echo "✅ フォーマット修正をコミットしました（プルリクエスト用）"
 
-    - name: Send fix notification
-      if: steps.fix_report.outputs.changes_made == 'true' && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+    - name: Record format fix results
+      if: always()
       run: |
-        if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
-          curl -H "Content-Type: application/json" \
-          -d '{
-            "embeds": [{
-              "title": "🔧 フォーマット自動修正完了",
-              "description": "コードフォーマットの問題を自動で修正しました",
-              "color": 3066993,
-              "fields": [
-                {"name": "修正ファイル数", "value": "${{ steps.fix_report.outputs.total_changes }}", "inline": true},
-                {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
-                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
-              ],
-              "footer": {"text": "GitHub Actions"},
-              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
-              "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            }]
-          }' \
-          ${{ vars.DISCORD_WEBHOOK_URL }}
+        if [ "${{ steps.check_format.outputs.format_needed }}" == "true" ]; then
+          if [ "${{ steps.fix_report.outputs.changes_made }}" == "true" ]; then
+            echo "🔧 フォーマット修正: ${{ steps.fix_report.outputs.total_changes }}ファイル修正完了"
+          else
+            echo "⚠️ フォーマット問題検出: 修正は不要"
+          fi
+        else
+          echo "✅ フォーマットチェック: 修正不要"
         fi
-
-        if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{
-            "text": "🔧 フォーマット自動修正完了",
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "🔧 フォーマット自動修正完了"
-                }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "コードフォーマットの問題を自動で修正しました\n\n*修正内容:*\n• 修正ファイル数: ${{ steps.fix_report.outputs.total_changes }}\n• ブランチ: ${{ github.ref_name }}\n• 実行者: ${{ github.actor }}"
-                }
-              },
-              {
-                "type": "actions",
-                "elements": [
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "修正内容を確認"
-                    },
-                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                  }
-                ]
-              }
-            ]
-          }' \
-          ${{ vars.SLACK_WEBHOOK_URL }}
-        fi
+        # 統合通知システムが結果を収集
 
     - name: Format check summary
       run: |

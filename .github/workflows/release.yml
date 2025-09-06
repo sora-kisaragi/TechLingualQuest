@@ -4,12 +4,34 @@ on:
   push:
     tags:
       - 'v*'
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+  schedule:
+    # 毎週月曜日の午前9時（JST）にリリース候補をチェック
+    - cron: '0 0 * * 1'  # UTC 00:00 = JST 09:00
   workflow_dispatch:
     inputs:
       version:
         description: 'Release version (e.g., v1.0.0)'
         required: true
         default: 'v1.0.0'
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - beta
+          - rc
+      force_release:
+        description: 'Force release even if no changes detected'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -23,6 +45,14 @@ jobs:
   pre-release-checks:
     runs-on: ubuntu-latest
     name: Pre-Release Quality Checks
+    outputs:
+      should_release: ${{ steps.release_check.outputs.should_release }}
+      release_reason: ${{ steps.release_check.outputs.release_reason }}
+    if: >
+      github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') ||
+      github.event_name == 'schedule'
 
     steps:
     - name: Checkout code
@@ -64,7 +94,49 @@ jobs:
     - name: Check formatting
       run: dart format --output=none --set-exit-if-changed .
 
+    - name: Determine release necessity
+      id: release_check
+      run: |
+        SHOULD_RELEASE=false
+        RELEASE_REASON=""
+        
+        if [ "${{ github.event_name }}" == "push" ] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          SHOULD_RELEASE=true
+          RELEASE_REASON="タグ付きリリース (手動またはGitHub)"
+        elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          SHOULD_RELEASE=true
+          RELEASE_REASON="手動実行リリース"
+        elif [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+          # mainブランチにマージされた場合、リリース対象のchangelogをチェック
+          if git log --oneline HEAD~5..HEAD | grep -E "(feat|fix|BREAKING)" >/dev/null; then
+            SHOULD_RELEASE=true
+            RELEASE_REASON="mainブランチマージ後の自動リリース"
+          else
+            echo "⚠️ 重要な変更が検出されませんでした。リリースをスキップします。"
+          fi
+        elif [ "${{ github.event_name }}" == "schedule" ]; then
+          # スケジュール実行の場合、前回リリースから一週間以上経過し、かつ変更がある場合
+          LAST_RELEASE=$(git describe --tags --abbrev=0 HEAD 2>/dev/null || echo "")
+          if [ -n "$LAST_RELEASE" ]; then
+            DAYS_SINCE_RELEASE=$(( ( $(date +%s) - $(git log -1 --format="%ct" $LAST_RELEASE) ) / 86400 ))
+            if [ $DAYS_SINCE_RELEASE -ge 7 ] && git log --oneline $LAST_RELEASE..HEAD | grep -E "(feat|fix)" >/dev/null; then
+              SHOULD_RELEASE=true
+              RELEASE_REASON="週次自動リリース (前回から${DAYS_SINCE_RELEASE}日経過)"
+            fi
+          fi
+        fi
+        
+        echo "should_release=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
+        echo "release_reason=$RELEASE_REASON" >> $GITHUB_OUTPUT
+        
+        if [ "$SHOULD_RELEASE" == "true" ]; then
+          echo "✅ リリース実行: $RELEASE_REASON"
+        else
+          echo "⏭️ リリースをスキップ: 実行条件を満たしていません"
+        fi
+
     - name: Validate project structure
+      if: steps.release_check.outputs.should_release == 'true' || github.event.inputs.force_release == 'true'
       run: ./validate_flutter_setup.sh
 
   # Android Release Build
@@ -72,6 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Android Release
     needs: pre-release-checks
+    if: needs.pre-release-checks.outputs.should_release == 'true' || github.event.inputs.force_release == 'true'
 
     steps:
     - name: Checkout code
@@ -137,6 +210,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Web Release
     needs: pre-release-checks
+    if: needs.pre-release-checks.outputs.should_release == 'true' || github.event.inputs.force_release == 'true'
 
     steps:
     - name: Checkout code
@@ -177,7 +251,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Create GitHub Release
     needs: [pre-release-checks, build-android, build-web]
-    if: startsWith(github.ref, 'refs/tags/')
+    if: (startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)) && (needs.pre-release-checks.outputs.should_release == 'true' || github.event.inputs.force_release == 'true')
 
     steps:
     - name: Checkout code
@@ -185,12 +259,28 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Get version from tag
+    - name: Get version from tag or input
       id: version
       run: |
-        VERSION=${GITHUB_REF#refs/tags/}
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "version_number=${VERSION#v}" >> $GITHUB_OUTPUT
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+          RELEASE_TYPE="${{ github.event.inputs.release_type }}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_number=${VERSION#v}" >> $GITHUB_OUTPUT
+          echo "release_type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_number=${VERSION#v}" >> $GITHUB_OUTPUT
+          echo "release_type=release" >> $GITHUB_OUTPUT
+        else
+          # 自動リリースの場合、適切なバージョンを生成
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD 2>/dev/null || echo "v0.0.0")
+          NEXT_VERSION=$(echo $LAST_TAG | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          echo "version=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "version_number=${NEXT_VERSION#v}" >> $GITHUB_OUTPUT
+          echo "release_type=auto" >> $GITHUB_OUTPUT
+        fi
 
     - name: Generate release notes
       id: release_notes

@@ -104,7 +104,8 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
 
-  # ビルド (Android, iOS, Web) - 並列実行で時間短縮
+  # ビルド (Android, Web) - 並列実行で時間短縮
+  # AndroidビルドはmainブランチのPR時のみ実行
   build:
     runs-on: ubuntu-latest
     name: Build Applications
@@ -113,6 +114,15 @@ jobs:
       fail-fast: false  # 一つが失敗しても他を継続
       matrix:
         build-type: [android-apk, android-appbundle, web]
+        include:
+          # Androidビルドはmainブランチへのプルリクエスト時のみ実行
+          - build-type: android-apk
+            condition: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
+          - build-type: android-appbundle  
+            condition: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
+          # Webビルドは全てのPRで実行
+          - build-type: web
+            condition: true
 
     steps:
     - name: Checkout code
@@ -126,7 +136,7 @@ jobs:
         cache: true
 
     - name: Setup Java (Android builds)
-      if: startsWith(matrix.build-type, 'android')
+      if: startsWith(matrix.build-type, 'android') && (github.base_ref == 'main' || github.ref_name == 'main')
       uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
@@ -141,7 +151,7 @@ jobs:
       run: flutter pub get
 
     - name: Build Android APK
-      if: matrix.build-type == 'android-apk'
+      if: matrix.build-type == 'android-apk' && (github.base_ref == 'main' || github.ref_name == 'main')
       run: |
         # Android APK 向けの環境変数を設定
         export APP_ENV=prod
@@ -153,7 +163,7 @@ jobs:
         echo "APK_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)" >> $GITHUB_ENV
 
     - name: Build Android App Bundle
-      if: matrix.build-type == 'android-appbundle'
+      if: matrix.build-type == 'android-appbundle' && (github.base_ref == 'main' || github.ref_name == 'main')
       run: |
         # Android App Bundle 向けの環境変数を設定
         export APP_ENV=prod
@@ -174,7 +184,7 @@ jobs:
         echo "WEB_SIZE=$(du -sh build/web | cut -f1)" >> $GITHUB_ENV
 
     - name: Upload Android APK artifact
-      if: matrix.build-type == 'android-apk'
+      if: matrix.build-type == 'android-apk' && (github.base_ref == 'main' || github.ref_name == 'main')
       uses: actions/upload-artifact@v4
       with:
         name: android-apk
@@ -182,7 +192,7 @@ jobs:
         retention-days: 7
 
     - name: Upload Android App Bundle artifact
-      if: matrix.build-type == 'android-appbundle'
+      if: matrix.build-type == 'android-appbundle' && (github.base_ref == 'main' || github.ref_name == 'main')
       uses: actions/upload-artifact@v4
       with:
         name: android-appbundle
@@ -197,149 +207,26 @@ jobs:
         path: build/web/
         retention-days: 7
 
-  # 通知処理
-  notify:
+  # 結果記録（統合通知用）
+  record-results:
     runs-on: ubuntu-latest
-    name: Send Notifications
+    name: Record Results for Summary
     needs: [quality-check, test, build]
     if: always()
 
     steps:
-    - name: Evaluate workflow results
-      id: evaluate
+    - name: Record workflow results
       run: |
+        echo "📊 ワークフロー実行結果を記録"
+        echo "Quality Check: ${{ needs.quality-check.result }}"
+        echo "Test: ${{ needs.test.result }}"
+        echo "Build: ${{ needs.build.result }}"
+        
+        # 統合通知システムが結果を収集するのを支援
         if [[ "${{ needs.quality-check.result }}" == "success" && "${{ needs.test.result }}" == "success" && "${{ needs.build.result }}" == "success" ]]; then
-          echo "status=success" >> $GITHUB_OUTPUT
-          echo "message=✅ CI/CD パイプラインが正常に完了しました" >> $GITHUB_OUTPUT
-          echo "color=3066993" >> $GITHUB_OUTPUT
+          echo "✅ Flutter CI/CD: 全プロセス正常完了"
+          echo "workflow_status=success" >> $GITHUB_ENV
         else
-          echo "status=failure" >> $GITHUB_OUTPUT
-          echo "message=❌ CI/CD パイプラインでエラーが発生しました" >> $GITHUB_OUTPUT
-          echo "color=15158332" >> $GITHUB_OUTPUT
+          echo "❌ Flutter CI/CD: 一部プロセスでエラー発生"
+          echo "workflow_status=failure" >> $GITHUB_ENV
         fi
-
-        echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-        echo "commit=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
-        echo "actor=${{ github.actor }}" >> $GITHUB_OUTPUT
-        echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
-        echo "run_id=${{ github.run_id }}" >> $GITHUB_OUTPUT
-
-    - name: Send Discord notification
-      if: vars.DISCORD_WEBHOOK_URL
-      run: |
-        # 失敗した処理を特定
-        FAILED_DETAILS=""
-        if [ "${{ needs.quality-check.result }}" != "success" ]; then
-          FAILED_DETAILS="${FAILED_DETAILS}• コード品質チェック: フォーマット・静的解析エラー\n"
-        fi
-        if [ "${{ needs.test.result }}" != "success" ]; then
-          FAILED_DETAILS="${FAILED_DETAILS}• テスト実行: 単体・ウィジェットテスト失敗\n"
-        fi
-        if [ "${{ needs.build.result }}" != "success" ]; then
-          FAILED_DETAILS="${FAILED_DETAILS}• ビルド処理: Android・Webビルドエラー\n"
-        fi
-        
-        DESCRIPTION_TEXT="${{ steps.evaluate.outputs.message }}"
-        if [ "${{ steps.evaluate.outputs.status }}" != "success" ] && [ -n "$FAILED_DETAILS" ]; then
-          DESCRIPTION_TEXT="${DESCRIPTION_TEXT}\n\n**失敗詳細:**\n${FAILED_DETAILS}"
-        fi
-        
-        curl -H "Content-Type: application/json" \
-        -d '{
-          "embeds": [{
-            "title": "TechLingual Quest CI/CD",
-            "description": "'"$DESCRIPTION_TEXT"'",
-            "color": ${{ steps.evaluate.outputs.color }},
-            "fields": [
-              {"name": "ブランチ", "value": "${{ steps.evaluate.outputs.branch }}", "inline": true},
-              {"name": "コミット", "value": "${{ steps.evaluate.outputs.commit }}", "inline": true},
-              {"name": "実行者", "value": "${{ steps.evaluate.outputs.actor }}", "inline": true},
-              {"name": "品質チェック", "value": "${{ needs.quality-check.result }}", "inline": true},
-              {"name": "テスト", "value": "${{ needs.test.result }}", "inline": true},
-              {"name": "ビルド", "value": "${{ needs.build.result }}", "inline": true},
-              {"name": "ワークフロー", "value": "Flutter CI/CD", "inline": true},
-              {"name": "実行環境", "value": "GitHub Actions", "inline": true}
-            ],
-            "footer": {"text": "GitHub Actions"},
-            "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
-            "url": "https://github.com/${{ steps.evaluate.outputs.repo }}/actions/runs/${{ steps.evaluate.outputs.run_id }}"
-          }]
-        }' \
-        ${{ vars.DISCORD_WEBHOOK_URL }}
-
-    - name: Send Slack notification
-      if: vars.SLACK_WEBHOOK_URL
-      run: |
-        STATUS_EMOJI="${{ steps.evaluate.outputs.status == 'success' && ':white_check_mark:' || ':x:' }}"
-        
-        # 失敗した処理を詳細に特定
-        FAILED_JOBS=""
-        if [ "${{ needs.quality-check.result }}" != "success" ]; then
-          FAILED_JOBS="${FAILED_JOBS}• コード品質チェック (フォーマット・静的解析)\n"
-        fi
-        if [ "${{ needs.test.result }}" != "success" ]; then
-          FAILED_JOBS="${FAILED_JOBS}• テスト実行 (単体・ウィジェットテスト)\n"
-        fi
-        if [ "${{ needs.build.result }}" != "success" ]; then
-          FAILED_JOBS="${FAILED_JOBS}• ビルド処理 (Android APK・Web)\n"
-        fi
-        
-        # 成功時と失敗時で異なるメッセージを構築
-        if [ "${{ steps.evaluate.outputs.status }}" == "success" ]; then
-          DETAIL_MESSAGE="全てのCI/CD処理が正常に完了しました。\n\n*完了した処理:*\n• コード品質チェック ✅\n• テスト実行 ✅\n• ビルド処理 ✅"
-        else
-          DETAIL_MESSAGE="CI/CD処理でエラーが発生しました。\n\n*失敗した処理:*\n${FAILED_JOBS}\n詳細な原因はログを確認してください。"
-        fi
-        
-        curl -X POST -H 'Content-type: application/json' \
-        --data '{
-          "text": "'$STATUS_EMOJI' TechLingual Quest CI/CD",
-          "blocks": [
-            {
-              "type": "header",
-              "text": {
-                "type": "plain_text",
-                "text": "'$STATUS_EMOJI' TechLingual Quest CI/CD"
-              }
-            },
-            {
-              "type": "section",
-              "text": {
-                "type": "mrkdwn",
-                "text": "'"$DETAIL_MESSAGE"'"
-              }
-            },
-            {
-              "type": "section",
-              "fields": [
-                {"type": "mrkdwn", "text": "*ブランチ:*\n${{ steps.evaluate.outputs.branch }}"},
-                {"type": "mrkdwn", "text": "*コミット:*\n${{ steps.evaluate.outputs.commit }}"},
-                {"type": "mrkdwn", "text": "*実行者:*\n${{ steps.evaluate.outputs.actor }}"},
-                {"type": "mrkdwn", "text": "*ワークフロー:*\nFlutter CI/CD"}
-              ]
-            },
-            {
-              "type": "section",
-              "fields": [
-                {"type": "mrkdwn", "text": "*品質チェック:*\n${{ needs.quality-check.result }}"},
-                {"type": "mrkdwn", "text": "*テスト実行:*\n${{ needs.test.result }}"},
-                {"type": "mrkdwn", "text": "*ビルド処理:*\n${{ needs.build.result }}"},
-                {"type": "mrkdwn", "text": "*実行時間:*\n約 ${{ github.event.workflow_run.run_duration_ms / 60000 || '不明' }} 分"}
-              ]
-            },
-            {
-              "type": "actions",
-              "elements": [
-                {
-                  "type": "button",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "詳細ログを確認"
-                  },
-                  "url": "https://github.com/${{ steps.evaluate.outputs.repo }}/actions/runs/${{ steps.evaluate.outputs.run_id }}"
-                }
-              ]
-            }
-          ]
-        }' \
-        ${{ vars.SLACK_WEBHOOK_URL }}

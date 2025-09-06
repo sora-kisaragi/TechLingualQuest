@@ -108,49 +108,12 @@ jobs:
           pubspec.lock
         retention-days: 30
 
-    - name: Send security notification
-      if: failure() && (vars.DISCORD_WEBHOOK_URL || vars.SLACK_WEBHOOK_URL)
+    - name: Record security scan results
+      if: always()
       run: |
-        if [ -n "${{ vars.DISCORD_WEBHOOK_URL }}" ]; then
-          curl -H "Content-Type: application/json" \
-          -d '{
-            "embeds": [{
-              "title": "🚨 セキュリティスキャン警告",
-              "description": "TechLingual Questプロジェクトでセキュリティ上の問題が検出されました",
-              "color": 16711680,
-              "fields": [
-                {"name": "ブランチ", "value": "${{ github.ref_name }}", "inline": true},
-                {"name": "コミット", "value": "$(echo ${{ github.sha }} | cut -c1-7)", "inline": true},
-                {"name": "実行者", "value": "${{ github.actor }}", "inline": true}
-              ],
-              "footer": {"text": "緊急対応が必要です"},
-              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
-              "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            }]
-          }' \
-          ${{ vars.DISCORD_WEBHOOK_URL }}
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ セキュリティスキャン: 問題なし"
+        else
+          echo "⚠️ セキュリティスキャン: 問題検出または実行エラー"
         fi
-
-        if [ -n "${{ vars.SLACK_WEBHOOK_URL }}" ]; then
-          curl -X POST -H 'Content-type: application/json' \
-          --data '{
-            "text": "🚨 セキュリティスキャン警告",
-            "blocks": [
-              {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": "🚨 セキュリティスキャン警告"
-                }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "TechLingual Questプロジェクトでセキュリティ上の問題が検出されました。緊急対応が必要です。"
-                }
-              }
-            ]
-          }' \
-          ${{ vars.SLACK_WEBHOOK_URL }}
-        fi
+        # 統合通知システムが結果を収集
