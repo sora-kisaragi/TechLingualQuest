@@ -54,7 +54,8 @@ void main() {
       await settingsService.saveSettings(initialSettings);
 
       // 言語設定を更新
-      final updateSuccess = await settingsService.updateSetting('language', 'en');
+      final updateSuccess =
+          await settingsService.updateSetting('language', 'en');
       expect(updateSuccess, isTrue);
 
       // 更新された設定を確認
@@ -67,7 +68,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('notificationsEnabled', false);
+      final updateSuccess =
+          await settingsService.updateSetting('notificationsEnabled', false);
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -79,7 +81,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('dailyReminderTime', '07:30');
+      final updateSuccess =
+          await settingsService.updateSetting('dailyReminderTime', '07:30');
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -90,7 +93,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('themeMode', 'light');
+      final updateSuccess =
+          await settingsService.updateSetting('themeMode', 'light');
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -101,7 +105,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('studyGoalPerDay', 90);
+      final updateSuccess =
+          await settingsService.updateSetting('studyGoalPerDay', 90);
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -112,7 +117,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('difficultyPreference', 'beginner');
+      final updateSuccess = await settingsService.updateSetting(
+          'difficultyPreference', 'beginner');
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -123,7 +129,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('soundEnabled', false);
+      final updateSuccess =
+          await settingsService.updateSetting('soundEnabled', false);
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -134,7 +141,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('vibrationEnabled', false);
+      final updateSuccess =
+          await settingsService.updateSetting('vibrationEnabled', false);
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -145,7 +153,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('autoSync', true);
+      final updateSuccess =
+          await settingsService.updateSetting('autoSync', true);
       expect(updateSuccess, isTrue);
 
       final updatedSettings = await settingsService.loadSettings();
@@ -156,7 +165,8 @@ void main() {
       const initialSettings = UserSettings();
       await settingsService.saveSettings(initialSettings);
 
-      final updateSuccess = await settingsService.updateSetting('unknownKey', 'value');
+      final updateSuccess =
+          await settingsService.updateSetting('unknownKey', 'value');
       expect(updateSuccess, isFalse);
     });
 
@@ -312,7 +322,7 @@ void main() {
     test('should reset settings to defaults', () async {
       // 初期化とカスタム設定の設定
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       const customSettings = UserSettings(
         language: 'en',
         themeMode: 'dark',
@@ -339,12 +349,13 @@ void main() {
       // モックで失敗を強制するため、無効なProviderContainerを作成
       final badContainer = ProviderContainer(
         overrides: [
-          settingsServiceProvider.overrideWith((ref) => _FailingSettingsService()),
+          settingsServiceProvider
+              .overrideWith((ref) => _FailingSettingsService()),
         ],
       );
-      
+
       final badNotifier = badContainer.read(userSettingsProvider.notifier);
-      
+
       try {
         const newSettings = UserSettings(language: 'en');
         await badNotifier.updateSettings(newSettings);

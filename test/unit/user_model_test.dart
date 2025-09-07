@@ -132,7 +132,7 @@ void main() {
         themeMode: 'light',
         studyGoalPerDay: 60,
       );
-      
+
       final copiedUser = originalUser.copyWith(settings: newSettings);
 
       expect(copiedUser.settings, equals(newSettings));

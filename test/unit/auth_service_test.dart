@@ -419,7 +419,7 @@ void main() {
         themeMode: 'system',
         studyGoalPerDay: 30,
       );
-      
+
       // ユーザーを作成して初期設定を設定
       const user = AuthUser(
         id: 'test-id',
@@ -451,8 +451,21 @@ void main() {
   });
 
   group('User Settings Integration Tests', () {
+    late ProviderContainer container;
+    late AuthService authService;
+
+    setUp(() {
+      container = ProviderContainer();
+      authService = container.read(authServiceProvider.notifier);
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+
     test('Settings should be null for new users', () async {
-      final loginResult = await authService.login('test@example.com', 'password123');
+      final loginResult =
+          await authService.login('test@example.com', 'password123');
       expect(loginResult, true);
 
       final authState = container.read(authServiceProvider);
@@ -469,7 +482,7 @@ void main() {
     test('Settings update should preserve other user fields', () async {
       // ログインしてユーザーを作成
       await authService.login('test@example.com', 'password123');
-      
+
       // プロフィールを更新
       await authService.updateProfile(
         name: 'Test Name',
@@ -496,7 +509,6 @@ void main() {
       expect(user.name, equals('Test Name'));
       expect(user.bio, equals('Test Bio'));
       expect(user.level, equals(UserLevel.advanced));
-    });
     });
   });
 

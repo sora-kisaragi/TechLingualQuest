@@ -12,7 +12,8 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    testWidgets('should display all settings sections', (WidgetTester tester) async {
+    testWidgets('should display all settings sections',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -42,7 +43,8 @@ void main() {
       expect(find.text('自動同期'), findsOneWidget);
     });
 
-    testWidgets('should display default settings values', (WidgetTester tester) async {
+    testWidgets('should display default settings values',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -64,7 +66,7 @@ void main() {
       final notificationSwitch = find.byType(Switch).at(0);
       final soundSwitch = find.byType(Switch).at(1);
       final vibrationSwitch = find.byType(Switch).at(2);
-      
+
       expect(tester.widget<Switch>(notificationSwitch).value, isTrue);
       expect(tester.widget<Switch>(soundSwitch).value, isTrue);
       expect(tester.widget<Switch>(vibrationSwitch).value, isTrue);
@@ -94,7 +96,8 @@ void main() {
       expect(find.text('設定が更新されました'), findsOneWidget);
     });
 
-    testWidgets('should toggle notification setting', (WidgetTester tester) async {
+    testWidgets('should toggle notification setting',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -138,7 +141,8 @@ void main() {
       expect(find.text('設定が更新されました'), findsOneWidget);
     });
 
-    testWidgets('should open time picker for reminder time', (WidgetTester tester) async {
+    testWidgets('should open time picker for reminder time',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -162,7 +166,8 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('should adjust study goal with plus/minus buttons', (WidgetTester tester) async {
+    testWidgets('should adjust study goal with plus/minus buttons',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -183,7 +188,8 @@ void main() {
       expect(find.text('設定が更新されました'), findsOneWidget);
     });
 
-    testWidgets('should show reset confirmation dialog', (WidgetTester tester) async {
+    testWidgets('should show reset confirmation dialog',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -210,14 +216,15 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('should reset settings when confirmed', (WidgetTester tester) async {
+    testWidgets('should reset settings when confirmed',
+        (WidgetTester tester) async {
       // カスタム設定でプロバイダーをセットアップ
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userSettingsProvider.overrideWith((ref) => 
-              _CustomUserSettingsNotifier(const UserSettings(language: 'en', themeMode: 'dark'))
-            ),
+            userSettingsProvider.overrideWith((ref) =>
+                _CustomUserSettingsNotifier(
+                    const UserSettings(language: 'en', themeMode: 'dark'))),
           ],
           child: MaterialApp(
             home: const SettingsPage(),
@@ -244,7 +251,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userSettingsProvider.overrideWith((ref) => _LoadingUserSettingsNotifier()),
+            userSettingsProvider
+                .overrideWith((ref) => _LoadingUserSettingsNotifier()),
           ],
           child: MaterialApp(
             home: const SettingsPage(),
@@ -262,7 +270,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userSettingsProvider.overrideWith((ref) => _ErrorUserSettingsNotifier()),
+            userSettingsProvider
+                .overrideWith((ref) => _ErrorUserSettingsNotifier()),
           ],
           child: MaterialApp(
             home: const SettingsPage(),
@@ -278,13 +287,14 @@ void main() {
       expect(find.text('再試行'), findsOneWidget);
     });
 
-    testWidgets('should limit study goal adjustment', (WidgetTester tester) async {
+    testWidgets('should limit study goal adjustment',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userSettingsProvider.overrideWith((ref) => 
-              _CustomUserSettingsNotifier(const UserSettings(studyGoalPerDay: 10))
-            ),
+            userSettingsProvider.overrideWith((ref) =>
+                _CustomUserSettingsNotifier(
+                    const UserSettings(studyGoalPerDay: 10))),
           ],
           child: MaterialApp(
             home: const SettingsPage(),
@@ -299,7 +309,8 @@ void main() {
       expect(tester.widget<IconButton>(minusButton).onPressed, isNull);
     });
 
-    testWidgets('should show correct switch states for custom settings', (WidgetTester tester) async {
+    testWidgets('should show correct switch states for custom settings',
+        (WidgetTester tester) async {
       const customSettings = UserSettings(
         notificationsEnabled: false,
         soundEnabled: false,
@@ -309,9 +320,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            userSettingsProvider.overrideWith((ref) => 
-              _CustomUserSettingsNotifier(customSettings)
-            ),
+            userSettingsProvider.overrideWith(
+                (ref) => _CustomUserSettingsNotifier(customSettings)),
           ],
           child: MaterialApp(
             home: const SettingsPage(),
@@ -323,7 +333,8 @@ void main() {
 
       // スイッチの状態を確認
       final switches = find.byType(Switch);
-      expect(tester.widget<Switch>(switches.at(0)).value, isFalse); // notifications
+      expect(tester.widget<Switch>(switches.at(0)).value,
+          isFalse); // notifications
       expect(tester.widget<Switch>(switches.at(1)).value, isFalse); // sound
       expect(tester.widget<Switch>(switches.at(2)).value, isTrue); // vibration
     });
@@ -331,8 +342,11 @@ void main() {
 }
 
 // テスト用のカスタムノティファイア
-class _CustomUserSettingsNotifier extends StateNotifier<AsyncValue<UserSettings>> {
-  _CustomUserSettingsNotifier(UserSettings settings) : super(AsyncValue.data(settings));
+class _CustomUserSettingsNotifier extends UserSettingsNotifier {
+  _CustomUserSettingsNotifier(UserSettings settings)
+      : super(_MockSettingsService()) {
+    state = AsyncValue.data(settings);
+  }
 
   @override
   Future<void> updateSettings(UserSettings newSettings) async {
@@ -345,10 +359,31 @@ class _CustomUserSettingsNotifier extends StateNotifier<AsyncValue<UserSettings>
   }
 }
 
-class _LoadingUserSettingsNotifier extends StateNotifier<AsyncValue<UserSettings>> {
-  _LoadingUserSettingsNotifier() : super(const AsyncValue.loading());
+class _LoadingUserSettingsNotifier extends UserSettingsNotifier {
+  _LoadingUserSettingsNotifier() : super(_MockSettingsService()) {
+    state = const AsyncValue.loading();
+  }
 }
 
-class _ErrorUserSettingsNotifier extends StateNotifier<AsyncValue<UserSettings>> {
-  _ErrorUserSettingsNotifier() : super(AsyncValue.error('Test error', StackTrace.empty));
+class _ErrorUserSettingsNotifier extends UserSettingsNotifier {
+  _ErrorUserSettingsNotifier() : super(_MockSettingsService()) {
+    state = AsyncValue.error('Test error', StackTrace.empty);
+  }
+}
+
+class _MockSettingsService extends SettingsService {
+  @override
+  Future<UserSettings> loadSettings() async {
+    return const UserSettings();
+  }
+
+  @override
+  Future<bool> saveSettings(UserSettings settings) async {
+    return true;
+  }
+
+  @override
+  Future<bool> resetToDefaults() async {
+    return true;
+  }
 }

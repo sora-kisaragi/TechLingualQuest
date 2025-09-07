@@ -69,7 +69,7 @@ void main() {
 
       expect(originalSettings.language, equals('ja'));
       expect(copiedSettings.language, equals('en'));
-      
+
       // Verify they are different instances
       expect(identical(originalSettings, copiedSettings), isFalse);
     });

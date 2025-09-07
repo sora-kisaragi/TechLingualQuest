@@ -56,7 +56,7 @@ class UserSettings {
 
   /// JSON から UserSettings インスタンスを作成
   /// Create UserSettings instance from JSON
-  factory UserSettings.fromJson(Map<String, dynamic> json) => 
+  factory UserSettings.fromJson(Map<String, dynamic> json) =>
       _$UserSettingsFromJson(json);
 
   /// UserSettings インスタンスを JSON に変換
@@ -122,8 +122,8 @@ class UserSettings {
   @override
   String toString() {
     return 'UserSettings(language: $language, notificationsEnabled: $notificationsEnabled, '
-           'dailyReminderTime: $dailyReminderTime, themeMode: $themeMode, '
-           'studyGoalPerDay: $studyGoalPerDay, difficultyPreference: $difficultyPreference, '
-           'soundEnabled: $soundEnabled, vibrationEnabled: $vibrationEnabled, autoSync: $autoSync)';
+        'dailyReminderTime: $dailyReminderTime, themeMode: $themeMode, '
+        'studyGoalPerDay: $studyGoalPerDay, difficultyPreference: $difficultyPreference, '
+        'soundEnabled: $soundEnabled, vibrationEnabled: $vibrationEnabled, autoSync: $autoSync)';
   }
 }

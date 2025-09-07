@@ -255,7 +255,8 @@ class AuthService extends StateNotifier<AuthState> {
         isLoading: false,
       );
 
-      AppLogger.info('User settings updated successfully for user: ${updatedUser.id}');
+      AppLogger.info(
+          'User settings updated successfully for user: ${updatedUser.id}');
       return true;
     } catch (error) {
       AppLogger.error('Settings update failed: $error');

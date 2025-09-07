@@ -22,7 +22,7 @@ class SettingsService {
     try {
       await _ensureInitialized();
       final settingsJson = _prefs!.getString(_settingsKey);
-      
+
       if (settingsJson == null) {
         AppLogger.info('No saved settings found, returning default settings');
         return const UserSettings();
@@ -30,11 +30,12 @@ class SettingsService {
 
       final settingsMap = json.decode(settingsJson) as Map<String, dynamic>;
       final settings = UserSettings.fromJson(settingsMap);
-      
+
       AppLogger.info('User settings loaded successfully');
       return settings;
     } catch (e, stackTrace) {
-      AppLogger.error('Failed to load user settings, returning defaults', e, stackTrace);
+      AppLogger.error(
+          'Failed to load user settings, returning defaults', e, stackTrace);
       return const UserSettings();
     }
   }
@@ -46,13 +47,13 @@ class SettingsService {
       await _ensureInitialized();
       final settingsJson = json.encode(settings.toJson());
       final success = await _prefs!.setString(_settingsKey, settingsJson);
-      
+
       if (success) {
         AppLogger.info('User settings saved successfully');
       } else {
         AppLogger.warning('Failed to save user settings');
       }
-      
+
       return success;
     } catch (e, stackTrace) {
       AppLogger.error('Failed to save user settings', e, stackTrace);
@@ -74,25 +75,32 @@ class SettingsService {
           updatedSettings = currentSettings.copyWith(language: value as String);
           break;
         case 'notificationsEnabled':
-          updatedSettings = currentSettings.copyWith(notificationsEnabled: value as bool);
+          updatedSettings =
+              currentSettings.copyWith(notificationsEnabled: value as bool);
           break;
         case 'dailyReminderTime':
-          updatedSettings = currentSettings.copyWith(dailyReminderTime: value as String);
+          updatedSettings =
+              currentSettings.copyWith(dailyReminderTime: value as String);
           break;
         case 'themeMode':
-          updatedSettings = currentSettings.copyWith(themeMode: value as String);
+          updatedSettings =
+              currentSettings.copyWith(themeMode: value as String);
           break;
         case 'studyGoalPerDay':
-          updatedSettings = currentSettings.copyWith(studyGoalPerDay: value as int);
+          updatedSettings =
+              currentSettings.copyWith(studyGoalPerDay: value as int);
           break;
         case 'difficultyPreference':
-          updatedSettings = currentSettings.copyWith(difficultyPreference: value as String);
+          updatedSettings =
+              currentSettings.copyWith(difficultyPreference: value as String);
           break;
         case 'soundEnabled':
-          updatedSettings = currentSettings.copyWith(soundEnabled: value as bool);
+          updatedSettings =
+              currentSettings.copyWith(soundEnabled: value as bool);
           break;
         case 'vibrationEnabled':
-          updatedSettings = currentSettings.copyWith(vibrationEnabled: value as bool);
+          updatedSettings =
+              currentSettings.copyWith(vibrationEnabled: value as bool);
           break;
         case 'autoSync':
           updatedSettings = currentSettings.copyWith(autoSync: value as bool);
@@ -115,13 +123,13 @@ class SettingsService {
     try {
       await _ensureInitialized();
       final success = await _prefs!.remove(_settingsKey);
-      
+
       if (success) {
         AppLogger.info('User settings reset to defaults');
       } else {
         AppLogger.warning('Failed to reset user settings');
       }
-      
+
       return success;
     } catch (e, stackTrace) {
       AppLogger.error('Failed to reset user settings', e, stackTrace);
@@ -148,11 +156,11 @@ class SettingsService {
     try {
       final settings = UserSettings.fromJson(settingsData);
       final success = await saveSettings(settings);
-      
+
       if (success) {
         AppLogger.info('User settings imported successfully');
       }
-      
+
       return success;
     } catch (e, stackTrace) {
       AppLogger.error('Failed to import user settings', e, stackTrace);
@@ -169,14 +177,17 @@ final settingsServiceProvider = Provider<SettingsService>((ref) {
 
 /// 現在の設定状態を管理するプロバイダー
 /// Provider for managing current settings state
-final userSettingsProvider = StateNotifierProvider<UserSettingsNotifier, AsyncValue<UserSettings>>((ref) {
+final userSettingsProvider =
+    StateNotifierProvider<UserSettingsNotifier, AsyncValue<UserSettings>>(
+        (ref) {
   return UserSettingsNotifier(ref.read(settingsServiceProvider));
 });
 
 /// ユーザー設定の状態管理クラス
 /// State management class for user settings
 class UserSettingsNotifier extends StateNotifier<AsyncValue<UserSettings>> {
-  UserSettingsNotifier(this._settingsService) : super(const AsyncValue.loading()) {
+  UserSettingsNotifier(this._settingsService)
+      : super(const AsyncValue.loading()) {
     _loadSettings();
   }
 

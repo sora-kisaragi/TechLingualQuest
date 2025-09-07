@@ -20,7 +20,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final settingsAsync = ref.watch(userSettingsProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('設定'),
@@ -78,7 +78,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             _buildLanguageSetting(context, settings),
             _buildThemeSetting(context, settings),
           ]),
-          
+
           const SizedBox(height: 24),
 
           // 通知設定セクション
@@ -114,14 +114,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // アクションボタン
           _buildActionButtons(context, settings),
-          
+
           const SizedBox(height: 24),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, IconData icon) {
+  Widget _buildSectionHeader(
+      BuildContext context, String title, IconData icon) {
     return Row(
       children: [
         Icon(icon, size: 20, color: Theme.of(context).primaryColor),
@@ -129,9 +130,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         Text(
           title,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
-          ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
         ),
       ],
     );
@@ -153,11 +154,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       subtitle: Text(_getLanguageDisplayName(settings.language)),
       trailing: DropdownButton<String>(
         value: settings.language,
-        onChanged: _isLoading ? null : (String? newValue) {
-          if (newValue != null) {
-            _updateSetting(settings.copyWith(language: newValue));
-          }
-        },
+        onChanged: _isLoading
+            ? null
+            : (String? newValue) {
+                if (newValue != null) {
+                  _updateSetting(settings.copyWith(language: newValue));
+                }
+              },
         items: const [
           DropdownMenuItem(value: 'ja', child: Text('日本語')),
           DropdownMenuItem(value: 'en', child: Text('English')),
@@ -173,11 +176,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       subtitle: Text(_getThemeDisplayName(settings.themeMode)),
       trailing: DropdownButton<String>(
         value: settings.themeMode,
-        onChanged: _isLoading ? null : (String? newValue) {
-          if (newValue != null) {
-            _updateSetting(settings.copyWith(themeMode: newValue));
-          }
-        },
+        onChanged: _isLoading
+            ? null
+            : (String? newValue) {
+                if (newValue != null) {
+                  _updateSetting(settings.copyWith(themeMode: newValue));
+                }
+              },
         items: const [
           DropdownMenuItem(value: 'system', child: Text('システム')),
           DropdownMenuItem(value: 'light', child: Text('ライト')),
@@ -193,20 +198,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       title: const Text('通知を有効にする'),
       subtitle: const Text('学習リマインダーやアップデート通知'),
       value: settings.notificationsEnabled,
-      onChanged: _isLoading ? null : (bool value) {
-        _updateSetting(settings.copyWith(notificationsEnabled: value));
-      },
+      onChanged: _isLoading
+          ? null
+          : (bool value) {
+              _updateSetting(settings.copyWith(notificationsEnabled: value));
+            },
     );
   }
 
-  Widget _buildReminderTimeSetting(BuildContext context, UserSettings settings) {
+  Widget _buildReminderTimeSetting(
+      BuildContext context, UserSettings settings) {
     return ListTile(
       leading: const Icon(Icons.schedule),
       title: const Text('リマインダー時刻'),
       subtitle: Text(settings.dailyReminderTime),
       trailing: IconButton(
         icon: const Icon(Icons.access_time),
-        onPressed: _isLoading ? null : () => _selectReminderTime(context, settings),
+        onPressed:
+            _isLoading ? null : () => _selectReminderTime(context, settings),
       ),
     );
   }
@@ -217,9 +226,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       title: const Text('音声を有効にする'),
       subtitle: const Text('効果音や音声フィードバック'),
       value: settings.soundEnabled,
-      onChanged: _isLoading ? null : (bool value) {
-        _updateSetting(settings.copyWith(soundEnabled: value));
-      },
+      onChanged: _isLoading
+          ? null
+          : (bool value) {
+              _updateSetting(settings.copyWith(soundEnabled: value));
+            },
     );
   }
 
@@ -229,9 +240,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       title: const Text('バイブレーションを有効にする'),
       subtitle: const Text('フィードバック用の振動'),
       value: settings.vibrationEnabled,
-      onChanged: _isLoading ? null : (bool value) {
-        _updateSetting(settings.copyWith(vibrationEnabled: value));
-      },
+      onChanged: _isLoading
+          ? null
+          : (bool value) {
+              _updateSetting(settings.copyWith(vibrationEnabled: value));
+            },
     );
   }
 
@@ -245,33 +258,43 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         children: [
           IconButton(
             icon: const Icon(Icons.remove),
-            onPressed: _isLoading || settings.studyGoalPerDay <= 10 ? null : () {
-              _updateSetting(settings.copyWith(studyGoalPerDay: settings.studyGoalPerDay - 10));
-            },
+            onPressed: _isLoading || settings.studyGoalPerDay <= 10
+                ? null
+                : () {
+                    _updateSetting(settings.copyWith(
+                        studyGoalPerDay: settings.studyGoalPerDay - 10));
+                  },
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: _isLoading || settings.studyGoalPerDay >= 180 ? null : () {
-              _updateSetting(settings.copyWith(studyGoalPerDay: settings.studyGoalPerDay + 10));
-            },
+            onPressed: _isLoading || settings.studyGoalPerDay >= 180
+                ? null
+                : () {
+                    _updateSetting(settings.copyWith(
+                        studyGoalPerDay: settings.studyGoalPerDay + 10));
+                  },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDifficultyPreference(BuildContext context, UserSettings settings) {
+  Widget _buildDifficultyPreference(
+      BuildContext context, UserSettings settings) {
     return ListTile(
       leading: const Icon(Icons.trending_up),
       title: const Text('難易度設定'),
       subtitle: Text(_getDifficultyDisplayName(settings.difficultyPreference)),
       trailing: DropdownButton<String>(
         value: settings.difficultyPreference,
-        onChanged: _isLoading ? null : (String? newValue) {
-          if (newValue != null) {
-            _updateSetting(settings.copyWith(difficultyPreference: newValue));
-          }
-        },
+        onChanged: _isLoading
+            ? null
+            : (String? newValue) {
+                if (newValue != null) {
+                  _updateSetting(
+                      settings.copyWith(difficultyPreference: newValue));
+                }
+              },
         items: const [
           DropdownMenuItem(value: 'beginner', child: Text('初級')),
           DropdownMenuItem(value: 'intermediate', child: Text('中級')),
@@ -309,27 +332,38 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   // Helper methods for display names
   String _getLanguageDisplayName(String language) {
     switch (language) {
-      case 'ja': return '日本語';
-      case 'en': return 'English';
-      default: return language;
+      case 'ja':
+        return '日本語';
+      case 'en':
+        return 'English';
+      default:
+        return language;
     }
   }
 
   String _getThemeDisplayName(String theme) {
     switch (theme) {
-      case 'system': return 'システム';
-      case 'light': return 'ライト';
-      case 'dark': return 'ダーク';
-      default: return theme;
+      case 'system':
+        return 'システム';
+      case 'light':
+        return 'ライト';
+      case 'dark':
+        return 'ダーク';
+      default:
+        return theme;
     }
   }
 
   String _getDifficultyDisplayName(String difficulty) {
     switch (difficulty) {
-      case 'beginner': return '初級';
-      case 'intermediate': return '中級';
-      case 'advanced': return '上級';
-      default: return difficulty;
+      case 'beginner':
+        return '初級';
+      case 'intermediate':
+        return '中級';
+      case 'advanced':
+        return '上級';
+      default:
+        return difficulty;
     }
   }
 
@@ -343,7 +377,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     try {
       await ref.read(userSettingsProvider.notifier).updateSettings(newSettings);
-      
+
       // 認証されている場合は、AuthServiceの設定も更新
       final authService = ref.read(authServiceProvider.notifier);
       if (authService.isAuthenticated) {
@@ -378,7 +412,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     }
   }
 
-  Future<void> _selectReminderTime(BuildContext context, UserSettings settings) async {
+  Future<void> _selectReminderTime(
+      BuildContext context, UserSettings settings) async {
     final currentTime = _parseTime(settings.dailyReminderTime);
     final selectedTime = await showTimePicker(
       context: context,
@@ -387,7 +422,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     if (selectedTime != null) {
       final timeString = '${selectedTime.hour.toString().padLeft(2, '0')}:'
-                        '${selectedTime.minute.toString().padLeft(2, '0')}';
+          '${selectedTime.minute.toString().padLeft(2, '0')}';
       _updateSetting(settings.copyWith(dailyReminderTime: timeString));
     }
   }

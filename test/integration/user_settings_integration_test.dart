@@ -16,10 +16,10 @@ void main() {
     setUp(() {
       // SharedPreferences のモックデータを初期化
       SharedPreferences.setMockInitialValues({});
-      
+
       // プロバイダーコンテナを作成
       container = ProviderContainer();
-      
+
       // サービスインスタンスを取得
       settingsService = container.read(settingsServiceProvider);
       authService = container.read(authServiceProvider.notifier);
@@ -71,7 +71,8 @@ void main() {
 
     test('should integrate settings with user authentication', () async {
       // 1. ユーザーログイン
-      final loginSuccess = await authService.login('test@example.com', 'password123');
+      final loginSuccess =
+          await authService.login('test@example.com', 'password123');
       expect(loginSuccess, isTrue);
 
       // 2. 初期状態では設定がnull
@@ -127,10 +128,10 @@ void main() {
     test('should maintain state consistency between providers', () async {
       // 1. UserSettingsNotifier を使用して設定を更新
       final settingsNotifier = container.read(userSettingsProvider.notifier);
-      
+
       // 初期化完了を待機
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       const newSettings = UserSettings(
         language: 'en',
         themeMode: 'dark',
@@ -152,7 +153,7 @@ void main() {
       // 4. 認証済みユーザーの場合、AuthService でも整合性を確認
       await authService.login('test@example.com', 'password123');
       await authService.updateUserSettings(newSettings);
-      
+
       final authState = container.read(authServiceProvider);
       expect(authState.user!.settings, equals(newSettings));
     });
@@ -256,7 +257,7 @@ void main() {
 
         await settingsService.saveSettings(settings);
         final loadedSettings = await settingsService.loadSettings();
-        
+
         expect(loadedSettings, equals(settings));
         expect(loadedSettings.studyGoalPerDay, equals(30 + (i * 10)));
       }

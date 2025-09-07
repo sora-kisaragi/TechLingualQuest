@@ -12,13 +12,15 @@ UserSettings _$UserSettingsFromJson(Map<String, dynamic> json) => UserSettings(
       dailyReminderTime: json['dailyReminderTime'] as String? ?? '09:00',
       themeMode: json['themeMode'] as String? ?? 'system',
       studyGoalPerDay: json['studyGoalPerDay'] as int? ?? 30,
-      difficultyPreference: json['difficultyPreference'] as String? ?? 'intermediate',
+      difficultyPreference:
+          json['difficultyPreference'] as String? ?? 'intermediate',
       soundEnabled: json['soundEnabled'] as bool? ?? true,
       vibrationEnabled: json['vibrationEnabled'] as bool? ?? true,
       autoSync: json['autoSync'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) => <String, dynamic>{
+Map<String, dynamic> _$UserSettingsToJson(UserSettings instance) =>
+    <String, dynamic>{
       'language': instance.language,
       'notificationsEnabled': instance.notificationsEnabled,
       'dailyReminderTime': instance.dailyReminderTime,
