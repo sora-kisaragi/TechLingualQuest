@@ -352,8 +352,10 @@ void main() {
       final switchTiles = find.byType(SwitchListTile);
       expect(tester.widget<SwitchListTile>(switchTiles.at(0)).value,
           isFalse); // notifications
-      expect(tester.widget<SwitchListTile>(switchTiles.at(1)).value, isFalse); // sound  
-      expect(tester.widget<SwitchListTile>(switchTiles.at(2)).value, isTrue); // vibration
+      expect(tester.widget<SwitchListTile>(switchTiles.at(1)).value,
+          isFalse); // sound
+      expect(tester.widget<SwitchListTile>(switchTiles.at(2)).value,
+          isTrue); // vibration
     });
   });
 }
@@ -366,9 +368,9 @@ class _CustomUserSettingsNotifier extends UserSettingsNotifier {
 
 class _CustomMockSettingsService extends SettingsService {
   final UserSettings _settings;
-  
+
   _CustomMockSettingsService(this._settings);
-  
+
   @override
   Future<UserSettings> loadSettings() async {
     return _settings;
@@ -387,7 +389,7 @@ class _LoadingUserSettingsNotifier extends UserSettingsNotifier {
 
 class _LoadingMockSettingsService extends SettingsService {
   final Completer<UserSettings> _completer = Completer<UserSettings>();
-  
+
   @override
   Future<UserSettings> loadSettings() async {
     // Return a future that never completes during the test

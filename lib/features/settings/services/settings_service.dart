@@ -10,6 +10,10 @@ class SettingsService {
   static const String _settingsKey = 'user_settings';
   SharedPreferences? _prefs;
 
+  // 同時更新を防ぐためのロック機構
+  // Lock mechanism to prevent concurrent updates
+  static bool _isUpdating = false;
+
   /// SharedPreferences の初期化
   /// Initialize SharedPreferences
   Future<void> _ensureInitialized() async {
@@ -64,6 +68,14 @@ class SettingsService {
   /// 特定の設定項目を更新
   /// Update specific setting item
   Future<bool> updateSetting<T>(String key, T value) async {
+    // 同時更新を防ぐための簡単なロック機構
+    // Simple lock mechanism to prevent concurrent updates
+    while (_isUpdating) {
+      await Future.delayed(const Duration(milliseconds: 10));
+    }
+
+    _isUpdating = true;
+
     try {
       final currentSettings = await loadSettings();
       UserSettings updatedSettings;
@@ -110,10 +122,13 @@ class SettingsService {
           return false;
       }
 
-      return await saveSettings(updatedSettings);
+      final result = await saveSettings(updatedSettings);
+      return result;
     } catch (e, stackTrace) {
       AppLogger.error('Failed to update setting $key', e, stackTrace);
       return false;
+    } finally {
+      _isUpdating = false;
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../shared/utils/logger.dart';
 import '../features/settings/models/user_settings.dart';
+import '../features/settings/services/settings_service.dart';
 
 /// 認証状態を管理するクラス
 class AuthState {
@@ -254,6 +255,19 @@ class AuthService extends StateNotifier<AuthState> {
         user: updatedUser,
         isLoading: false,
       );
+
+      // 設定をSharedPreferencesにも保存（統合テスト対応）
+      // Also save settings to SharedPreferences for integration with SettingsService
+      try {
+        final settingsService = SettingsService();
+        await settingsService.saveSettings(newSettings);
+        AppLogger.info('Settings persisted to SharedPreferences');
+      } catch (e) {
+        AppLogger.warning(
+            'Failed to persist settings to SharedPreferences: $e');
+        // エラーでも処理は継続（メインのユーザー状態更新は成功）
+        // Continue processing even if persistence fails (main user state update succeeded)
+      }
 
       AppLogger.info(
           'User settings updated successfully for user: ${updatedUser.id}');
