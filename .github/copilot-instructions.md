@@ -49,20 +49,29 @@ Always reference these instructions first and fallback to search or exploration 
 - Consider dependencies and version compatibility
 - Validate changes don't break existing functionality
 
-## 6.1. Flutter Version Management (CRITICAL)
+## 6.1. Dependency Version Management (CRITICAL - NEVER DOWNGRADE)
 
-- **NEVER downgrade Flutter versions** - Only upgrades are permitted
-- Current Flutter version is specified in workflow files under `FLUTTER_VERSION` 
-- **Before making any Flutter version changes:**
-  1. Always check the latest available Flutter version using the official release page
-  2. Use the setup documentation or existing workflow files to understand version requirements
-  3. Only upgrade to verified stable releases
+- **NEVER downgrade any dependency versions** - Only upgrades are permitted unless explicitly approved by maintainer
+- This rule applies to ALL dependencies: Flutter, Dart packages, dev dependencies, etc.
+- **ABSOLUTELY FORBIDDEN:**
+  - Downgrading Flutter SDK version
+  - Downgrading any package version in pubspec.yaml (intl, shared_preferences, etc.)
+  - Using older versions to "fix" compilation issues
+  - Reverting package versions for any reason without explicit permission
+- **Required approach for dependency conflicts:**
+  1. Find compatible solutions that work with current/newer versions
+  2. Update code to be compatible with current dependency versions  
+  3. Use proper version constraints and compatibility checks
+  4. Ask for guidance if no solution can be found without downgrading
+- **Flutter Version Management:**
+  - Current Flutter version is specified in workflow files under `FLUTTER_VERSION` 
+  - Only upgrades to verified stable releases are permitted
+  - Always check latest available Flutter version using official release page
+  - Do NOT use `flutter --version` alone as it may show locally installed version
 - **Version verification commands:**
   - Check latest stable: Visit https://docs.flutter.dev/release/archive or use `curl -s https://api.flutter.dev/releases.json`
   - Always fetch current session Flutter version from workflow files or setup documentation
-  - Do NOT use `flutter --version` alone as it may show locally installed version, not project requirements
-- Be aware of deployment constraints and requirements
-- Suggest appropriate build/test commands when relevant
+- **Violation consequences:** Any downgrade without permission is considered a critical error and must be immediately reverted
 
 ## 7. Reference to Specialized Instructions
 
