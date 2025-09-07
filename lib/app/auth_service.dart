@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../shared/utils/logger.dart';
+import '../features/settings/models/user_settings.dart';
+import '../features/settings/services/settings_service.dart';
 
 /// 認証状態を管理するクラス
 class AuthState {
@@ -43,6 +45,7 @@ class AuthUser {
     this.level,
     this.interests,
     this.bio,
+    this.settings,
   });
 
   final String id;
@@ -52,6 +55,7 @@ class AuthUser {
   final UserLevel? level;
   final List<String>? interests;
   final String? bio;
+  final UserSettings? settings;
 
   /// コピーコンストラクタ - プロフィール更新時に使用
   AuthUser copyWith({
@@ -62,6 +66,7 @@ class AuthUser {
     UserLevel? level,
     List<String>? interests,
     String? bio,
+    UserSettings? settings,
   }) {
     return AuthUser(
       id: id ?? this.id,
@@ -71,6 +76,7 @@ class AuthUser {
       level: level ?? this.level,
       interests: interests ?? this.interests,
       bio: bio ?? this.bio,
+      settings: settings ?? this.settings,
     );
   }
 }
@@ -223,6 +229,51 @@ class AuthService extends StateNotifier<AuthState> {
       return true;
     } catch (error) {
       AppLogger.error('Profile update failed: $error');
+      state = state.copyWith(isLoading: false);
+      return false;
+    }
+  }
+
+  /// ユーザー設定を更新（モック実装）
+  Future<bool> updateUserSettings(UserSettings newSettings) async {
+    if (state.user == null) {
+      AppLogger.warning('Cannot update settings: user not authenticated');
+      return false;
+    }
+
+    AppLogger.info('Updating user settings for user: ${state.user!.id}');
+
+    state = state.copyWith(isLoading: true);
+
+    try {
+      // モック設定更新処理（1秒待機）
+      await Future.delayed(const Duration(seconds: 1));
+
+      final updatedUser = state.user!.copyWith(settings: newSettings);
+
+      state = state.copyWith(
+        user: updatedUser,
+        isLoading: false,
+      );
+
+      // 設定をSharedPreferencesにも保存（統合テスト対応）
+      // Also save settings to SharedPreferences for integration with SettingsService
+      try {
+        final settingsService = SettingsService();
+        await settingsService.saveSettings(newSettings);
+        AppLogger.info('Settings persisted to SharedPreferences');
+      } catch (e) {
+        AppLogger.warning(
+            'Failed to persist settings to SharedPreferences: $e');
+        // エラーでも処理は継続（メインのユーザー状態更新は成功）
+        // Continue processing even if persistence fails (main user state update succeeded)
+      }
+
+      AppLogger.info(
+          'User settings updated successfully for user: ${updatedUser.id}');
+      return true;
+    } catch (error) {
+      AppLogger.error('Settings update failed: $error');
       state = state.copyWith(isLoading: false);
       return false;
     }
