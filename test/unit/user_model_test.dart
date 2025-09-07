@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tech_lingual_quest/app/auth_service.dart';
+import 'package:tech_lingual_quest/features/settings/models/user_settings.dart';
 
 void main() {
   group('UserLevel Enum Tests', () {
@@ -125,6 +126,21 @@ void main() {
       expect(copiedUser.interests, isNot(same(originalUser.interests)));
     });
 
+    test('should update settings field correctly', () {
+      const newSettings = UserSettings(
+        language: 'en',
+        themeMode: 'light',
+        studyGoalPerDay: 60,
+      );
+      
+      final copiedUser = originalUser.copyWith(settings: newSettings);
+
+      expect(copiedUser.settings, equals(newSettings));
+      expect(copiedUser.id, equals(originalUser.id)); // Other fields unchanged
+      expect(copiedUser.email, equals(originalUser.email));
+      expect(copiedUser.name, equals(originalUser.name));
+    });
+
     test('should handle empty string values', () {
       final copiedUser = originalUser.copyWith(
         name: '',
@@ -152,6 +168,7 @@ void main() {
       expect(user.level, isNull);
       expect(user.interests, isNull);
       expect(user.bio, isNull);
+      expect(user.settings, isNull);
     });
 
     test('should create user with all fields', () {

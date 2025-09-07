@@ -10,6 +10,7 @@ import '../features/auth/pages/profile_page.dart';
 import '../features/auth/pages/profile_edit_page.dart';
 import '../features/vocabulary/pages/vocabulary_page.dart';
 import '../features/quests/pages/quests_page.dart';
+import '../features/settings/pages/settings_page.dart';
 import '../shared/utils/logger.dart';
 import 'routes.dart';
 import 'auth_service.dart';
@@ -159,7 +160,7 @@ class AppRouter {
         path: AppRoutes.settings,
         name: AppRoutes.settingsName,
         builder: (BuildContext context, GoRouterState state) {
-          return const Placeholder(); // 将来的にSettingsPageを実装
+          return const SettingsPage();
         },
       ),
 

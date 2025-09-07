@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tech_lingual_quest/app/auth_service.dart';
+import 'package:tech_lingual_quest/features/settings/models/user_settings.dart';
 
 void main() {
   group('AuthService Tests - Login/Logout Functionality', () {
@@ -410,6 +411,92 @@ void main() {
       expect(user.bio, initialBio);
       expect(user.interests, initialInterests);
       expect(user.profileImageUrl, newImageUrl);
+    });
+
+    test('Profile update should handle settings updates', () async {
+      const initialSettings = UserSettings(
+        language: 'ja',
+        themeMode: 'system',
+        studyGoalPerDay: 30,
+      );
+      
+      // ユーザーを作成して初期設定を設定
+      const user = AuthUser(
+        id: 'test-id',
+        email: 'test@example.com',
+        name: 'Test User',
+        settings: initialSettings,
+      );
+
+      // 手動でユーザーを設定（ログインをシミュレート）
+      container.read(authServiceProvider.notifier).state = AuthState(
+        isAuthenticated: true,
+        user: user,
+        isLoading: false,
+      );
+
+      const newSettings = UserSettings(
+        language: 'en',
+        themeMode: 'dark',
+        studyGoalPerDay: 60,
+      );
+
+      final updateResult = await authService.updateUserSettings(newSettings);
+
+      expect(updateResult, true);
+
+      final authState = container.read(authServiceProvider);
+      expect(authState.user!.settings, equals(newSettings));
+    });
+  });
+
+  group('User Settings Integration Tests', () {
+    test('Settings should be null for new users', () async {
+      final loginResult = await authService.login('test@example.com', 'password123');
+      expect(loginResult, true);
+
+      final authState = container.read(authServiceProvider);
+      expect(authState.user!.settings, isNull);
+    });
+
+    test('Should fail to update settings when not authenticated', () async {
+      const settings = UserSettings(language: 'en');
+      final updateResult = await authService.updateUserSettings(settings);
+
+      expect(updateResult, false);
+    });
+
+    test('Settings update should preserve other user fields', () async {
+      // ログインしてユーザーを作成
+      await authService.login('test@example.com', 'password123');
+      
+      // プロフィールを更新
+      await authService.updateProfile(
+        name: 'Test Name',
+        bio: 'Test Bio',
+        level: UserLevel.advanced,
+      );
+
+      // 設定を更新
+      const newSettings = UserSettings(
+        language: 'en',
+        themeMode: 'dark',
+      );
+
+      final updateResult = await authService.updateUserSettings(newSettings);
+      expect(updateResult, true);
+
+      final authState = container.read(authServiceProvider);
+      final user = authState.user!;
+
+      // 設定が更新されていることを確認
+      expect(user.settings, equals(newSettings));
+
+      // 他のフィールドが保持されていることを確認
+      expect(user.name, equals('Test Name'));
+      expect(user.bio, equals('Test Bio'));
+      expect(user.level, equals(UserLevel.advanced));
+    });
     });
   });
 
