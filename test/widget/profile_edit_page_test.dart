@@ -50,8 +50,10 @@ void main() {
               body: Form(
                 child: Column(
                   children: [
-                    TextFormField(decoration: InputDecoration(labelText: 'Display Name')),
-                    ElevatedButton(onPressed: () {}, child: Text('Save Changes')),
+                    TextFormField(
+                        decoration: InputDecoration(labelText: 'Display Name')),
+                    ElevatedButton(
+                        onPressed: () {}, child: Text('Save Changes')),
                   ],
                 ),
               ),
@@ -66,9 +68,10 @@ void main() {
       expect(find.text('Save Changes'), findsOneWidget);
     });
 
-    testWidgets('should handle image upload button interaction', (tester) async {
+    testWidgets('should handle image upload button interaction',
+        (tester) async {
       bool buttonPressed = false;
-      
+
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -97,7 +100,7 @@ void main() {
       expect(find.text('Change Photo'), findsOneWidget);
       expect(find.byIcon(Icons.camera_alt), findsOneWidget);
     });
-    
+
     testWidgets('should render profile image placeholder', (tester) async {
       await tester.pumpWidget(
         ProviderScope(

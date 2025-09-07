@@ -111,7 +111,8 @@ void main() {
       final testData = [1, 2, 3, 4, 5];
       final mockFile = MockXFile();
       when(() => mockFile.name).thenReturn('test.jpg');
-      when(() => mockFile.readAsBytes()).thenAnswer((_) async => Uint8List.fromList(testData));
+      when(() => mockFile.readAsBytes())
+          .thenAnswer((_) async => Uint8List.fromList(testData));
 
       final result = await ImageService.convertImageToBase64(mockFile);
 
@@ -292,8 +293,8 @@ void main() {
       for (final test in base64Tests) {
         final mockFile = MockXFile();
         when(() => mockFile.name).thenReturn(test['name'] as String);
-        when(() => mockFile.readAsBytes())
-            .thenAnswer((_) async => Uint8List.fromList(test['data'] as List<int>));
+        when(() => mockFile.readAsBytes()).thenAnswer(
+            (_) async => Uint8List.fromList(test['data'] as List<int>));
 
         final result = await ImageService.convertImageToBase64(mockFile);
         expect(result, isNotNull);
