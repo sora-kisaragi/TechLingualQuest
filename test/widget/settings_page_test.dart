@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,11 +57,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // デフォルト値が表示されていることを確認
-      expect(find.text('日本語'), findsOneWidget); // 言語
-      expect(find.text('システム'), findsOneWidget); // テーマ
+      expect(find.text('日本語'), findsNWidgets(2)); // 言語（ドロップダウン項目とサブタイトル）
+      expect(find.text('システム'), findsNWidgets(2)); // テーマ（ドロップダウン項目とサブタイトル）
       expect(find.text('09:00'), findsOneWidget); // リマインダー時刻
       expect(find.text('30分'), findsOneWidget); // 学習目標
-      expect(find.text('中級'), findsOneWidget); // 難易度
+      expect(find.text('中級'), findsNWidgets(2)); // 難易度（ドロップダウン項目とサブタイトル）
 
       // スイッチの状態を確認
       final notificationSwitch = find.byType(Switch).at(0);
@@ -161,8 +162,13 @@ void main() {
       // タイムピッカーが表示されることを確認
       expect(find.byType(TimePickerDialog), findsOneWidget);
 
-      // キャンセルボタンを押す
-      await tester.tap(find.text('キャンセル'));
+      // キャンセルボタンを押す (日本語優先、英語フォールバック)
+      final cancelButton = find.text('キャンセル');
+      if (cancelButton.evaluate().isNotEmpty) {
+        await tester.tap(cancelButton);
+      } else {
+        await tester.tap(find.text('Cancel'));
+      }
       await tester.pumpAndSettle();
     });
 
@@ -180,6 +186,8 @@ void main() {
 
       // プラスボタンをタップして学習目標を増やす
       final plusButton = find.byIcon(Icons.add);
+      await tester.ensureVisible(plusButton);
+      await tester.pumpAndSettle();
       await tester.tap(plusButton);
       await tester.pumpAndSettle();
 
@@ -202,6 +210,8 @@ void main() {
 
       // リセットボタンをタップ
       final resetButton = find.text('デフォルト設定にリセット');
+      await tester.ensureVisible(resetButton);
+      await tester.pumpAndSettle();
       await tester.tap(resetButton);
       await tester.pumpAndSettle();
 
@@ -236,11 +246,18 @@ void main() {
 
       // リセットボタンをタップ
       final resetButton = find.text('デフォルト設定にリセット');
+      await tester.ensureVisible(resetButton);
+      await tester.pumpAndSettle();
       await tester.tap(resetButton);
       await tester.pumpAndSettle();
 
-      // リセットを確認
-      await tester.tap(find.text('リセット'));
+      // リセットを確認 (英語の場合もある)
+      final confirmButton = find.text('リセット');
+      if (confirmButton.evaluate().isEmpty) {
+        await tester.tap(find.text('Reset'));
+      } else {
+        await tester.tap(confirmButton);
+      }
       await tester.pumpAndSettle();
 
       // リセット成功メッセージが表示されることを確認
@@ -279,7 +296,7 @@ void main() {
         ),
       );
 
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       // エラー表示を確認
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -305,7 +322,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // マイナスボタンが無効化されていることを確認（最小値10）
-      final minusButton = find.byIcon(Icons.remove);
+      final minusButton = find.widgetWithIcon(IconButton, Icons.remove);
       expect(tester.widget<IconButton>(minusButton).onPressed, isNull);
     });
 
@@ -332,11 +349,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // スイッチの状態を確認
-      final switches = find.byType(Switch);
-      expect(tester.widget<Switch>(switches.at(0)).value,
+      final switchTiles = find.byType(SwitchListTile);
+      expect(tester.widget<SwitchListTile>(switchTiles.at(0)).value,
           isFalse); // notifications
-      expect(tester.widget<Switch>(switches.at(1)).value, isFalse); // sound
-      expect(tester.widget<Switch>(switches.at(2)).value, isTrue); // vibration
+      expect(tester.widget<SwitchListTile>(switchTiles.at(1)).value, isFalse); // sound  
+      expect(tester.widget<SwitchListTile>(switchTiles.at(2)).value, isTrue); // vibration
     });
   });
 }
@@ -344,30 +361,58 @@ void main() {
 // テスト用のカスタムノティファイア
 class _CustomUserSettingsNotifier extends UserSettingsNotifier {
   _CustomUserSettingsNotifier(UserSettings settings)
-      : super(_MockSettingsService()) {
-    state = AsyncValue.data(settings);
+      : super(_CustomMockSettingsService(settings));
+}
+
+class _CustomMockSettingsService extends SettingsService {
+  final UserSettings _settings;
+  
+  _CustomMockSettingsService(this._settings);
+  
+  @override
+  Future<UserSettings> loadSettings() async {
+    return _settings;
   }
 
   @override
-  Future<void> updateSettings(UserSettings newSettings) async {
-    state = AsyncValue.data(newSettings);
-  }
-
-  @override
-  Future<void> resetSettings() async {
-    state = const AsyncValue.data(UserSettings());
+  Future<bool> saveSettings(UserSettings settings) async {
+    // Mock implementation - do nothing
+    return true;
   }
 }
 
 class _LoadingUserSettingsNotifier extends UserSettingsNotifier {
-  _LoadingUserSettingsNotifier() : super(_MockSettingsService()) {
-    state = const AsyncValue.loading();
+  _LoadingUserSettingsNotifier() : super(_LoadingMockSettingsService());
+}
+
+class _LoadingMockSettingsService extends SettingsService {
+  final Completer<UserSettings> _completer = Completer<UserSettings>();
+  
+  @override
+  Future<UserSettings> loadSettings() async {
+    // Return a future that never completes during the test
+    return _completer.future;
+  }
+
+  @override
+  Future<bool> saveSettings(UserSettings settings) async {
+    return true;
   }
 }
 
 class _ErrorUserSettingsNotifier extends UserSettingsNotifier {
-  _ErrorUserSettingsNotifier() : super(_MockSettingsService()) {
-    state = AsyncValue.error('Test error', StackTrace.empty);
+  _ErrorUserSettingsNotifier() : super(_ErrorMockSettingsService());
+}
+
+class _ErrorMockSettingsService extends SettingsService {
+  @override
+  Future<UserSettings> loadSettings() async {
+    throw 'Test error';
+  }
+
+  @override
+  Future<bool> saveSettings(UserSettings settings) async {
+    return false;
   }
 }
 
