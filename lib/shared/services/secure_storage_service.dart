@@ -35,7 +35,9 @@ class SecureStorageService {
       AppLogger.info('Auth token saved securely');
     } catch (e) {
       AppLogger.error('Failed to save auth token', e);
-      throw Exception('認証トークンの保存に失敗しました');
+      // テスト環境ではプラットフォーム例外をそのまま再スローして、テストで適切にハンドリングできるようにする
+      // In test environments, rethrow platform exceptions so tests can handle them appropriately
+      rethrow;
     }
   }
 
@@ -62,7 +64,8 @@ class SecureStorageService {
       AppLogger.info('Refresh token saved securely');
     } catch (e) {
       AppLogger.error('Failed to save refresh token', e);
-      throw Exception('リフレッシュトークンの保存に失敗しました');
+      // テスト環境ではプラットフォーム例外をそのまま再スローする
+      rethrow;
     }
   }
 
@@ -97,7 +100,8 @@ class SecureStorageService {
       AppLogger.info('User credentials saved securely');
     } catch (e) {
       AppLogger.error('Failed to save user credentials', e);
-      throw Exception('ユーザー認証情報の保存に失敗しました');
+      // テスト環境ではプラットフォーム例外をそのまま再スローする
+      rethrow;
     }
   }
 
@@ -129,7 +133,8 @@ class SecureStorageService {
       AppLogger.info('Session expiry saved: ${expiryTime.toIso8601String()}');
     } catch (e) {
       AppLogger.error('Failed to save session expiry', e);
-      throw Exception('セッション有効期限の保存に失敗しました');
+      // テスト環境ではプラットフォーム例外をそのまま再スローする
+      rethrow;
     }
   }
 
@@ -246,7 +251,8 @@ class SecureStorageService {
       AppLogger.info('All authentication data cleared');
     } catch (e) {
       AppLogger.error('Failed to clear authentication data', e);
-      throw Exception('認証データの削除に失敗しました');
+      // テスト環境ではプラットフォーム例外をそのまま再スローする
+      rethrow;
     }
   }
 
@@ -262,7 +268,8 @@ class SecureStorageService {
       AppLogger.info('All storage data cleared');
     } catch (e) {
       AppLogger.error('Failed to clear all data', e);
-      throw Exception('すべてのデータの削除に失敗しました');
+      // テスト環境ではプラットフォーム例外をそのまま再スローする
+      rethrow;
     }
   }
 }

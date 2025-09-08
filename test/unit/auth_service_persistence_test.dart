@@ -8,6 +8,11 @@ void main() {
     late ProviderContainer container;
     late AuthService authService;
 
+    setUpAll(() {
+      // Flutter test binding initialization required for platform channels
+      TestWidgetsFlutterBinding.ensureInitialized();
+    });
+
     setUp(() {
       container = ProviderContainer();
       authService = container.read(authServiceProvider.notifier);
