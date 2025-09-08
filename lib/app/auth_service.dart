@@ -229,6 +229,59 @@ class AuthService extends StateNotifier<AuthState> {
     }
   }
 
+  /// テスト用の有効なクレデンシャルかチェック
+  /// Check if credentials are valid for testing
+  bool _isValidCredentials(String email, String password) {
+    // 空の値は無効
+    if (email.isEmpty || password.isEmpty) {
+      return false;
+    }
+    
+    // パスワードが短すぎる場合は無効
+    if (password.length < 6) {
+      return false;
+    }
+    
+    // テスト用の有効なクレデンシャル
+    // Valid test credentials
+    final validCredentials = {
+      'test@example.com': 'password123',
+      'newuser@example.com': 'password123',
+      'user@test.com': 'testpass123',
+    };
+    
+    return validCredentials[email] == password;
+  }
+
+  /// テスト用の有効な登録データかチェック
+  /// Check if registration data is valid for testing
+  bool _isValidRegistrationData(String email, String password, String name) {
+    // 基本的な検証
+    if (email.isEmpty || password.isEmpty || name.isEmpty) {
+      return false;
+    }
+    
+    // パスワードが短すぎる場合は無効
+    if (password.length < 6) {
+      return false;
+    }
+    
+    // メールアドレス形式の簡単な検証
+    if (!email.contains('@') || !email.contains('.')) {
+      return false;
+    }
+    
+    // 登録では新しいユーザーのみ許可（既存ユーザーとの重複チェック）
+    // Only allow new users for registration (check for existing users)
+    final existingUsers = ['test@example.com']; // 既存ユーザーのリスト
+    
+    if (existingUsers.contains(email)) {
+      return false; // 既に存在するユーザー
+    }
+    
+    return true;
+  }
+
   /// ログイン処理（永続化対応）
   /// Login with persistence support
   Future<bool> login(String email, String password, {bool rememberMe = true}) async {
@@ -240,8 +293,9 @@ class AuthService extends StateNotifier<AuthState> {
       // モック認証処理（2秒待機）
       await Future.delayed(const Duration(seconds: 2));
 
-      // 簡単な認証ロジック（デモ用）
-      if (email.isNotEmpty && password.length >= 6) {
+      // 簡単な認証ロジック（デモ用）- テスト用の有効なクレデンシャル
+      // Simple authentication logic (demo) - Valid test credentials
+      if (_isValidCredentials(email, password)) {
         final userId = DateTime.now().millisecondsSinceEpoch.toString();
         final user = AuthUser(
           id: userId,
@@ -335,8 +389,9 @@ class AuthService extends StateNotifier<AuthState> {
       // モック登録処理（2秒待機）
       await Future.delayed(const Duration(seconds: 2));
 
-      // 簡単な登録ロジック（デモ用）
-      if (email.isNotEmpty && password.length >= 6 && name.isNotEmpty) {
+      // 簡単な登録ロジック（デモ用）- より厳格な検証
+      // Simple registration logic (demo) - More strict validation
+      if (_isValidRegistrationData(email, password, name)) {
         final userId = DateTime.now().millisecondsSinceEpoch.toString();
         final user = AuthUser(
           id: userId,
