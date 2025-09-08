@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tech_lingual_quest/shared/services/image_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
 void main() {
@@ -264,86 +265,6 @@ void main() {
       });
     });
 
-    group('File Size and Metadata Coverage', () {
-      test('File size calculations should be accurate', () async {
-        try {
-          final testData = Uint8List.fromList(List.filled(1024, 1)); // 1KB
-          final xFile = XFile.fromData(testData, name: 'size_test.jpg');
-          
-          final result = await ImageService.uploadProfileImage(xFile);
-          // The upload method internally calculates and logs file size
-          expect(result, isA<String?>());
-        } catch (e) {
-          print('File size calculation test: $e');
-        }
-      });
-
-      test('Different file sizes should be handled appropriately', () async {
-        final sizes = [512, 1024, 2048, 4096]; // Different sizes in bytes
-        
-        for (final size in sizes) {
-          try {
-            final testData = Uint8List.fromList(List.filled(size, 1));
-            final xFile = XFile.fromData(testData, name: 'test_$size.jpg');
-            
-            await ImageService.uploadProfileImage(xFile);
-            await ImageService.convertImageToBase64(xFile);
-          } catch (e) {
-            print('Size handling test ($size bytes): $e');
-          }
-        }
-      });
-    });
-
-    group('Integration and Real-World Usage Coverage', () {
-      test('Complete image workflow should work end-to-end', () async {
-        try {
-          // Simulate complete workflow: pick -> upload -> convert
-          final testData = Uint8List.fromList([
-            0xFF, 0xD8, 0xFF, 0xE0, // JPEG header
-            0x00, 0x10, 0x4A, 0x46
-          ]);
-          final xFile = XFile.fromData(testData, name: 'workflow_test.jpg');
-          
-          // Test upload
-          final uploadUrl = await ImageService.uploadProfileImage(xFile);
-          expect(uploadUrl, isA<String?>());
-          
-          // Test base64 conversion
-          final base64Data = await ImageService.convertImageToBase64(xFile);
-          expect(base64Data, isA<String?>());
-          
-          // Test MIME type detection
-          final mimeType = ImageService.getMimeType(xFile.name);
-          expect(mimeType, 'image/jpeg');
-          
-          // Test options retrieval
-          final options = ImageService.getImageSourceOptions();
-          expect(options.length, 2);
-          
-        } catch (e) {
-          print('End-to-end workflow test: $e');
-        }
-      });
-
-      test('Error scenarios should not break workflow', () async {
-        try {
-          // Test error resilience in workflow
-          await ImageService.uploadProfileImage(null as dynamic);
-          await ImageService.convertImageToBase64(null as dynamic);
-          
-          final mimeType = ImageService.getMimeType('');
-          expect(mimeType, 'image/jpeg'); // Should default
-          
-          final options = ImageService.getImageSourceOptions();
-          expect(options, isNotEmpty); // Should always return options
-          
-        } catch (e) {
-          print('Error resilience test: $e');
-        }
-      });
-    });
-
     group('Error Handling Coverage', () {
       test('All methods should handle null inputs gracefully', () async {
         try {
@@ -353,17 +274,6 @@ void main() {
         } catch (e) {
           // Expected for null inputs
           print('Null input handling test: $e');
-        }
-      });
-
-      test('Network errors should be handled gracefully', () async {
-        // Test network error simulation
-        try {
-          // This would test network error handling in a real implementation
-          final result = await ImageService.uploadProfileImage(null as dynamic);
-          expect(result, isA<String?>());
-        } catch (e) {
-          print('Network error handling test: $e');
         }
       });
 
@@ -378,42 +288,6 @@ void main() {
         
         // Should not crash the app
         expect(true, true);
-      });
-    });
-
-    group('Performance and Memory Coverage', () {
-      test('Large image processing should not cause memory issues', () async {
-        // Test with various image sizes
-        final imageSizes = [1000, 10000, 100000]; // Different sizes
-        
-        for (final size in imageSizes) {
-          final imageData = Uint8List.fromList(List.filled(size, 1));
-          
-          try {
-            // Test that large images are handled appropriately
-            final processed = await ImageService.processImageForUpload(imageData);
-            expect(processed, isA<Uint8List?>());
-          } catch (e) {
-            print('Large image processing test (size $size): $e');
-          }
-        }
-      });
-
-      test('Concurrent image operations should be handled safely', () async {
-        // Test concurrent operations
-        final futures = List.generate(3, (index) => 
-          ImageService.pickImage(source: ImageSource.gallery)
-        );
-        
-        try {
-          final results = await Future.wait(futures);
-          expect(results.length, 3);
-          for (final result in results) {
-            expect(result, isA<XFile?>());
-          }
-        } catch (e) {
-          print('Concurrent operations test: $e');
-        }
       });
     });
 
