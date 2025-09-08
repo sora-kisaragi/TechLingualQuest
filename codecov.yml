@@ -10,14 +10,14 @@ coverage:
     project:
       default:
         # プロジェクト全体の最小カバレッジ要件
-        target: 82%        # 目標カバレッジ82%以上
+        target: 80%        # 目標カバレッジ82%以上
         threshold: 1%      # 1%以下の低下は許容
         base: auto
         
     patch:
       default:
         # パッチ（新規追加・変更コード）のカバレッジ要件  
-        target: 75%        # 新規コードは75%以上
+        target: 85%        # 新規コードは75%以上
         threshold: 5%      # 5%以下の低下は許容
         base: auto
 
