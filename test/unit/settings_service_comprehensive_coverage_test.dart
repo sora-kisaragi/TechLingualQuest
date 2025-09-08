@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tech_lingual_quest/features/settings/services/settings_service.dart';
 import 'package:tech_lingual_quest/features/settings/models/user_settings.dart';
 
@@ -11,12 +12,18 @@ void main() {
     });
 
     setUp(() {
+      // Mock SharedPreferences with empty values for each test
+      SharedPreferences.setMockInitialValues({});
       settingsService = SettingsService();
     });
 
-    tearDown(() {
+    tearDown(() async {
       // Reset to clean state for each test
-      settingsService.resetToDefaults().catchError((_) {});
+      try {
+        await settingsService.resetToDefaults();
+      } catch (_) {
+        // Ignore errors during cleanup
+      }
     });
 
     group('Basic CRUD Operations', () {
@@ -212,8 +219,10 @@ void main() {
           studyGoalPerDay: 50,
         );
 
-        await settingsService.saveSettings(testSettings);
+        final saveResult = await settingsService.saveSettings(testSettings);
+        expect(saveResult, true);
 
+        // Create new service instance (will use same mocked SharedPreferences)
         final newService = SettingsService();
         final loadedSettings = await newService.loadSettings();
 
