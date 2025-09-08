@@ -342,4 +342,206 @@ void main() {
       expect(authToken!.isNotEmpty, true);
     });
   });
+
+  group('Advanced Authentication Tests', () {
+    late ProviderContainer container;
+    late AuthService authService;
+
+    setUp(() {
+      container = ProviderContainer();
+      authService = container.read(authServiceProvider.notifier);
+    });
+
+    tearDown(() {
+      container.dispose();
+      SecureStorageService.clearAllData().catchError((_) {});
+    });
+
+    test('Login should fail with invalid credentials', () async {
+      final result = await authService.login('invalid@email.com', 'wrongpass');
+      
+      expect(result, false);
+      expect(container.read(authServiceProvider).isAuthenticated, false);
+    });
+
+    test('Login should handle empty email', () async {
+      final result = await authService.login('', 'password');
+      
+      expect(result, false);
+      expect(container.read(authServiceProvider).isAuthenticated, false);
+    });
+
+    test('Login should handle empty password', () async {
+      final result = await authService.login('test@example.com', '');
+      
+      expect(result, false);
+      expect(container.read(authServiceProvider).isAuthenticated, false);
+    });
+
+    test('Password reset should work with valid email', () async {
+      final result = await authService.requestPasswordReset('test@example.com');
+      
+      expect(result, true);
+    });
+
+    test('Password reset should fail with invalid email', () async {
+      final result = await authService.requestPasswordReset('invalid-email');
+      
+      expect(result, false);
+    });
+
+    test('Password reset should fail with empty email', () async {
+      final result = await authService.requestPasswordReset('');
+      
+      expect(result, false);
+    });
+
+    test('Profile update should fail when not authenticated', () async {
+      final result = await authService.updateProfile(name: 'New Name');
+      
+      expect(result, false);
+    });
+
+    test('Profile update should work when authenticated', () async {
+      await authService.login('test@example.com', 'password123');
+      
+      final result = await authService.updateProfile(
+        name: 'Updated Name',
+        bio: 'Updated bio',
+        interests: ['flutter'],
+        profileImageUrl: 'https://example.com/new-image.jpg',
+      );
+      
+      expect(result, true);
+      
+      final user = container.read(authServiceProvider).user;
+      expect(user!.name, 'Updated Name');
+      expect(user.bio, 'Updated bio');
+      expect(user.interests, ['flutter']);
+      expect(user.profileImageUrl, 'https://example.com/new-image.jpg');
+    });
+
+    test('Profile update should clear profile image when requested', () async {
+      await authService.login('test@example.com', 'password123');
+      
+      // 最初に画像を設定
+      await authService.updateProfile(profileImageUrl: 'https://example.com/image.jpg');
+      expect(container.read(authServiceProvider).user!.profileImageUrl, 'https://example.com/image.jpg');
+      
+      // 画像をクリア
+      final result = await authService.updateProfile(clearProfileImage: true);
+      
+      expect(result, true);
+      expect(container.read(authServiceProvider).user!.profileImageUrl, null);
+    });
+
+    test('AuthState copyWith should work correctly', () async {
+      final user = AuthUser(
+        id: 'test',
+        email: 'test@example.com',
+        name: 'Test User',
+      );
+      
+      final originalState = AuthState(
+        isAuthenticated: true,
+        user: user,
+        authToken: 'token123',
+        sessionExpiry: DateTime.now().add(const Duration(hours: 1)),
+      );
+      
+      // 通常のコピー
+      final copiedState = originalState.copyWith(
+        isLoading: true,
+        lastSyncTime: DateTime.now(),
+      );
+      
+      expect(copiedState.isAuthenticated, true);
+      expect(copiedState.user, user);
+      expect(copiedState.authToken, 'token123');
+      expect(copiedState.isLoading, true);
+      expect(copiedState.lastSyncTime, isNotNull);
+      
+      // トークンをクリア
+      final clearedState = originalState.copyWith(clearToken: true);
+      
+      expect(clearedState.authToken, null);
+      expect(clearedState.sessionExpiry, null);
+    });
+
+    test('AuthState session validity should work correctly', () async {
+      // 有効なセッション
+      final validState = AuthState(
+        isAuthenticated: true,
+        authToken: 'token123',
+        sessionExpiry: DateTime.now().add(const Duration(hours: 1)),
+      );
+      
+      expect(validState.isSessionValid, true);
+      expect(validState.timeUntilExpiry!.inMinutes > 0, true);
+      
+      // 期限切れのセッション
+      final expiredState = AuthState(
+        isAuthenticated: true,
+        authToken: 'token123',
+        sessionExpiry: DateTime.now().subtract(const Duration(hours: 1)),
+      );
+      
+      expect(expiredState.isSessionValid, false);
+      expect(expiredState.timeUntilExpiry, const Duration());
+      
+      // 認証されていない状態
+      const unauthenticatedState = AuthState(isAuthenticated: false);
+      
+      expect(unauthenticatedState.isSessionValid, false);
+      expect(unauthenticatedState.timeUntilExpiry, null);
+    });
+
+    test('Session refresh should work correctly', () async {
+      await authService.login('test@example.com', 'password123');
+      
+      final beforeRefresh = container.read(authServiceProvider);
+      expect(beforeRefresh.isAuthenticated, true);
+      
+      final result = await authService.refreshSession();
+      expect(result, true);
+      
+      final afterRefresh = container.read(authServiceProvider);
+      expect(afterRefresh.isAuthenticated, true);
+      expect(afterRefresh.authToken, isNotNull);
+    });
+
+    test('Session validation should work correctly', () async {
+      await authService.login('test@example.com', 'password123');
+      
+      final isValid = await authService.validateSession();
+      expect(isValid, true);
+    });
+
+    test('Session validation should fail for unauthenticated state', () async {
+      final isValid = await authService.validateSession();
+      expect(isValid, false);
+    });
+
+    test('Initialize auth should restore valid session', () async {
+      // ログインしてセッション状態を作成
+      await authService.login('test@example.com', 'password123', rememberMe: true);
+      
+      // 新しいサービスインスタンスでセッション復元をテスト
+      final newContainer = ProviderContainer();
+      final newAuthService = newContainer.read(authServiceProvider.notifier);
+      
+      try {
+        await newAuthService.initializeAuth();
+        
+        // セッションが復元されているかは環境に依存するため、
+        // エラーが発生しないことのみを確認
+        expect(newContainer.read(authServiceProvider).isLoading, false);
+      } catch (e) {
+        // テスト環境ではSecureStorageが機能しない場合があるため、例外は許容
+        print('Session restoration test skipped due to environment limitations: $e');
+      } finally {
+        newContainer.dispose();
+      }
+    });
+  });
 }

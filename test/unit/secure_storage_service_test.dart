@@ -47,7 +47,7 @@ void main() {
           final token = await SecureStorageService.getAuthToken();
           expect(token, null);
         } catch (e) {
-          if (e.toString().contains('MissingPluginException') || 
+          if (e.toString().contains('MissingPluginException') ||
               e.toString().contains('PlatformException')) {
             print('Skipping secure storage test - not available in test environment');
             return;
