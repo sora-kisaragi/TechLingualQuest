@@ -51,8 +51,9 @@ void main() {
       });
 
       test('getRefreshToken should handle storage errors gracefully', () async {
+        String? token;
         try {
-          final token = await SecureStorageService.getRefreshToken();
+          token = await SecureStorageService.getRefreshToken();
           expect(token, isA<String?>());
         } catch (e) {
           if (e.toString().contains('MissingPluginException') || 
