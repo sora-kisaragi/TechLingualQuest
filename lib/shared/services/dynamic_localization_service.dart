@@ -41,10 +41,22 @@ class DynamicLocalizationService {
   // Cache for loaded translations
   static Map<String, dynamic>? _translationsData;
   static Map<String, LanguageInfo>? _supportedLanguages;
+  static bool _isLoading = false;
 
   /// Load translations from JSON file
   static Future<void> _loadTranslations() async {
     if (_translationsData != null) return; // Already loaded
+    
+    // Prevent race conditions during loading
+    if (_isLoading) {
+      // Wait for the ongoing loading to complete
+      while (_isLoading) {
+        await Future.delayed(const Duration(milliseconds: 10));
+      }
+      return;
+    }
+    
+    _isLoading = true;
 
     try {
       final String jsonString = await rootBundle.loadString(_translationsPath);
@@ -74,6 +86,8 @@ class DynamicLocalizationService {
           locale: Locale('en'),
         ),
       };
+    } finally {
+      _isLoading = false;
     }
   }
 
@@ -170,6 +184,7 @@ class DynamicLocalizationService {
   static Future<void> reloadTranslations() async {
     _translationsData = null;
     _supportedLanguages = null;
+    _isLoading = false;
     await _loadTranslations();
   }
 }
