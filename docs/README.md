@@ -16,6 +16,7 @@ docs/
 │   ├── ci-cd-setup.md        # CI/CD セットアップ
 │   ├── pre-commit-setup.md   # pre-commit ガイド
 │   ├── screenshot_guide.md   # スクリーンショット撮影ガイド
+│   ├── code-coverage-guide.md# コードカバレッジガイド
 │   └── DEVELOPMENT.md        # 開発環境セットアップ
 ├── process/                   # 開発プロセス（Issue/タスクの派生）
 │   ├── development-notes.md  # 開発ノート

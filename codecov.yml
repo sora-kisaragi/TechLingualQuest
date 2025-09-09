@@ -13,6 +13,8 @@ coverage:
         target: 80%        # 目標カバレッジ80%以上
         threshold: 1%      # 1%以下の低下は許容
         base: auto
+        # より厳格な品質管理のための設定
+        if_ci_failed: error  # CI失敗時はカバレッジチェックもエラー
         
     patch:
       default:
@@ -20,6 +22,9 @@ coverage:
         target: 85%        # 新規コードは85%以上
         threshold: 5%      # 5%以下の低下は許容
         base: auto
+        # 新規コードの品質を重視
+        if_ci_failed: error
+        if_not_found: success  # 新規ファイルが見つからない場合は成功扱い
 
   ignore:
     # カバレッジ計算から除外するファイル
