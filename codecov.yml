@@ -1,0 +1,43 @@
+# Codecov Configuration for TechLingualQuest
+# コードカバレッジ設定
+
+coverage:
+  precision: 2
+  round: down
+  range: "50...85"
+
+  status:
+    project:
+      default:
+        # プロジェクト全体の最小カバレッジ要件
+        target: 80%        # 目標カバレッジ80%以上
+        threshold: 1%      # 1%以下の低下は許容
+        base: auto
+        
+    patch:
+      default:
+        # パッチ（新規追加・変更コード）のカバレッジ要件  
+        target: 85%        # 新規コードは85%以上
+        threshold: 5%      # 5%以下の低下は許容
+        base: auto
+
+  ignore:
+    # カバレッジ計算から除外するファイル
+    - "lib/generated/**"     # 自動生成ファイル
+    - "lib/**/*.g.dart"      # build_runnerで生成されるファイル
+    - "lib/l10n/**"          # ローカライゼーション自動生成ファイル
+    - "lib/main.dart"        # エントリーポイント（UIテストで検証）
+    - "lib/**/constants/**"  # 定数ファイル
+    
+comment:
+  layout: "reach,diff,flags,files,footer"
+  behavior: default
+  require_changes: false
+  
+parsers:
+  gcov:
+    branch_detection:
+      conditional: yes
+      loop: yes
+      method: no
+      macro: no

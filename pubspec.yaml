@@ -43,6 +43,9 @@ dependencies:
   shared_preferences: ^2.3.2
   intl: ^0.20.2
 
+  # Secure storage for sensitive data
+  flutter_secure_storage: ^9.2.2
+
   # Image picker for profile photos
   image_picker: ^1.1.2
 
