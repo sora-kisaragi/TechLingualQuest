@@ -27,6 +27,18 @@ applyTo: "**/*.dart"
 - Write unit tests for business logic
 - Widget tests for UI components
 
+### Code Coverage Requirements
+- **Overall Coverage**: Maintain 80% or higher code coverage across the entire project
+- **New Code Coverage**: All new code additions (patches) must achieve 85% or higher coverage
+- **Local Verification**: Always verify coverage locally before committing using `flutter test --coverage`
+- **Coverage Reporting**: Use `genhtml coverage/lcov.info -o coverage/html` to generate coverage reports
+
+### Test-Driven Development (xDD)
+- **Test-First Approach**: Write tests before implementing functionality when possible
+- **TDD/FDD Priority**: Follow Test-Driven Development (TDD) or Feature-Driven Development (FDD) methodologies
+- **Quality Focus**: Prioritize tested, working code over merely working code
+- **Continuous Improvement**: Regularly review and improve test coverage and quality
+
 ## Formatter & Lint
 - Use `flutter format` / `dart format`
 - Enable recommended lints (e.g., `flutter_lints`)
@@ -38,3 +50,9 @@ applyTo: "**/*.dart"
 - **CI/CD compliance**: All code must pass `dart format --set-exit-if-changed .` check
 - **Automated formatting**: Pre-commit hooks will automatically format Dart files
 - **Best practice**: Format code immediately after making changes to maintain consistency
+
+### Code Coverage Pre-commit Verification
+- **Coverage check**: Run `flutter test --coverage` locally before every commit
+- **Coverage threshold**: Ensure new code meets 85% coverage requirement
+- **Coverage report**: Use `genhtml coverage/lcov.info -o coverage/html` to review detailed coverage
+- **Coverage validation**: Verify overall project coverage remains above 80%

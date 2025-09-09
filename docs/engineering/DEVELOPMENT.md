@@ -50,6 +50,32 @@ Pre-commit のセットアップと運用手順は専用ドキュメントに分
 
 - 詳細: `docs/engineering/pre-commit-setup.md`
 
+## コードカバレッジの確認と管理
+
+**詳細なガイド**: `docs/engineering/code-coverage-guide.md`
+
+### クイックスタート
+```bash
+# テスト実行とカバレッジ生成
+flutter test --coverage
+
+# カバレッジレポートの生成（HTML形式）
+genhtml coverage/lcov.info -o coverage/html
+
+# レポートの確認（ブラウザで開く）
+open coverage/html/index.html
+```
+
+### カバレッジ要件
+- **全体カバレッジ**: 80%以上を維持
+- **新規コード**: 85%以上のカバレッジ必須
+- **commit前確認**: 必ずローカルでカバレッジを確認してからcommit
+
+### xDD開発の推進
+- **TDD（Test-Driven Development）**: テストファースト開発を優先
+- **FDD（Feature-Driven Development）**: 機能駆動開発の採用
+- **品質重視**: 動作するコードではなく、テストされた動作するコードを目指す
+
 ## トラブルシューティング
 
 1. ビルド中のOutOfMemoryError: ヒープを増やす

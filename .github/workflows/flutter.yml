@@ -100,9 +100,12 @@ jobs:
       uses: codecov/codecov-action@v4
       with:
         file: coverage/lcov.info
-        fail_ci_if_error: false
+        fail_ci_if_error: true  # カバレッジ要件を満たさない場合はCIを失敗させる
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
+        # カバレッジ要件のコメント
+        # - プロジェクト全体: 80%以上
+        # - 新規コード（パッチ）: 85%以上
 
   build:
     runs-on: ubuntu-latest
