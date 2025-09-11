@@ -163,8 +163,10 @@ class TestHelpers {
 }
 
 /// Test implementation of DynamicLanguageNotifier
-class TestDynamicLanguageNotifier extends StateNotifier<Locale> {
-  TestDynamicLanguageNotifier(super.initialLocale);
+class TestDynamicLanguageNotifier extends DynamicLanguageNotifier {
+  TestDynamicLanguageNotifier(Locale initialLocale) : super() {
+    state = initialLocale;
+  }
 
   @override
   Future<bool> changeLanguage(String languageCode) async {
@@ -229,7 +231,7 @@ class TestAppTranslations implements AppTranslations {
       'Chinese': _languageCode == 'zh' ? '中文' : '中文',
     };
     
-    return translations[key] ?? fallback.isNotEmpty ? fallback : key;
+    return translations[key] ?? (fallback.isNotEmpty ? fallback : key);
   }
 
   @override

@@ -450,7 +450,7 @@ void main() {
         await tester.pump();
         
         // Dispose widget before completion
-        await tester.pumpWidget(const Container());
+        await tester.pumpWidget(Container());
         
         // Should handle mounted check gracefully
         await tester.pumpAndSettle();

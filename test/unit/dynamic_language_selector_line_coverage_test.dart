@@ -124,7 +124,7 @@ void main() {
         await tester.pump(); // Start async operation that might error
         
         // Dispose widget during error handling
-        await tester.pumpWidget(const Container());
+        await tester.pumpWidget(Container());
         
         await tester.pumpAndSettle();
       });
@@ -782,8 +782,8 @@ class TestLanguageSelectorThatUsesAsyncMethod extends StatelessWidget {
   }
 }
 
-class TestSuccessfulLanguageNotifier extends StateNotifier<Locale> {
-  TestSuccessfulLanguageNotifier() : super(const Locale('en'));
+class TestSuccessfulLanguageNotifier extends DynamicLanguageNotifier {
+  TestSuccessfulLanguageNotifier() : super();
 
   @override
   Future<bool> changeLanguage(String languageCode) async {
@@ -792,8 +792,8 @@ class TestSuccessfulLanguageNotifier extends StateNotifier<Locale> {
   }
 }
 
-class TestFailingLanguageNotifier extends StateNotifier<Locale> {
-  TestFailingLanguageNotifier() : super(const Locale('en'));
+class TestFailingLanguageNotifier extends DynamicLanguageNotifier {
+  TestFailingLanguageNotifier() : super();
 
   @override
   Future<bool> changeLanguage(String languageCode) async {
@@ -801,8 +801,10 @@ class TestFailingLanguageNotifier extends StateNotifier<Locale> {
   }
 }
 
-class TestLanguageNotifier extends StateNotifier<Locale> {
-  TestLanguageNotifier(super.locale);
+class TestLanguageNotifier extends DynamicLanguageNotifier {
+  TestLanguageNotifier(Locale locale) : super() {
+    state = locale;
+  }
 
   @override
   Future<bool> changeLanguage(String languageCode) async {
