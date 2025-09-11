@@ -19,7 +19,7 @@ class DashboardPage extends ConsumerWidget {
       appBar: AppBar(
         title: translationsAsync.when(
           data: (translations) => Text(
-            translations['dashboard_title'] ?? 'Dashboard',
+            translations.getSync('dashboard_title', fallback: 'Dashboard'),
           ),
           loading: () => const Text('Dashboard'),
           error: (_, __) => const Text('Dashboard'),
@@ -47,7 +47,7 @@ class DashboardPage extends ConsumerWidget {
     BuildContext context, 
     WidgetRef ref, 
     AuthUser? user,
-    Map<String, String> translations,
+    AppTranslations translations,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
@@ -62,7 +62,7 @@ class DashboardPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    translations['welcome_message'] ?? 'Welcome back!',
+                    translations.getSync('welcome_message', fallback: 'Welcome back!'),
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
@@ -72,7 +72,7 @@ class DashboardPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Level: ${user?.level.name ?? 'Unknown'}',
+                    'Level: ${user?.level?.key ?? 'Unknown'}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -89,7 +89,7 @@ class DashboardPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    translations['progress_overview'] ?? 'Progress Overview',
+                    translations.getSync('progress_overview', fallback: 'Progress Overview'),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 16),
@@ -99,7 +99,7 @@ class DashboardPage extends ConsumerWidget {
                         child: _buildProgressCard(
                           context,
                           Icons.book,
-                          translations['vocabulary_learned'] ?? 'Vocabulary',
+                          translations.getSync('vocabulary_learned', fallback: 'Vocabulary'),
                           '0', // Placeholder
                         ),
                       ),
@@ -108,7 +108,7 @@ class DashboardPage extends ConsumerWidget {
                         child: _buildProgressCard(
                           context,
                           Icons.flag,
-                          translations['quests_completed'] ?? 'Quests',
+                          translations.getSync('quests_completed', fallback: 'Quests'),
                           '0', // Placeholder
                         ),
                       ),
@@ -128,7 +128,7 @@ class DashboardPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    translations['recent_activity'] ?? 'Recent Activity',
+                    translations.getSync('recent_activity', fallback: 'Recent Activity'),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 16),

@@ -24,6 +24,9 @@ void main() {
     });
 
     testWidgets('should redirect unauthenticated user from protected route to auth page', (tester) async {
+      // Ensure user is logged out initially
+      await authService.logout();
+      
       // Test widget setup
       final router = GoRouter(
         routes: [
@@ -125,15 +128,10 @@ void main() {
     });
 
     test('route guard should return correct redirect for protected routes', () {
-      // This tests the logic without widget rendering
-      
-      // Mock route state
-      final mockState = _MockGoRouterState('/dashboard');
-      
-      // Test unauthenticated access
+      // Ensure user is logged out initially
       container.read(authServiceProvider.notifier).logout();
       
-      // Simulate route guard check
+      // Test unauthenticated access to protected routes
       final isAuthenticated = container.read(isAuthenticatedProvider);
       final shouldRedirect = !isAuthenticated && _isProtectedRoute('/dashboard');
       
@@ -229,22 +227,4 @@ bool _isProtectedRoute(String path) {
 
   final metadata = AppRouteMetadata.getMetadata(routeName);
   return metadata?.requiresAuth ?? false;
-}
-
-// Mock GoRouterState for testing
-class _MockGoRouterState extends GoRouterState {
-  _MockGoRouterState(String path) : super(
-    location: path,
-    subloc: path,
-    name: null,
-    path: path,
-    fullpath: path,
-    params: {},
-    queryParams: {},
-    queryParametersAll: {},
-    extra: null,
-    error: null,
-    pageKey: const ValueKey('test'),
-    uri: Uri.parse(path),
-  );
 }
