@@ -10,6 +10,7 @@ import '../features/auth/pages/profile_page.dart';
 import '../features/auth/pages/profile_edit_page.dart';
 import '../features/vocabulary/pages/vocabulary_page.dart';
 import '../features/quests/pages/quests_page.dart';
+import '../features/dashboard/pages/dashboard_page.dart';
 import '../features/settings/pages/settings_page.dart';
 import '../shared/utils/logger.dart';
 import 'routes.dart';
@@ -164,6 +165,15 @@ class AppRouter {
         },
       ),
 
+      // ダッシュボードルート（認証が必要）
+      GoRoute(
+        path: AppRoutes.dashboard,
+        name: AppRoutes.dashboardName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const DashboardPage();
+        },
+      ),
+
       // アバウトルート
       GoRoute(
         path: AppRoutes.about,
@@ -214,6 +224,7 @@ class AppRouter {
     if (path.startsWith('/auth/profile')) return AppRoutes.profileName;
     if (path.startsWith('/auth/login')) return AppRoutes.loginName;
     if (path.startsWith('/auth/register')) return AppRoutes.registerName;
+    if (path.startsWith('/auth/password-reset')) return AppRoutes.passwordResetName;
     if (path.startsWith('/auth')) return AppRoutes.authName;
     if (path.startsWith('/vocabulary/add')) return AppRoutes.vocabularyAddName;
     if (path.contains('/vocabulary/') && path.split('/').length > 2) {
@@ -225,6 +236,7 @@ class AppRouter {
       return AppRoutes.questDetailName;
     }
     if (path.startsWith('/quests')) return AppRoutes.questsName;
+    if (path.startsWith('/dashboard')) return AppRoutes.dashboardName;
     if (path.startsWith('/settings')) return AppRoutes.settingsName;
     if (path.startsWith('/about')) return AppRoutes.aboutName;
 
