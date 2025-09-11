@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'shared/utils/config.dart';
 import 'app/router.dart';
@@ -47,7 +48,11 @@ class TechLingualQuestApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'TechLingual Quest',
       locale: currentLocale,
-      // Remove Flutter's built-in localization delegates since we're using our own system
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       supportedLocales: const [
         Locale('en'),
         Locale('ja'),
