@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/dynamic_localization_service.dart';
 
 /// Dynamic language selector widget that works with JSON-based translations
+/// JSON ベースの翻訳に対応する動的言語選択ウィジェット
 ///
 /// This widget automatically adapts to all languages defined in the JSON file
 /// without requiring code changes for new language additions
+/// このウィジェットは JSON ファイルで定義されたすべての言語に自動的に適応し、
+/// 新しい言語追加時にコード変更を必要としません
 class DynamicLanguageSelector extends ConsumerWidget {
   const DynamicLanguageSelector({super.key});
 
