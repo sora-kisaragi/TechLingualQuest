@@ -445,8 +445,10 @@ class AsyncLanguageDisplayWidget extends StatelessWidget {
 }
 
 /// Test language notifier
-class TestLanguageNotifier extends StateNotifier<Locale> {
-  TestLanguageNotifier(super.locale);
+class TestLanguageNotifier extends DynamicLanguageNotifier {
+  TestLanguageNotifier(Locale locale) {
+    state = locale;
+  }
 
   @override
   Future<bool> changeLanguage(String languageCode) async {
@@ -628,9 +630,7 @@ class AsyncTestTranslations extends TestTranslations {
 }
 
 /// Language notifier that fails on change
-class FailingLanguageNotifier extends StateNotifier<Locale> {
-  FailingLanguageNotifier() : super(const Locale('en'));
-
+class FailingLanguageNotifier extends DynamicLanguageNotifier {
   @override
   Future<bool> changeLanguage(String languageCode) async {
     // Always return false to simulate failure
@@ -639,9 +639,7 @@ class FailingLanguageNotifier extends StateNotifier<Locale> {
 }
 
 /// Language notifier that succeeds on change
-class SuccessfulLanguageNotifier extends StateNotifier<Locale> {
-  SuccessfulLanguageNotifier() : super(const Locale('en'));
-
+class SuccessfulLanguageNotifier extends DynamicLanguageNotifier {
   @override
   Future<bool> changeLanguage(String languageCode) async {
     state = Locale(languageCode);

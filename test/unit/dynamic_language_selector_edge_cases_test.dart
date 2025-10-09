@@ -575,9 +575,7 @@ class ConsistentStateLanguageSelector extends StatelessWidget {
   }
 }
 
-class RapidChangeLanguageNotifier extends StateNotifier<Locale> {
-  RapidChangeLanguageNotifier() : super(const Locale('en'));
-  
+class RapidChangeLanguageNotifier extends DynamicLanguageNotifier {
   int changeCount = 0;
 
   @override
